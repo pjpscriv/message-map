@@ -7,3 +7,7 @@ python/*
 # Irrelevant file formats #
 ###########################
 *.pptx
+
+# My Data
+*.zip
+peter-messages/
