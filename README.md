@@ -12,7 +12,7 @@
 
 The goal of this project is to allow you to visualize your own Facebook Messages in your browser, with a nice graphical display that gives insights on the number of messages you send and receive, when, to whom, etc.. If you have always been curious about your Facebook messages history, you should find some answers here.
 
-## How does it work?
+## How does it work ?
 
 ### Create your datafile from your Facebook History
 First, you should extract your data from Facebook in JSON format [here](https://www.facebook.com/your_information/). Once you've got your data ready, you can go on the [website](https://adurivault.github.io/FBMessage/).
