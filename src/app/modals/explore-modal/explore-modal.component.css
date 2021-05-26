@@ -1,0 +1,7 @@
+app-explore-modal:host {
+    /* overflow: scroll; */
+    display: block;
+    position: absolute;
+    top: 0;
+    margin-top: 10vh;
+}

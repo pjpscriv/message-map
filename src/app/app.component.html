@@ -1,0 +1,28 @@
+<app-nav-bar
+    (explanationClicked)="displayExplanation(true)"
+    (exploreClicked)="displayExplore(true)"
+    (resetClicked)="resetClicked()"
+></app-nav-bar>
+
+<app-time-density></app-time-density>
+<app-main-view></app-main-view>
+<app-filters></app-filters>
+
+<div></div>
+
+<app-date-density></app-date-density>
+<app-message-display></app-message-display>
+
+<app-explanation-modal
+    *ngIf="showExplanation"
+    (close)="displayExplanation(false)">
+</app-explanation-modal>
+<app-explore-modal
+    *ngIf="showExplore"
+    (close)="displayExplore(false)"
+    (loading)="displayProcessing(true)">
+</app-explore-modal>
+<app-processing-modal
+    *ngIf="showProcessing"
+    (close)="displayProcessing(false)">
+</app-processing-modal>

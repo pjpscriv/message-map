@@ -1,0 +1,51 @@
+<div class="modal-content">
+  <span class="close" (click)="closeClicked()">&times;</span>
+  <h2> Download your Messenger data from Facebook </h2>
+  <p>
+    - Download your Facebook archive from <a href="https://www.facebook.com/your_information/"> this link</a>. <br>
+    - Click "Download Your Information" <br>
+    - Select the format "JSON" <br>
+    - Select at least "Messages" in the list of information to download <br>
+    - Click "Create file" and wait for the notification saying that your file is ready to download (around 10 minutes)
+    <br>
+    - Download the zip file, unzip it, and save it somewhere on your computer <br>
+  </p>
+
+  <h2> Show this application where the data is on your computer to this application</h2>
+  <p>
+    - Click on the button below <br>
+  <div style="text-align:center; padding:30px ">
+    <input id="file" type="file" name="file" class="inputfile" (change)="readFiles($event)" style="float:center"
+      webkitdirectory=true>
+    <label for="file" class="custom-button">Use your own file</label>
+  </div>
+  <br>
+  <p>
+    - Navigate to the Facebook archive you selected <br>
+    - Select the "message" Folder and confirm <br>
+  </p>
+
+  <h2> We are not the NSA, Facebook, or Cambridge Analytica </h2>
+  <p>
+    You may (if you're using Chrome) get a warning saying that your data will be downloaded. While this
+    can be frightening, this is actually false. The data will loaded <i>into your browser</i>, not on internet.
+    Computations will be done locally without a single piece of data leaving your computer.
+    <br><br>
+    The truth is we don't have any interest in your data, we don't even have servers to store it. We are
+    just two students who want to empower you to do something cool with your data.
+    <br><br>
+    All of the code behind this application is available <a href="https://github.com/adurivault/FBMessage">here</a>.
+    It means that anyone familiar with programming can check that this application does what we say it does, and only
+    what we say it does.
+    <br><br>
+    If you are not familiar with programming, and you still do not trust us (Who can blame you? This is
+    written by two strangers on internet after all...) you can cut your internet connexion before
+    selecting the files. Once the page is loaded, everything will work fine without internet. This
+    way you can be absolutely sure that the data is not sent to anybody.
+  </p>
+  <p>
+    Authors :
+    <a href="https://github.com/MathReynaud"> Mathilde Reynaud </a> |
+    <a href="https://github.com/adurivault"> Augustin Durivault </a> <br>
+  </p>
+</div>

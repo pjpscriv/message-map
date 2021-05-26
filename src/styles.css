@@ -1,0 +1,194 @@
+/* You can add global styles to this file, and also import other style files */
+body {
+  background-color: #303030;
+  margin: 0px;
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #303030;
+}
+
+li {float: left;}
+
+.axis--x line{stroke: #A0A0A0;}
+.axis--x path{stroke: #A0A0A0;}
+.axis--x text{fill: #A0A0A0;}
+
+.axis--y line{stroke: #A0A0A0;}
+.axis--y path{stroke: #A0A0A0;}
+.axis--y text{fill: #A0A0A0;}
+
+.barchart-div {
+  margin-top: 8px;
+  padding-left: 8px;
+  background-color: #353535;
+  /* background-blend-mode: overlay ; */
+  border-left-style: solid;
+  border-left-width: 6px;
+  border-left-color: #2c7bb6;
+}
+
+.area {
+    fill: #2c7bb6;
+    clip-path: url(#clip);
+}
+
+.zoom {
+  cursor: move;
+  fill: none;
+  pointer-events: all;
+}
+
+.tooltip {
+  position: absolute;
+  text-align: center;
+  width: 180px;
+  height: 20px;
+  padding: 2px;
+  font-family: "Nunito";
+  font-size: 12px;
+  background: lightsteelblue;
+  border: 0px;
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+.bar {
+  fill: #2c7bb6;
+}
+
+.bar.mouseovered{
+  stroke: white
+}
+
+.bar-element {
+  cursor: pointer;
+}
+
+.unclicked{
+  opacity: 0.5
+}
+
+.title_barchart {
+  color: #A0A0A0;
+  font-family: "Nunito";
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.img-color {
+  cursor: pointer;
+}
+
+.legend_hist_num {
+  fill: #00a6ca;
+  font-family: "Nunito";
+  font-size: 12px;
+}
+
+.legend_hist_text {
+  fill: #A0A0A0;
+  font-family: "Nunito";
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.title {
+  font-family: "Nunito";
+  color: #A0A0A0;
+  font-size: 30px;
+  font-weight: bold;
+  margin-left: 20px;
+}
+
+.md_header {
+  color: #A0A0A0;
+  font-family: "Nunito";
+  font-size: 11px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.md_text {
+  color: #FFFFFF;
+  font-family: "Nunito";
+  font-size: 11px;
+  margin: 0;
+}
+
+::-webkit-scrollbar {
+    width: 0.5em;
+}
+
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: darkgrey;
+  outline: 1px solid slategrey;
+}
+
+.custom-button {
+    border-radius: 4px;
+    border : none;
+    background-color: #A0A0A0;
+    font-family: "Nunito";
+    font-size: 16px;
+    font-weight: bold;
+    display: inline-block;
+    padding: 6px 12px;
+    margin-right: 10px;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.modal {
+    display: none;      /* Hidden by default */
+    position: fixed;    /* Stay in place */
+    z-index: 1;         /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%;        /* Full width */
+    height: 100%;       /* Full height */
+    overflow: auto;     /* Enable scroll if needed */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: #fefefe;
+    font-family: "Nunito";
+    font-size: 16px;
+    margin: auto;
+    padding: 20px;
+    border-left-style: solid;
+    border-left-width: 10px;
+    border-left-color: #2c7bb6;
+    width: 45%;
+}
+
+/* The Close Button */
+.close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
