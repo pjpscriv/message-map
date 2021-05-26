@@ -124,7 +124,7 @@
     var h_bar = 12;
   }
 
-  // Define the pop-ups and the different action to open / close them
+  // Define the pop-ups and the actions to open / close them
   {
     // Get the modal
     var exploreModal = document.getElementById('ExploreModal');
@@ -436,16 +436,20 @@ chart = barChart({})
 function main(){
   parse_date();
   add_sent();
+
   initialize_length_ticks();
   initialize_crossfilter();
   initialize_barchart_parameters();
+  
   draw_barcharts();
   add_message_displayer();
+  
   initialize_scatterplot();
   draw_scatterplot();
   draw_density_date();
   draw_density_time();
   initialize_brush();
+  
   processingModal.style.display = "none"
 }
 
@@ -464,14 +468,14 @@ function define_colored_barchart(name){
     coloredBarchart.isColoredBarchart = false
     coloredBarchart.img.attr("src", "img/colors.png")
   }
-  if (newColoredBarchart == coloredBarchart){ // If clicked on the one active, remove everythin
+  if (newColoredBarchart == coloredBarchart){ // If clicked on the one active, remove everything
     coloredBarchart = undefined;
     colorScale.domain([])
   } else { // Else, change the colored barchart
     coloredBarchart = newColoredBarchart
     coloredBarchart.isColoredBarchart = true
     coloredBarchart.img.attr("src", "img/colors_bw.png")
-    colorScale.domain(coloredBarchart.nested_data.map(x=>x.key))
+    colorScale.domain(coloredBarchart.nested_data.map(x=> x.key))
   }
   draw_barcharts()
   draw_scatterplot()
@@ -653,6 +657,7 @@ function add_message_displayer(){
     dim_time_tt.filter();
 
     if (message_tooltip.length > 0 ){
+      var closest = message_tooltip[0];
       var full_date = String(message_tooltip[0].date);
       var full_time = String(message_tooltip[0].timeSeconds);
 
@@ -831,7 +836,7 @@ function draw_scatterplot(){
     } else {
       context_canvas.fillStyle = color_base;
     }
-    context_canvas.globalAlpha = 0.1;
+    context_canvas.globalAlpha = 0.5;
     context_canvas.arc(x1(d.date), y1(d.timeSeconds), 2, 0,  2 * Math.PI, true);
     context_canvas.fill()
     context_canvas.closePath();

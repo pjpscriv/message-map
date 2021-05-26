@@ -11,3 +11,9 @@ python/*
 # My Data
 *.zip
 peter-messages/
+
+# Just all data cos I'm lazy
+data/*
+
+# Local Chrome Script
+local-chrome.sh
