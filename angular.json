@@ -123,6 +123,13 @@
               "devServerTarget": "ngfbmessage:serve:production"
             }
           }
+        },
+        "deploy": {
+          "builder": "angular-cli-ghpages:deploy",
+          "options": {
+            "baseHref": "/ng-fb-message/",
+            "message": "Deploy to GitHub Pages"
+          }
         }
       }
     }
