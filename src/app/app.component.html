@@ -1,7 +1,7 @@
 <app-nav-bar
-    (explanationClicked)="displayExplanation(true)"
-    (exploreClicked)="displayExplore(true)"
-    (resetClicked)="resetClicked()"
+    (explanationClicked)="displayModal('explanation')"
+    (exploreClicked)="displayModal('explore')"
+    (resetClicked)="displayModal('none')"
 ></app-nav-bar>
 
 <app-time-density></app-time-density>
@@ -15,14 +15,13 @@
 
 <app-explanation-modal
     *ngIf="showExplanation"
-    (close)="displayExplanation(false)">
+    (close)="displayModal('none')">
 </app-explanation-modal>
 <app-explore-modal
     *ngIf="showExplore"
-    (close)="displayExplore(false)"
-    (loading)="displayProcessing(true)">
+    (close)="displayModal('none')"
+    (loading)="displayModal('processing')">
 </app-explore-modal>
 <app-processing-modal
-    *ngIf="showProcessing"
-    (close)="displayProcessing(false)">
+    *ngIf="showProcessing">
 </app-processing-modal>

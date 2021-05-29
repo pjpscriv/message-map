@@ -1,6 +1,0 @@
-app-explanation-modal:host {
-    /* overflow: scroll; */
-    position: absolute;
-    top: 0;
-    margin-top: 10vh;
-}

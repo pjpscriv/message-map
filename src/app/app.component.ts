@@ -12,27 +12,18 @@ export class AppComponent {
   public showExplore = false;
   public showProcessing = false;
 
-  public displayExplanation(display: boolean) {
-    this.showExplanation = display;
-    this.showExplore = false;
-    this.showProcessing = false;
-  }
 
-  public displayExplore(display: boolean) {
-    this.showExplore = display;
-    this.showExplanation = false;
-    this.showProcessing = false;
-  }
-
-  public displayProcessing(display: boolean) {
-    this.showProcessing = display;
-    this.showExplore = false;
-    this.showExplanation = false;
-  }
-
-  public resetClicked() {
+  public displayModal(modalName: string) {
     this.showExplanation = false;
     this.showExplore = false;
     this.showProcessing = false;
+
+    if (modalName === "explanation") {
+      this.showExplanation = true;
+    } else if (modalName === "explore") {
+      this.showExplore = true;
+    } else if (modalName === "processing") {
+      this.showProcessing = true;
+    }
   }
 }

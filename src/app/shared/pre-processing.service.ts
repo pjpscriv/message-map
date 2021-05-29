@@ -21,7 +21,7 @@ export class PreProcessingService {
     this.googleAnalyticsService.gtag('event', 'Load', {'event_category': 'Load','event_label': 'Custom'});
 
     for (let file of files) {
-      if (this.hasValidFileName(file.webkitRelativePath)) {
+      if (this.hasValidFileName(file)) {
         this.filesToRead += 1
 
         var reader = new FileReader()
@@ -66,9 +66,8 @@ export class PreProcessingService {
     console.log(`Done! Read ${this.filesRead} of ${this.filesToRead} files`);
   }
 
-  // TODO: Make typing nicer. Something like: <File | { webkitRelativePath }>
-  private hasValidFileName(file: any): boolean {
-    return this.messagesRegEx.test(file)
+  private hasValidFileName(file: File & {webkitRelativePath: string}): boolean {
+    return this.messagesRegEx.test(file.webkitRelativePath)
   }
 
   private getMediaType(message: Message): string {

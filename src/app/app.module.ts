@@ -12,6 +12,7 @@ import { DateDensityComponent } from './main/date-density/date-density.component
 import { TimeDensityComponent } from './main/time-density/time-density.component';
 import { MessageDisplayComponent } from './main/message-display/message-display.component';
 import { MainViewComponent } from './main/main-view/main-view.component';
+import { ModalTemplateComponent } from './modals/modal-template/modal-template.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { MainViewComponent } from './main/main-view/main-view.component';
     DateDensityComponent,
     TimeDensityComponent,
     MessageDisplayComponent,
-    MainViewComponent
+    MainViewComponent,
+    ModalTemplateComponent
   ],
   imports: [
     BrowserModule,
