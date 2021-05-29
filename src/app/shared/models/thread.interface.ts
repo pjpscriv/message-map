@@ -21,4 +21,10 @@ export interface Message {
     content: any;
     message: string;
     length: string;
+    reactions: Array<Reaction>;
+}
+
+export interface Reaction {
+    reaction: string;
+    actor: string;
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { GoogleAnalyticsService } from './google-analytics.service';
 import { MessageDataService } from './message-data.service';
-import { Message, Thread } from './models/thread.interface';
+import { Message, Reaction, Thread } from './models/thread.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -9,26 +9,21 @@ import { Message, Thread } from './models/thread.interface';
 export class PreProcessingService {
   // private messagesRegEx = new RegExp('messages/.*message.*\.json');
   private messagesRegEx = new RegExp('.*message.*\.json');
-  private count_init = 0;
-  private count_end = 0;
+  private filesToRead = 0;
+  private filesRead = 0;
 
   constructor(
     private googleAnalyticsService: GoogleAnalyticsService,
     private messageService: MessageDataService) { }
 
   public readFiles(files: Array<any>) {
-    // explanationModal.style.display = "none"
-    // exploreModal.style.display = "none"
-    // processingModal.style.display = "block"
 
     this.googleAnalyticsService.gtag('event', 'Load', {'event_category': 'Load','event_label': 'Custom'});
 
-    for (var i = 0; i < files.length; i++) {
-      let file = files[i];
+    for (let file of files) {
+      if (this.hasValidFileName(file.webkitRelativePath)) {
+        this.filesToRead += 1
 
-      if (this.isValidMessagesJson(file.webkitRelativePath)) {
-
-        this.count_init += 1
         var reader = new FileReader()
 
         reader.onloadend = () => {
@@ -49,16 +44,16 @@ export class PreProcessingService {
               'type': message['type'],
               'media': this.getMediaType(message),
               'message': this.getMessage(message),
-              'length': this.getLength(message),
+              'length': this.getMessage(message).length,
               'reactions': this.getReactions(message)
             }
             let messageAndThread = Object.assign({}, message_info, thread_info)
             this.messageService.addMessage(messageAndThread);
           }
 
-          this.count_end += 1
+          this.filesRead += 1
 
-          if (this.count_init == this.count_end) {
+          if (this.filesToRead == this.filesRead) {
             console.log('All messages loaded!');
             // main()
           }
@@ -68,11 +63,11 @@ export class PreProcessingService {
       }
     }
 
-    console.log('Done!');
+    console.log(`Done! Read ${this.filesRead} of ${this.filesToRead} files`);
   }
 
   // TODO: Make typing nicer. Something like: <File | { webkitRelativePath }>
-  private isValidMessagesJson(file: any): boolean {
+  private hasValidFileName(file: any): boolean {
     return this.messagesRegEx.test(file)
   }
 
@@ -96,21 +91,11 @@ export class PreProcessingService {
     }
   }
 
-  private getLength(message: Message): number {
-    try {
-      return decodeURIComponent(escape(message['content'])).length;
-    } catch (err) {
-      return 0;
+  private getReactions(message: Message): Array<Reaction> {
+    if (message['reactions'] != undefined) {
+        return message['reactions']
+    } else {
+        return []
     }
-  }
-
-  // TODO: Fix this apparently
-  private getReactions(message: Message): number {
-    // if (message['reactions'].length == undefined) {
-    //     message_info['reactions'] = 0
-    // } else {
-    //     return 0
-    // }
-    return 0;
   }
 }
