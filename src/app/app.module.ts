@@ -13,6 +13,7 @@ import { TimeDensityComponent } from './main/time-density/time-density.component
 import { MessageDisplayComponent } from './main/message-display/message-display.component';
 import { MainViewComponent } from './main/main-view/main-view.component';
 import { ModalTemplateComponent } from './modals/modal-template/modal-template.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { ModalTemplateComponent } from './modals/modal-template/modal-template.c
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    BrowserAnimationsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

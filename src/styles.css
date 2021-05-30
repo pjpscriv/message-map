@@ -1,7 +1,18 @@
 /* You can add global styles to this file, and also import other style files */
+
+html,
 body {
-  background-color: #303030;
-  margin: 0px;
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+body {
+    background-color: #303030;
+    margin: 0px;
 }
 
 ul {
@@ -12,24 +23,42 @@ ul {
     background-color: #303030;
 }
 
-li {float: left;}
+li {
+    float: left;
+}
 
-.axis--x line{stroke: #A0A0A0;}
-.axis--x path{stroke: #A0A0A0;}
-.axis--x text{fill: #A0A0A0;}
+.axis--x line {
+    stroke: #A0A0A0;
+}
 
-.axis--y line{stroke: #A0A0A0;}
-.axis--y path{stroke: #A0A0A0;}
-.axis--y text{fill: #A0A0A0;}
+.axis--x path {
+    stroke: #A0A0A0;
+}
+
+.axis--x text {
+    fill: #A0A0A0;
+}
+
+.axis--y line {
+    stroke: #A0A0A0;
+}
+
+.axis--y path {
+    stroke: #A0A0A0;
+}
+
+.axis--y text {
+    fill: #A0A0A0;
+}
 
 .barchart-div {
-  margin-top: 8px;
-  padding-left: 8px;
-  background-color: #353535;
-  /* background-blend-mode: overlay ; */
-  border-left-style: solid;
-  border-left-width: 6px;
-  border-left-color: #2c7bb6;
+    margin-top: 8px;
+    padding-left: 8px;
+    background-color: #353535;
+    /* background-blend-mode: overlay ; */
+    border-left-style: solid;
+    border-left-width: 6px;
+    border-left-color: #2c7bb6;
 }
 
 .area {
@@ -38,86 +67,86 @@ li {float: left;}
 }
 
 .zoom {
-  cursor: move;
-  fill: none;
-  pointer-events: all;
+    cursor: move;
+    fill: none;
+    pointer-events: all;
 }
 
 .tooltip {
-  position: absolute;
-  text-align: center;
-  width: 180px;
-  height: 20px;
-  padding: 2px;
-  font-family: "Nunito";
-  font-size: 12px;
-  background: lightsteelblue;
-  border: 0px;
-  border-radius: 8px;
-  pointer-events: none;
+    position: absolute;
+    text-align: center;
+    width: 180px;
+    height: 20px;
+    padding: 2px;
+    font-family: "Nunito";
+    font-size: 12px;
+    background: lightsteelblue;
+    border: 0px;
+    border-radius: 8px;
+    pointer-events: none;
 }
 
 .bar {
-  fill: #2c7bb6;
+    fill: #2c7bb6;
 }
 
-.bar.mouseovered{
-  stroke: white
+.bar.mouseovered {
+    stroke: white
 }
 
 .bar-element {
-  cursor: pointer;
+    cursor: pointer;
 }
 
-.unclicked{
-  opacity: 0.5
+.unclicked {
+    opacity: 0.5
 }
 
 .title_barchart {
-  color: #A0A0A0;
-  font-family: "Nunito";
-  font-size: 18px;
-  font-weight: bold;
+    color: #A0A0A0;
+    font-family: "Nunito";
+    font-size: 18px;
+    font-weight: bold;
 }
 
 .img-color {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 .legend_hist_num {
-  fill: #00a6ca;
-  font-family: "Nunito";
-  font-size: 12px;
+    fill: #00a6ca;
+    font-family: "Nunito";
+    font-size: 12px;
 }
 
 .legend_hist_text {
-  fill: #A0A0A0;
-  font-family: "Nunito";
-  font-size: 12px;
-  font-weight: bold;
+    fill: #A0A0A0;
+    font-family: "Nunito";
+    font-size: 12px;
+    font-weight: bold;
 }
 
 .title {
-  font-family: "Nunito";
-  color: #A0A0A0;
-  font-size: 30px;
-  font-weight: bold;
-  margin-left: 20px;
+    font-family: "Nunito";
+    color: #A0A0A0;
+    font-size: 30px;
+    font-weight: bold;
+    margin-left: 20px;
 }
 
 .md_header {
-  color: #A0A0A0;
-  font-family: "Nunito";
-  font-size: 11px;
-  font-weight: bold;
-  margin: 0;
+    color: #A0A0A0;
+    font-family: "Nunito";
+    font-size: 11px;
+    font-weight: bold;
+    margin: 0;
 }
 
 .md_text {
-  color: #FFFFFF;
-  font-family: "Nunito";
-  font-size: 11px;
-  margin: 0;
+    color: #FFFFFF;
+    font-family: "Nunito";
+    font-size: 11px;
+    margin: 0;
 }
 
 ::-webkit-scrollbar {
@@ -125,18 +154,18 @@ li {float: left;}
 }
 
 ::-webkit-scrollbar-track {
-    box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: darkgrey;
-  outline: 1px solid slategrey;
+    background-color: darkgrey;
+    outline: 1px solid slategrey;
 }
 
 .custom-button {
     border-radius: 4px;
-    border : none;
+    border: none;
     background-color: #A0A0A0;
     font-family: "Nunito";
     font-size: 16px;
