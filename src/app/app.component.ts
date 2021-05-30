@@ -13,7 +13,7 @@ export class AppComponent {
   public showProcessing = false;
 
 
-  public displayModal(modalName: string) {
+  public displayModal(modalName: string): void {
     this.showExplanation = false;
     this.showExplore = false;
     this.showProcessing = false;

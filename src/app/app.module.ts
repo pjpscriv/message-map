@@ -14,6 +14,7 @@ import { MessageDisplayComponent } from './main/message-display/message-display.
 import { MainViewComponent } from './main/main-view/main-view.component';
 import { ModalTemplateComponent } from './modals/modal-template/modal-template.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    MatProgressBarModule
   ],
   providers: [],
   bootstrap: [AppComponent]

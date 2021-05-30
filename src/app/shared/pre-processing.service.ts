@@ -16,46 +16,50 @@ export class PreProcessingService {
     private googleAnalyticsService: GoogleAnalyticsService,
     private messageService: MessageDataService) { }
 
-  public readFiles(files: Array<any>) {
+  public readFiles(files: Array<any>): void {
 
-    this.googleAnalyticsService.gtag('event', 'Load', {'event_category': 'Load','event_label': 'Custom'});
+    this.googleAnalyticsService.gtag('event', 'Load', { 'event_category': 'Load', 'event_label': 'Custom' });
 
-    for (let file of files) {
+    for (const file of files) {
       if (this.hasValidFileName(file)) {
         this.filesToRead += 1
 
-        var reader = new FileReader()
+        const reader = new FileReader();
+        reader.onload = (event) => {
 
-        reader.onloadend = () => {
-
-          let thread: Thread = JSON.parse(<string> reader.result)
-          let thread_info: any = {
-            'is_still_participant': thread['is_still_participant'],
-            'thread_type': thread['thread_type'],
-            'thread': decodeURIComponent(escape(thread['title'])),
-            'nb_participants': thread['participants'] ? thread['participants'].length : 0
-          }
-
-          let thread_messages: any[] = thread['messages']
-          for (let message of thread_messages) {
-            let message_info: any = {
-              'sender_name': decodeURIComponent(escape(message['sender_name'])),
-              'timestamp': message['timestamp'] || (message['timestamp_ms'] / 1000),
-              'type': message['type'],
-              'media': this.getMediaType(message),
-              'message': this.getMessage(message),
-              'length': this.getMessage(message).length,
-              'reactions': this.getReactions(message)
+          const thread: Thread = JSON.parse(<string> event.target?.result)
+          if (thread != null) {
+            const thread_info: any = {
+              'is_still_participant': thread['is_still_participant'],
+              'thread_type': thread['thread_type'],
+              'thread': decodeURIComponent(escape(thread['title'])),
+              'nb_participants': thread['participants'] ? thread['participants'].length : 0
             }
-            let messageAndThread = Object.assign({}, message_info, thread_info)
-            this.messageService.addMessage(messageAndThread);
+
+            const thread_messages: any[] = thread['messages'] ?? [];
+            for (const message of thread_messages) {
+              const message_info: any = {
+                'sender_name': decodeURIComponent(escape(message['sender_name'])),
+                'timestamp': message['timestamp'] || (message['timestamp_ms'] / 1000),
+                'type': message['type'],
+                'media': this.getMediaType(message),
+                'message': this.getMessage(message),
+                'length': this.getMessage(message).length,
+                'reactions': this.getReactions(message)
+              }
+              const messageAndThread = Object.assign({}, message_info, thread_info)
+              this.messageService.addMessage(messageAndThread);
+            }
+          } else {
+            throw Error(`Thread was null for ${file?.webkitRelativePath}`)
           }
 
           this.filesRead += 1
+          this.messageService.setProgress(this.filesRead, this.filesToRead);
 
           if (this.filesToRead == this.filesRead) {
             console.log('All messages loaded!');
-            // main()
+            this.messageService.messagesLoaded();
           }
         }
 
@@ -66,7 +70,7 @@ export class PreProcessingService {
     console.log(`Done! Read ${this.filesRead} of ${this.filesToRead} files`);
   }
 
-  private hasValidFileName(file: File & {webkitRelativePath: string}): boolean {
+  private hasValidFileName(file: File & { webkitRelativePath: string }): boolean {
     return this.messagesRegEx.test(file.webkitRelativePath)
   }
 
@@ -92,9 +96,9 @@ export class PreProcessingService {
 
   private getReactions(message: Message): Array<Reaction> {
     if (message['reactions'] != undefined) {
-        return message['reactions']
+      return message['reactions']
     } else {
-        return []
+      return []
     }
   }
 }

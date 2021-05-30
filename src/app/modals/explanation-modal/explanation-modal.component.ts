@@ -1,20 +1,14 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 
 @Component({
   selector: 'app-explanation-modal',
-  templateUrl: './explanation-modal.component.html',
-  styleUrls: ['./explanation-modal.component.css']
+  templateUrl: './explanation-modal.component.html'
 })
-export class ExplanationModalComponent implements OnInit {
+export class ExplanationModalComponent {
 
   @Output() close = new EventEmitter();
 
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
-  public closeClicked() {
+  public closeClicked(): void {
     this.close.emit();
   }
 
