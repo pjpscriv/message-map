@@ -1,0 +1,35 @@
+app-time-density {
+    height: 70vh;
+    width: 11vw;
+    display: inline-block;
+}
+
+app-main-view {
+    height: 70vh;
+    width: 68vw;
+    display: inline-block;
+}
+
+app-filters {
+    height: 70vh;
+    width: 19vw;
+    display: inline-block;
+}
+
+.placeholder {
+    height: 20vh;
+    width: 11vw;
+    display: inline-block;
+}
+
+app-date-density {
+    height: 20vh;
+    width: 68vw;
+    display: inline-block;
+}
+
+app-message-display {
+    height: 20vh;
+    width: 19vw;
+    display: inline-block;
+}
