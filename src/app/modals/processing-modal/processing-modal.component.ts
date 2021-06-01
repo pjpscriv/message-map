@@ -8,14 +8,12 @@ import { MessageDataService } from 'src/app/shared/message-data.service';
 })
 export class ProcessingModalComponent {
 
-  @Output() public close = new EventEmitter();
   public progress$: Observable<number>;
 
   constructor(private messageService: MessageDataService) {
     this.progress$ = this.messageService.getProgress();
   }
 
-  public closeClicked(): void {
-    this.close.emit();
-  }
+  // TODO: Inject a service of some sort and listen for when the messages are loaded
+
 }
