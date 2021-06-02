@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { GoogleAnalyticsService } from './google-analytics.service';
 import { MessageDataService } from './message-data.service';
-import { Message, Reaction, Thread } from './models/thread.interface';
+import { Message, Reaction, Thread } from '../models/thread.interface';
 
 @Injectable({
   providedIn: 'root'
