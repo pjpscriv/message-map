@@ -1,4 +1,4 @@
-import { Message } from "../models/thread.interface";
+import { Message } from '../models/thread.interface';
 
 export interface AppState {
     messages: Array<Message>;

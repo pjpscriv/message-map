@@ -9,40 +9,40 @@ export class BarchartService {
 
   constructor(private gs: GoogleAnalyticsService) { }
 
-  /** 
+  /**
 
   barChart(config_global: any) {
     var h_bar = 12,
         onMouseover = function(){}
-  
-  
+
+
     function chart(bc: any){
       bc.xScale.domain([0, d3.max(bc.nested_data, (d: any) => d.value)])
-  
+
       // On click, change the appearance of the bars, filter everything, and update barcharts, curves, and scatterplot
       function onClick(d: any){
         this.gs.gtag('event', 'Histogram', {
              'event_category': 'Filter',
              'event_label': bc.title})
-  
+
          // Update the "clicked" sets
          if (bc.clicked.has(d.key)) {
            bc.clicked.delete(d.key)
          } else {
            bc.clicked.add(d.key)
          }
-  
+
          // Apply filters
          if (bc.clicked.size == 0) {
            bc.dimension.filter()
          } else {
             bc.dimension.filter(function(a){return bc.clicked.has(a)})
          }
-  
+
          // Update to match new filters
          update_all()
       }
-  
+
       // On mouseover, display tooltip
       function onMouseover(d){
         div.transition()
@@ -53,7 +53,7 @@ export class BarchartService {
            .style("top", (d3.event.pageY - 28) + "px");
         d3.select(this).classed("mouseovered", true);
       }
-  
+
       // On mouseout, hide the tooltip
       function onMouseout(d){
         div.transition()
@@ -61,13 +61,13 @@ export class BarchartService {
            .style("opacity", 0);
         d3.select(this).classed("mouseovered", false);
       }
-  
+
       // Select the svg element, if it exists.
       var svg = bc.div_body.selectAll("svg").data([bc.nested_data]);
-  
+
       // Otherwise, create the skeletal chart.
       var svgEnter = svg.enter().append("svg");
-  
+
       // Create a group for each bar. We will then add the bar and the labels to these groups
       var bar_elements = svgEnter.selectAll(".bar-element")
           .data(bc.nested_data).enter()
@@ -75,9 +75,9 @@ export class BarchartService {
           .attr("class", "bar-element")
           // .attr("id", function(d){try {return this_temp.get_data(d)} catch {return "other"}})
           .attr("transform", function(d, i) { return "translate(" + 0 + "," + i*(h_bar+2) + ")"; });
-  
+
       bc.xScale.domain([0, d3.max(bc.nested_data, function(d) {return d.value;})])
-  
+
       // Add bars
       bar_elements.append("rect")
           .attr("class", "bar")
@@ -89,7 +89,7 @@ export class BarchartService {
           .on("click", onClick)
           .on("mouseover", onMouseover)
           .on("mouseout", onMouseout)
-  
+
       // Add number-labels to bar charts
       bar_elements.append("text")
         .attr("class", "legend_hist_num")
@@ -102,7 +102,7 @@ export class BarchartService {
         .on("click", onClick)
         .on("mouseover", onMouseover)
         .on("mouseout", onMouseout)
-  
+
       // Add labels to bar charts
       bar_elements.append("text")
           .attr("class", "legend_hist_text")
@@ -112,7 +112,7 @@ export class BarchartService {
           .on("click", onClick)
           .on("mouseover", onMouseover)
           .on("mouseout", onMouseout)
-  
+
       // Adjust svg size
       let bbox = svgEnter.nodes()[0].getBBox();
       svgEnter.attr("width", bbox.x + bbox.width  + "px")
@@ -120,7 +120,7 @@ export class BarchartService {
     }
     return chart
   }
-  
+
   */
 
 }

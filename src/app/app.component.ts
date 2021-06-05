@@ -28,17 +28,17 @@ export class AppComponent implements OnInit {
   );
 
   private testMessage: Message = {
-    sender_name: "Peter",
+    sender_name: 'Peter',
     timestamp: null,
     timestamp_ms: null,
-    type: "message",
+    type: 'message',
     photos: null,
     videos: null,
     files: null,
-    media: "",
-    content: "Hello World!",
-    message: "It's a me",
-    length: "8",
+    media: '',
+    content: 'Hello World!',
+    message: 'It\'s a me',
+    length: '8',
     reactions: []
   };
 

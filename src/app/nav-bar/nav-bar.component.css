@@ -1,11 +1,22 @@
-button {
-    margin-left: 10px;
-}
-
-.nav-item {
-    float: right;
-}
-
 .example-spacer {
     flex: 1 1 auto;
+}
+
+.icon-button {
+  display: inline-block;
+}
+
+.raised-button {
+  display: none;
+  margin-left: 10px;
+}
+
+@media only screen and (min-width: 850px) {
+  .icon-button {
+    display: none;
+  }
+
+  .raised-button {
+    display: inline-block;
+  }
 }
