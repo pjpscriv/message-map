@@ -1,4 +1,7 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {Component, Input} from '@angular/core';
+import {Store} from '@ngrx/store';
+import {AppState, MODAL_STATE} from '../../store/state';
+import {UpdateModalDisplayAction} from '../../store/actions';
 
 @Component({
   selector: 'app-modal-template',
@@ -7,12 +10,13 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 })
 export class ModalTemplateComponent {
 
-  @Output() close = new EventEmitter();
   @Input() closeable = true;
 
-  public closeClicked() : void {
+  constructor(private store: Store<AppState>) {}
+
+  public closeClicked(): void {
     if (this.closeable) {
-      this.close.emit();
+      this.store.dispatch(UpdateModalDisplayAction({modalDisplay: MODAL_STATE.NONE}));
     }
   }
 }

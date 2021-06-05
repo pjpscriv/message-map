@@ -1,8 +1,4 @@
-<app-nav-bar
-    (explanationClicked)="displayModal('explanation')"
-    (exploreClicked)="displayModal('explore')"
-    (resetClicked)="test()"
-></app-nav-bar>
+<app-nav-bar (resetClicked)="test()"></app-nav-bar>
 
 <app-time-density></app-time-density>
 <app-main-view></app-main-view>
@@ -12,15 +8,6 @@
 <app-date-density></app-date-density>
 <app-message-display></app-message-display>
 
-<app-explanation-modal
-    *ngIf="showExplanation"
-    (close)="displayModal('none')">
-</app-explanation-modal>
-<app-explore-modal
-    *ngIf="showExplore"
-    (close)="displayModal('none')"
-    (loading)="displayModal('processing')">
-</app-explore-modal>
-<app-processing-modal
-    *ngIf="showProcessing">
-</app-processing-modal>
+<app-explanation-modal *ngIf="showExplanation$ | async"></app-explanation-modal>
+<app-explore-modal *ngIf="showExplore$ | async"></app-explore-modal>
+<app-processing-modal *ngIf="showProcessing$ | async"></app-processing-modal>

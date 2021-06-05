@@ -2,6 +2,9 @@ import { Injectable } from '@angular/core';
 import { GoogleAnalyticsService } from './google-analytics.service';
 import { MessageDataService } from './message-data.service';
 import { Message, Reaction, Thread } from '../models/thread.interface';
+import {Store} from '@ngrx/store';
+import {AppState, MODAL_STATE} from '../store/state';
+import {UpdateModalDisplayAction} from '../store/actions';
 
 @Injectable({
   providedIn: 'root'
@@ -14,9 +17,12 @@ export class PreProcessingService {
 
   constructor(
     private googleAnalyticsService: GoogleAnalyticsService,
-    private messageService: MessageDataService) { }
+    private messageService: MessageDataService,
+    private store: Store<AppState>) { }
 
   public readFiles(files: Array<any>): void {
+
+    this.store.dispatch(UpdateModalDisplayAction({modalDisplay: MODAL_STATE.PROGRESS }));
 
     this.googleAnalyticsService.gtag('event', 'Load', { 'event_category': 'Load', 'event_label': 'Custom' });
 
@@ -54,7 +60,7 @@ export class PreProcessingService {
             throw Error(`Thread was null for ${file?.webkitRelativePath}`)
           }
 
-          this.filesRead += 1
+          this.filesRead += 1;
           this.messageService.setProgress(this.filesRead, this.filesToRead);
 
           if (this.filesToRead == this.filesRead) {
@@ -71,7 +77,7 @@ export class PreProcessingService {
   }
 
   private hasValidFileName(file: File & { webkitRelativePath: string }): boolean {
-    return this.messagesRegEx.test(file.webkitRelativePath)
+    return this.messagesRegEx.test(file.webkitRelativePath);
   }
 
   private getMediaType(message: Message): string {

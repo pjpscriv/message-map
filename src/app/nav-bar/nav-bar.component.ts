@@ -1,4 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
+import {Store} from '@ngrx/store';
+import {AppState, MODAL_STATE} from '../store/state';
+import {UpdateModalDisplayAction} from '../store/actions';
 
 @Component({
   selector: 'app-nav-bar',
@@ -7,16 +10,17 @@ import { Component, EventEmitter, Output } from '@angular/core';
 })
 export class NavBarComponent {
 
-  @Output() exploreClicked = new EventEmitter();
-  @Output() explanationClicked = new EventEmitter();
   @Output() resetClicked = new EventEmitter();
 
+  constructor(private store: Store<AppState>) {
+  }
+
   public explore(): void {
-    this.exploreClicked.emit();
+    this.store.dispatch(UpdateModalDisplayAction({modalDisplay: MODAL_STATE.EXPLORE}));
   }
 
   public explanation(): void {
-    this.explanationClicked.emit();
+    this.store.dispatch(UpdateModalDisplayAction({modalDisplay: MODAL_STATE.EXPLANATION}));
   }
 
   public reset(): void {

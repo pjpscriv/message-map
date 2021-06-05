@@ -7,17 +7,9 @@ import { PreProcessingService } from 'src/app/shared/pre-processing.service';
 })
 export class ExploreModalComponent {
 
-  @Output() close = new EventEmitter();
-  @Output() loading = new EventEmitter();
-
   constructor(private preProcessingService: PreProcessingService) { }
 
-  public closeClicked(): void {
-    this.close.emit();
-  }
-
   public readFiles(event: any): void {
-    this.loading.emit();
     this.preProcessingService.readFiles(event.target.files);
   }
 }

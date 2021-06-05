@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { Store } from '@ngrx/store';
+import { Store, select } from '@ngrx/store';
 import { Message } from './models/thread.interface';
 import { UpdateMessagesAction } from './store/actions';
+import {AppState, MODAL_STATE} from './store/state';
+import {selectModalDisplay} from './store/selectors';
+import {map} from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -11,9 +14,18 @@ import { UpdateMessagesAction } from './store/actions';
 export class AppComponent implements OnInit {
   title = 'ngfbmessage';
 
-  public showExplanation = true;
-  public showExplore = false;
-  public showProcessing = false;
+  public showExplanation$ = this.store.pipe(
+    select(selectModalDisplay),
+    map(modalState => modalState === MODAL_STATE.EXPLANATION)
+  );
+  public showExplore$ = this.store.pipe(
+    select(selectModalDisplay),
+    map(modalState => modalState === MODAL_STATE.EXPLORE)
+  );
+  public showProcessing$ = this.store.pipe(
+    select(selectModalDisplay),
+    map(modalState => modalState === MODAL_STATE.PROGRESS)
+  );
 
   private testMessage: Message = {
     sender_name: "Peter",
@@ -28,29 +40,15 @@ export class AppComponent implements OnInit {
     message: "It's a me",
     length: "8",
     reactions: []
+  };
+
+  constructor(private store: Store<AppState>) {}
+
+  public ngOnInit(): void {
+    this.store.dispatch(UpdateMessagesAction({ messages: [this.testMessage] }));
   }
 
-  constructor (private store: Store) {}
-
-  public ngOnInit() {
-    this.store.dispatch(new UpdateMessagesAction({ messages: [this.testMessage] }));
-  }
-
-  test() {
-    this.store.dispatch(new UpdateMessagesAction({ messages: [this.testMessage] }));
-  }
-
-  public displayModal(modalName: string): void {
-    this.showExplanation = false;
-    this.showExplore = false;
-    this.showProcessing = false;
-
-    if (modalName === "explanation") {
-      this.showExplanation = true;
-    } else if (modalName === "explore") {
-      this.showExplore = true;
-    } else if (modalName === "processing") {
-      this.showProcessing = true;
-    }
+  test(): void {
+    this.store.dispatch(UpdateMessagesAction({ messages: [this.testMessage] }));
   }
 }

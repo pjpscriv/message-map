@@ -22,7 +22,7 @@ import { MatIconModule } from '@angular/material/icon';
 
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
-import { appReducer } from './store/reducer';
+import {messagesReducer, loadProgressReducer, modalDisplayReducer} from './store/reducers';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
 @NgModule({
@@ -47,7 +47,11 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
     MatButtonModule,
     MatIconModule,
     MatProgressBarModule,
-    StoreModule.forRoot({messages: appReducer}),
+    StoreModule.forRoot({
+      messages: messagesReducer,
+      loadProgress: loadProgressReducer,
+      modalDisplay: modalDisplayReducer
+    }),
     EffectsModule.forRoot([]),
     StoreDevtoolsModule.instrument({}),
   ],

@@ -1,6 +1,8 @@
-import { Component, Output, EventEmitter } from '@angular/core';
-import { Observable } from 'rxjs';
-import { MessageDataService } from 'src/app/shared/message-data.service';
+import {Component} from '@angular/core';
+import {select, Store} from '@ngrx/store';
+import {selectLoadProgress} from '../../store/selectors';
+import {AppState, MODAL_STATE} from '../../store/state';
+import {UpdateModalDisplayAction} from '../../store/actions';
 
 @Component({
   selector: 'app-processing-modal',
@@ -8,12 +10,13 @@ import { MessageDataService } from 'src/app/shared/message-data.service';
 })
 export class ProcessingModalComponent {
 
-  public progress$: Observable<number>;
+  public progress$ = this.store.pipe(select(selectLoadProgress));
 
-  constructor(private messageService: MessageDataService) {
-    this.progress$ = this.messageService.getProgress();
+  constructor(private store: Store<AppState>) {
+    this.progress$.subscribe(loadProgress => {
+      if (loadProgress >= 100) {
+        this.store.dispatch(UpdateModalDisplayAction({modalDisplay: MODAL_STATE.NONE}));
+      }
+    });
   }
-
-  // TODO: Inject a service of some sort and listen for when the messages are loaded
-
 }
