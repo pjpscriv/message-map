@@ -21,6 +21,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
+import { MatDialogModule } from '@angular/material/dialog';
 
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
@@ -59,6 +60,7 @@ import { ThreadListComponent } from './main/thread-list/thread-list.component';
     MatProgressBarModule,
     MatSidenavModule,
     MatListModule,
+    MatDialogModule,
     StoreModule.forRoot({
       messages: messagesReducer,
       loadProgress: loadProgressReducer,

@@ -1,8 +1,8 @@
-<app-modal-template [closeable]="false">
-    <h2>Processing data...</h2>
-    <p *ngIf="(progress$ | async) == 100 ; else loading">Done!</p>
-    <ng-template #loading>
-        <p>It can take up to a minute</p>
-    </ng-template>
-    <mat-progress-bar mode="determinate" value="{{ progress$ | async }}"></mat-progress-bar>
-</app-modal-template>
+<h1 mat-dialog-title>Processing data...</h1>
+<div mat-dialog-content>
+  <p *ngIf="(progress$ | async) == 100 ; else loading">Done!</p>
+  <ng-template #loading>
+      <p>It can take up to a minute</p>
+  </ng-template>
+  <mat-progress-bar mode="determinate" value="{{ progress$ | async }}"></mat-progress-bar>
+</div>
