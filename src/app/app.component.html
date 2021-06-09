@@ -1,12 +1,21 @@
-<app-nav-bar (resetClicked)="test()"></app-nav-bar>
+<app-nav-bar (resetClicked)="test()" (menuClicked)="sidenav.toggle()"></app-nav-bar>
 
-<app-time-density></app-time-density>
-<app-main-view></app-main-view>
-<app-filters></app-filters>
+<mat-sidenav-container>
+  <mat-sidenav #sidenav [mode]="'side'" class="example-sidenav">
+    <app-thread-list></app-thread-list>
+  </mat-sidenav>
 
-<div class="placeholder"></div>
-<app-date-density></app-date-density>
-<app-message-display></app-message-display>
+  <mat-sidenav-content>
+    <app-time-density></app-time-density>
+    <app-main-view></app-main-view>
+    <app-filters></app-filters>
+
+    <div class="placeholder"></div>
+    <app-date-density></app-date-density>
+    <app-message-display></app-message-display>
+  </mat-sidenav-content>
+
+</mat-sidenav-container>
 
 <app-explanation-modal *ngIf="showExplanation$ | async"></app-explanation-modal>
 <app-explore-modal *ngIf="showExplore$ | async"></app-explore-modal>

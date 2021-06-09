@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { GoogleAnalyticsService } from './google-analytics.service';
 import { MessageDataService } from './message-data.service';
-import { Message, Reaction, Thread } from '../models/thread.interface';
+import { Message, Reaction, ParsedThread, ThreadInfo } from '../models/thread.interface';
 import {Store} from '@ngrx/store';
 import {AppState, MODAL_STATE} from '../store/state';
 import {UpdateModalDisplayAction} from '../store/actions';
@@ -11,20 +11,20 @@ import {UpdateModalDisplayAction} from '../store/actions';
 })
 export class PreProcessingService {
   // private messagesRegEx = new RegExp('messages/.*message.*\.json');
-  private messagesRegEx = new RegExp('.*message.*\.json');
+  private messagesRegEx = new RegExp('.*message.*.json');
   private filesToRead = 0;
   private filesRead = 0;
 
   constructor(
     private googleAnalyticsService: GoogleAnalyticsService,
     private messageService: MessageDataService,
-    private store: Store<AppState>) { }
+    private store: Store<AppState>
+  ) {}
 
   public readFiles(files: Array<any>): void {
-
     this.store.dispatch(UpdateModalDisplayAction({modalDisplay: MODAL_STATE.PROGRESS }));
-
     this.googleAnalyticsService.gtag('event', 'Load', { event_category: 'Load', event_label: 'Custom' });
+    const threads: Array<ThreadInfo> = [];
 
     for (const file of files) {
       if (this.hasValidFileName(file)) {
@@ -33,16 +33,20 @@ export class PreProcessingService {
         const reader = new FileReader();
         reader.onload = (event) => {
 
-          const thread: Thread = JSON.parse(event.target?.result as string);
-          if (thread != null) {
-            const threadInfo: any = {
-              is_still_participant: thread.is_still_participant,
-              thread_type: thread.thread_type,
-              thread: decodeURIComponent(escape(thread.title)),
-              nb_participants: thread.participants ? thread.participants.length : 0
-            };
+          const parsedThread: ParsedThread = JSON.parse(event.target?.result as string);
+          if (parsedThread != null) {
 
-            const threadMessages: any[] = thread.messages ?? [];
+            const threadInfo: ThreadInfo = {
+              is_still_participant: parsedThread.is_still_participant ?? false,
+              title: parsedThread.title ? decodeURIComponent(escape(parsedThread.title)) : '',
+              thread_id: decodeURIComponent(escape(parsedThread.thread_path)),
+              thread_type: parsedThread.thread_type ?? "Unknown",
+              nb_participants: parsedThread.participants ? parsedThread.participants.length : 0,
+              participants: parsedThread.participants ?? []
+            };
+            threads.push(threadInfo);
+
+            const threadMessages: any[] = parsedThread.messages ?? [];
             for (const message of threadMessages) {
               const messageInfo: any = {
                 sender_name: decodeURIComponent(escape(message.sender_name)),
@@ -65,6 +69,7 @@ export class PreProcessingService {
 
           if (this.filesToRead === this.filesRead) {
             console.log('All messages loaded!');
+            this.messageService.addThreads(threads);
             this.messageService.messagesLoaded();
           }
         };
@@ -76,9 +81,11 @@ export class PreProcessingService {
     console.log(`Done! Read ${this.filesRead} of ${this.filesToRead} files`);
   }
 
+
   private hasValidFileName(file: File & { webkitRelativePath: string }): boolean {
     return this.messagesRegEx.test(file.webkitRelativePath);
   }
+
 
   private getMediaType(message: Message): string {
     if (message.photos !== undefined) {
@@ -92,6 +99,7 @@ export class PreProcessingService {
     }
   }
 
+
   private getMessage(message: Message): string {
     try {
       return decodeURIComponent(escape(message.content));
@@ -99,6 +107,7 @@ export class PreProcessingService {
       return '';
     }
   }
+
 
   private getReactions(message: Message): Array<Reaction> {
     if (message.reactions !== undefined) {

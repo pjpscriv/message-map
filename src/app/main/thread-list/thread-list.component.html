@@ -1,0 +1,10 @@
+<mat-list>
+    <mat-list-item *ngFor="let thread of threads$ | async">
+      <img matListAvatar src="..." alt="...">
+      <h3 matLine> {{thread.title}} </h3>
+      <p matLine>
+        <span> {{thread.thread_id}} </span>
+        <!-- <span class="demo-2"> -- {{message.content}} </span> -->
+      </p>
+    </mat-list-item>
+  </mat-list>

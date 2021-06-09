@@ -1,11 +1,25 @@
-export interface Thread {
-    is_still_participant?: any;
-    thread_type?: any;
-    thread?: any;
-    participants?: any;
+export interface ParsedThread {
+    is_still_participant?: boolean;
+    thread_type?: string;
+    thread_path: string;
+    thread?: any; // kill
+    participants?: Array<any>;
     nb_participants?: number;
-    title?: any;
+    title?: string;
     messages: Array<Message>;
+}
+
+export interface ThreadInfo {
+    is_still_participant: boolean;
+    title: string;
+    thread_id: string;
+    thread_type: string;
+    nb_participants: number;
+    participants: Array<Person>;
+}
+
+interface Person {
+    name: string
 }
 
 export interface Message {

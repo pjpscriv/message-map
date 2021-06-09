@@ -1,6 +1,6 @@
 <mat-toolbar>
   <button mat-icon-button color="primary">
-    <mat-icon>menu</mat-icon>
+    <mat-icon (click)="menu()">menu</mat-icon>
   </button>
 
   <span>FBMessage Explorer</span>
@@ -21,12 +21,10 @@
     <mat-icon>upload</mat-icon>
     Explore your own data
   </button>
-
   <button mat-raised-button color="primary" class="raised-button" (click)="reset()">
     <mat-icon>refresh</mat-icon>
     Reset All Filters
   </button>
-
   <button mat-raised-button color="primary" class="raised-button" (click)="explanation()">
     <mat-icon>help</mat-icon>
     What is this?

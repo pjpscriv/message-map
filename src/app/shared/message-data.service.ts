@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { Observable } from 'rxjs';
 import {select, Store} from '@ngrx/store';
 import {AppState} from '../store/state';
-import {UpdateLoadProgressAction, UpdateMessagesAction} from '../store/actions';
+import {UpdateLoadProgressAction, UpdateMessagesAction, UpdateThreadsAction} from '../store/actions';
 import {selectLoadProgress} from '../store/selectors';
+import { ThreadInfo } from '../models/thread.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,6 @@ import {selectLoadProgress} from '../store/selectors';
 export class MessageDataService {
 
   private messageArray: Array<any> = [];
-  private progress = new Subject<number>();
 
   constructor(private store: Store<AppState>) {}
 
@@ -19,9 +19,16 @@ export class MessageDataService {
     this.messageArray.push(message);
   }
 
+  public addThreads(threads: Array<ThreadInfo>): void {
+    this.store.dispatch(UpdateThreadsAction({ threads }))
+  }
+
   public setProgress(value: number, total: number): void {
-    const loadProgress = Math.floor((value / total) * 100);
-    this.store.dispatch(UpdateLoadProgressAction({ loadProgress }));
+    const cent = Math.floor(total / 100);
+    if (value % cent === 0) {
+      const loadProgress = Math.floor((value / total) * 100);
+      this.store.dispatch(UpdateLoadProgressAction({ loadProgress }));
+    }
   }
 
   public getProgress(): Observable<number> {
@@ -29,7 +36,7 @@ export class MessageDataService {
   }
 
   public messagesLoaded(): void {
-    this.progress.next(100);
+    this.store.dispatch(UpdateLoadProgressAction({ loadProgress: 100 }));
     this.store.dispatch(UpdateMessagesAction({messages: this.messageArray }));
   }
 }

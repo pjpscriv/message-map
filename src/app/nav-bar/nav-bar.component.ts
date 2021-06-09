@@ -11,6 +11,7 @@ import {UpdateModalDisplayAction} from '../store/actions';
 export class NavBarComponent {
 
   @Output() resetClicked = new EventEmitter();
+  @Output() menuClicked = new EventEmitter();
 
   constructor(private store: Store<AppState>) {
   }
@@ -25,5 +26,9 @@ export class NavBarComponent {
 
   public reset(): void {
     this.resetClicked.emit();
+  }
+
+  public menu(): void {
+    this.menuClicked.emit();
   }
 }

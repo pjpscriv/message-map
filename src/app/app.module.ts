@@ -19,11 +19,20 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
 
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
-import {messagesReducer, loadProgressReducer, modalDisplayReducer} from './store/reducers';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+
+import {
+  messagesReducer,
+  loadProgressReducer,
+  modalDisplayReducer,
+  threadsReducer
+} from './store/reducers';
+import { ThreadListComponent } from './main/thread-list/thread-list.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +46,8 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
     TimeDensityComponent,
     MessageDisplayComponent,
     MainViewComponent,
-    ModalTemplateComponent
+    ModalTemplateComponent,
+    ThreadListComponent
   ],
   imports: [
     BrowserModule,
@@ -47,10 +57,13 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
     MatButtonModule,
     MatIconModule,
     MatProgressBarModule,
+    MatSidenavModule,
+    MatListModule,
     StoreModule.forRoot({
       messages: messagesReducer,
       loadProgress: loadProgressReducer,
-      modalDisplay: modalDisplayReducer
+      modalDisplay: modalDisplayReducer,
+      threads: threadsReducer
     }),
     EffectsModule.forRoot([]),
     StoreDevtoolsModule.instrument({}),
