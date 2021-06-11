@@ -12,7 +12,6 @@ import { DateDensityComponent } from './main/date-density/date-density.component
 import { TimeDensityComponent } from './main/time-density/time-density.component';
 import { MessageDisplayComponent } from './main/message-display/message-display.component';
 import { MainViewComponent } from './main/main-view/main-view.component';
-import { ModalTemplateComponent } from './modals/modal-template/modal-template.component';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -30,7 +29,6 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import {
   messagesReducer,
   loadProgressReducer,
-  modalDisplayReducer,
   threadsReducer
 } from './store/reducers';
 import { ThreadListComponent } from './main/thread-list/thread-list.component';
@@ -47,7 +45,6 @@ import { ThreadListComponent } from './main/thread-list/thread-list.component';
     TimeDensityComponent,
     MessageDisplayComponent,
     MainViewComponent,
-    ModalTemplateComponent,
     ThreadListComponent
   ],
   imports: [
@@ -64,7 +61,6 @@ import { ThreadListComponent } from './main/thread-list/thread-list.component';
     StoreModule.forRoot({
       messages: messagesReducer,
       loadProgress: loadProgressReducer,
-      modalDisplay: modalDisplayReducer,
       threads: threadsReducer
     }),
     EffectsModule.forRoot([]),

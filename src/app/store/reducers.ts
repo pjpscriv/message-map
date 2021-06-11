@@ -1,11 +1,9 @@
-import {createReducer, on} from '@ngrx/store';
-import {UpdateLoadProgressAction, UpdateMessagesAction, UpdateModalDisplayAction, UpdateThreadsAction} from './actions';
-import {Message, ThreadInfo} from '../models/thread.interface';
-import {MODAL_STATE} from './state';
+import { createReducer, on } from '@ngrx/store';
+import { Message, ThreadInfo } from '../models/thread.interface';
+import { UpdateLoadProgressAction, UpdateMessagesAction, UpdateThreadsAction } from './actions';
 
 const initialMessagesState: Array<Message> = [];
 const initialLoadProgressState = 0;
-const initialModalsState = MODAL_STATE.EXPLANATION;
 const initialThreadsState: Array<ThreadInfo> = [];
 
 export const messagesReducer = createReducer(
@@ -22,15 +20,6 @@ export const loadProgressReducer = createReducer(
   on(UpdateLoadProgressAction,
     (state, { loadProgress }) => {
       return loadProgress;
-    }
-  )
-);
-
-export const modalDisplayReducer = createReducer(
-  initialModalsState,
-  on(UpdateModalDisplayAction,
-    (state, { modalDisplay }) => {
-      return modalDisplay;
     }
   )
 );

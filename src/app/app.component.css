@@ -40,3 +40,7 @@ app-message-display {
     width: 19vw;
     display: inline-block;
 }
+
+.border {
+    border:orange solid 10px;
+}

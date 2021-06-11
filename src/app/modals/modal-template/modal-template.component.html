@@ -1,6 +1,0 @@
-<div class="modal" (click)="closeClicked()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
-        <span *ngIf="closeable" class="close" (click)="closeClicked()">&times;</span>
-        <ng-content></ng-content>
-    </div>
-</div>

@@ -1,10 +1,7 @@
 import { Injectable } from '@angular/core';
+import { Message, ParsedThread, Reaction, ThreadInfo } from '../models/thread.interface';
 import { GoogleAnalyticsService } from './google-analytics.service';
 import { MessageDataService } from './message-data.service';
-import { Message, Reaction, ParsedThread, ThreadInfo } from '../models/thread.interface';
-import {Store} from '@ngrx/store';
-import {AppState, MODAL_STATE} from '../store/state';
-import {UpdateModalDisplayAction} from '../store/actions';
 
 @Injectable({
   providedIn: 'root'
@@ -17,12 +14,10 @@ export class PreProcessingService {
 
   constructor(
     private googleAnalyticsService: GoogleAnalyticsService,
-    private messageService: MessageDataService,
-    private store: Store<AppState>
+    private messageService: MessageDataService
   ) {}
 
   public readFiles(files: Array<any>): void {
-    this.store.dispatch(UpdateModalDisplayAction({modalDisplay: MODAL_STATE.PROGRESS }));
     this.googleAnalyticsService.gtag('event', 'Load', { event_category: 'Load', event_label: 'Custom' });
     const threads: Array<ThreadInfo> = [];
 
