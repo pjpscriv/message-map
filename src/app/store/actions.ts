@@ -4,7 +4,8 @@ import {Message, ThreadInfo} from '../models/thread.interface';
 export enum AppActionTypes {
   UPDATE_MESSAGES = '[Messages] Update Messages',
   UPDATE_LOAD_PROGRESS = '[Load Progress] Update Load Progress',
-  UPDATE_THREADS = '[Threads] Update Threads'
+  UPDATE_THREADS = '[Threads] Update Threads',
+  ADD_THREAD = '[Threads] Add Thread'
 }
 
 export const UpdateMessagesAction = createAction(
@@ -20,4 +21,9 @@ export const UpdateLoadProgressAction = createAction(
 export const UpdateThreadsAction = createAction(
   AppActionTypes.UPDATE_THREADS,
   props<{ threads: Array<ThreadInfo> }>()
-)
+);
+
+export const AddThreadAction = createAction(
+  AppActionTypes.ADD_THREAD,
+  props<{ thread: ThreadInfo }>()
+);

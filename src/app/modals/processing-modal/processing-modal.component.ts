@@ -10,11 +10,15 @@ import { AppState } from '../../store/state';
 export class ProcessingModalComponent {
 
   public progress$ = this.store.pipe(select(selectLoadProgress));
+  public final = false;
   public loaded = false;
 
   constructor(private store: Store<AppState>) {
     this.progress$.subscribe(loadProgress => {
-      if (loadProgress >= 100) {
+      if (loadProgress === 99) {
+        this.final = true;
+      } else if (loadProgress >= 100) {
+        this.final = false;
         this.loaded = true;
       }
     });

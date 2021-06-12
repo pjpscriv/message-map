@@ -8,5 +8,6 @@
       <p>It can take up to a minute</p>
   </ng-template>
 
-  <mat-progress-bar mode="determinate" value="{{ progress$ | async }}"></mat-progress-bar>
+  <mat-progress-bar *ngIf="final" mode="indeterminate"></mat-progress-bar>
+  <mat-progress-bar *ngIf="!final" mode="determinate" value="{{ progress$ | async }}"></mat-progress-bar>
 </div>
