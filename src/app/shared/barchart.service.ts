@@ -9,10 +9,10 @@ export class BarchartService {
 
   constructor(private gs: GoogleAnalyticsService) { }
 
-  /**
+  /** *
 
   barChart(config_global: any) {
-    var h_bar = 12,
+    let h_bar = 12,
         onMouseover = function(){}
 
 
@@ -63,13 +63,13 @@ export class BarchartService {
       }
 
       // Select the svg element, if it exists.
-      var svg = bc.div_body.selectAll("svg").data([bc.nested_data]);
+      let svg = bc.div_body.selectAll("svg").data([bc.nested_data]);
 
       // Otherwise, create the skeletal chart.
-      var svgEnter = svg.enter().append("svg");
+      let svgEnter = svg.enter().append("svg");
 
       // Create a group for each bar. We will then add the bar and the labels to these groups
-      var bar_elements = svgEnter.selectAll(".bar-element")
+      let bar_elements = svgEnter.selectAll(".bar-element")
           .data(bc.nested_data).enter()
           .append("g")
           .attr("class", "bar-element")
@@ -118,9 +118,10 @@ export class BarchartService {
       svgEnter.attr("width", bbox.x + bbox.width  + "px")
           .attr("height",bbox.y + bbox.height + "px");
     }
+
     return chart
   }
 
-  */
+  /** */
 
 }

@@ -536,10 +536,10 @@ function get_username() {
 
 function initialize_crossfilter() {
   messages = crossfilter(messages_array)
-  dim_date = messages.dimension(function (d) { return d.date; })
-  dim_time = messages.dimension(function (d) { return d.timeMinutes; })
-  dim_date_tt = messages.dimension(function (d) { return d.date; }) //For tooltip
-  dim_time_tt = messages.dimension(function (d) { return d.timeMinutes; }) //For tooltip
+  dim_date = messages.dimension(d => d.date )
+  dim_time = messages.dimension(d => d.timeMinutes )
+  dim_date_tt = messages.dimension(d => d.date ) //For tooltip
+  dim_time_tt = messages.dimension(d => d.timeMinutes ) //For tooltip
   group_date = dim_date.group()
   group_time = dim_time.group()
 }

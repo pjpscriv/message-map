@@ -22,6 +22,30 @@ interface Person {
     name: string
 }
 
+export interface MessageAndThread {
+    // Message
+    sender_name: string;
+    timestamp: any;
+    date: Date;
+    timeSeconds: Date;
+    type: any;
+    photos: any;
+    videos: any;
+    files: any;
+    media: string;
+    content: any;
+    message: string;
+    length: string;
+    reactions: Array<Reaction>;
+    // Thread
+    is_still_participant: boolean;
+    title: string;
+    thread_id: string;
+    thread_type: string;
+    nb_participants: number;
+    participants: Array<Person>;
+}
+
 export interface Message {
     sender_name: string;
     timestamp?: any;
@@ -31,7 +55,6 @@ export interface Message {
     videos: any;
     files: any;
     media: string;
-
     content: any;
     message: string;
     length: string;

@@ -12,8 +12,8 @@ app-time-density {
 }
 
 app-main-view {
-    height: 70vh;
-    width: 68vw;
+    height: 80%;
+    width: 80%;
     display: inline-block;
 }
 
@@ -39,6 +39,16 @@ app-message-display {
     height: 20vh;
     width: 19vw;
     display: inline-block;
+}
+
+mat-sidenav-container {
+    height: 93.4vh;
+}
+
+mat-sidenav-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .border {

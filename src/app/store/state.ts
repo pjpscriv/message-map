@@ -1,7 +1,7 @@
-import { Message, ThreadInfo } from '../models/thread.interface';
+import { MessageAndThread, ThreadInfo } from '../models/thread.interface';
 
 export interface AppState {
-    messages: Array<Message>;
+    messages: Array<MessageAndThread>;
     loadProgress: number;
     threads: Array<ThreadInfo>
 }

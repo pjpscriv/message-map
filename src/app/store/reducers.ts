@@ -1,8 +1,8 @@
 import { createReducer, on } from '@ngrx/store';
-import { Message, ThreadInfo } from '../models/thread.interface';
+import { MessageAndThread, ThreadInfo } from '../models/thread.interface';
 import { AddThreadAction, UpdateLoadProgressAction, UpdateMessagesAction, UpdateThreadsAction } from './actions';
 
-const initialMessagesState: Array<Message> = [];
+const initialMessagesState: Array<MessageAndThread> = [];
 const initialLoadProgressState = 0;
 const initialThreadsState: Array<ThreadInfo> = [];
 

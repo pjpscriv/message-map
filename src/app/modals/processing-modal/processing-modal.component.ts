@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 import { select, Store } from '@ngrx/store';
 import { selectLoadProgress } from '../../store/selectors';
 import { AppState } from '../../store/state';
@@ -13,13 +14,16 @@ export class ProcessingModalComponent {
   public final = false;
   public loaded = false;
 
-  constructor(private store: Store<AppState>) {
+  constructor(
+    private store: Store<AppState>,
+    private dialogRef: MatDialogRef<ProcessingModalComponent>
+  ) {
     this.progress$.subscribe(loadProgress => {
-      if (loadProgress === 99) {
-        this.final = true;
-      } else if (loadProgress >= 100) {
-        this.final = false;
+      this.final = loadProgress === 99;
+
+      if (loadProgress >= 100) {
         this.loaded = true;
+        this.dialogRef.close();
       }
     });
   }

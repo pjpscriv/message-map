@@ -12,6 +12,7 @@ import { DateDensityComponent } from './main/date-density/date-density.component
 import { TimeDensityComponent } from './main/time-density/time-density.component';
 import { MessageDisplayComponent } from './main/message-display/message-display.component';
 import { MainViewComponent } from './main/main-view/main-view.component';
+import { ThreadListComponent } from './main/thread-list/thread-list.component';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -27,12 +28,13 @@ import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
+import { AngularResizedEventModule } from 'angular-resize-event';
+
 import {
   messagesReducer,
   loadProgressReducer,
   threadsReducer
 } from './store/reducers';
-import { ThreadListComponent } from './main/thread-list/thread-list.component';
 
 @NgModule({
   declarations: [
@@ -67,6 +69,7 @@ import { ThreadListComponent } from './main/thread-list/thread-list.component';
     }),
     EffectsModule.forRoot([]),
     StoreDevtoolsModule.instrument({}),
+    AngularResizedEventModule
   ],
   providers: [],
   bootstrap: [AppComponent]

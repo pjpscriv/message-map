@@ -1,10 +1,10 @@
 import {createSelector} from '@ngrx/store';
 import {AppState} from './state';
-import {Message, ThreadInfo} from '../models/thread.interface';
+import {MessageAndThread, ThreadInfo} from '../models/thread.interface';
 
 export const selectMessages = createSelector(
   (state: AppState) => state.messages,
-  (messages: Array<Message>) => messages
+  (messages: Array<MessageAndThread>) => messages
 );
 
 export const selectLoadProgress = createSelector(

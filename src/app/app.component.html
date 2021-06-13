@@ -1,4 +1,7 @@
-<app-nav-bar (resetClicked)="test()" (menuClicked)="sidenav.toggle()"></app-nav-bar>
+<app-nav-bar
+  (resetClicked)="test()"
+  (menuClicked)="sidenav.toggle()"
+  (filtersClicked)="filtersSidenav.toggle()"></app-nav-bar>
 
 <mat-sidenav-container>
 
@@ -7,12 +10,16 @@
   </mat-sidenav>
 
   <mat-sidenav-content>
-    <app-time-density class="border"></app-time-density>
+    <!-- <app-time-density class="border"></app-time-density> -->
     <app-main-view class="border"></app-main-view>
-    <app-filters class="border"></app-filters>
-    <div class="placeholder border"></div>
-    <app-date-density class="border"></app-date-density>
-    <app-message-display class="border"></app-message-display>
+    <!-- <app-filters class="border"></app-filters> -->
+    <!-- <div class="placeholder border"></div> -->
+    <!-- <app-date-density class="border"></app-date-density> -->
+    <!-- <app-message-display class="border"></app-message-display> -->
   </mat-sidenav-content>
+
+  <mat-sidenav #filtersSidenav [mode]="'side'" position="end" class="example-sidenav">
+    <app-filters></app-filters>
+  </mat-sidenav>
 
 </mat-sidenav-container>
