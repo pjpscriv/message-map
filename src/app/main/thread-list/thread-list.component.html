@@ -9,7 +9,8 @@
     <mat-icon *ngIf="thread.nb_participants > 3" matListAvatar [matBadge]="thread.nb_participants" matBadgePosition="below">
       {{getIcon(thread)}}
     </mat-icon>
-    <h3 matLine> {{thread.title}} </h3>
-    <p matLine><span> {{thread.thread_id}} </span></p>
+    <h3 matLine>{{thread.title}}</h3>
+    <p matLine><span>{{thread.id}}</span></p>
+    <p matLine><span>{{thread.nb_messsages}} Messages</span></p>
   </mat-list-item>
 </mat-list>

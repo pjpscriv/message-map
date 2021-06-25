@@ -52,5 +52,6 @@ mat-sidenav-content {
 }
 
 .border {
-    border:orange solid 10px;
+    box-shadow: #0002 0px 0px 20px;
+    border-radius: 16px;
 }

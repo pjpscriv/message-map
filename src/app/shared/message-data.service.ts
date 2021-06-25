@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { Message, ThreadMap } from '../models/thread.interface';
+import { Message, Thread } from '../models/thread.interface';
 import { UpdateLoadProgressAction, UpdateMessagesAction, UpdateThreadsAction } from '../store/app.actions';
 import { selectLoadProgress } from '../store/app.selectors';
 import { AppState } from '../store/app.state';
@@ -19,7 +19,7 @@ export class MessageDataService {
     this.messageArray.push(message);
   }
 
-  public addThreads(threads: ThreadMap): void {
+  public addThreads(threads: Array<Thread>): void {
     this.store.dispatch(UpdateThreadsAction({ threads }))
   }
 

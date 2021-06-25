@@ -6,7 +6,7 @@
   display: inline-block;
 }
 
-.raised-button {
+.wide-button {
   display: none;
   margin-left: 10px;
 }
@@ -21,7 +21,7 @@
     display: none;
   }
 
-  .raised-button {
+  .wide-button {
     display: inline-block;
   }
 }

@@ -13,7 +13,7 @@ type WebkitFile = File & { webkitRelativePath: string };
 })
 export class PreProcessingService {
   private messagesRegEx = new RegExp('.*message.*.json'); // new RegExp('messages/.*message.*\.json');
-  private threads: ThreadMap = {};
+  private threads: Array<Thread> = [];
   private filesToRead = 0;
   private filesRead = 0;
 
@@ -54,20 +54,11 @@ export class PreProcessingService {
         reader.readAsText(file);
       }
     }
-    console.log(`Done! Read ${this.filesRead} of ${this.filesToRead} files`);
   }
 
 
-  private addThread(threadInfo: Thread): void {
-    if (threadInfo.thread_id in Object.keys(this.threads)) {
-      const existingThread = this.threads[threadInfo.thread_id];
-      const errorMessage = `Unequal threads: \n
-          Existing: ${existingThread.thread_id}\n
-          New: ${threadInfo.thread_id}`
-      assert(deepEqual(existingThread, threadInfo), errorMessage);
-    } else {
-      this.threads[threadInfo.thread_id] = threadInfo;
-    }
+  private addThread(thread: Thread): void {
+    this.threads.push(thread);
   }
 
 
@@ -75,7 +66,7 @@ export class PreProcessingService {
     return {
       is_still_participant: parsedThread.is_still_participant ?? false,
       title: parsedThread.title ? decodeURIComponent(escape(parsedThread.title)) : '',
-      thread_id: decodeURIComponent(escape(parsedThread.thread_path)),
+      id: decodeURIComponent(escape(parsedThread.thread_path)),
       thread_type: parsedThread.thread_type ?? "Unknown",
       nb_participants: parsedThread.participants ? parsedThread.participants.length : 0,
       participants: parsedThread.participants ?? [],

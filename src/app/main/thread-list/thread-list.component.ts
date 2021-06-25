@@ -53,13 +53,13 @@ export class ThreadListComponent {
   private sortMethods(method: SORT_BY): (a:Thread, b:Thread) => number {
     switch(method) {
       case (SORT_BY.MESSAGE_COUNT):
-        return (a: Thread, b: Thread) => a.nb_messsages > b.nb_messsages ? 1 : -1;
+        return (a: Thread, b: Thread) => a.nb_messsages < b.nb_messsages ? 1 : -1;
       case (SORT_BY.PARTICIPANT_COUNT):
-        return (a: Thread, b: Thread) => a.nb_participants > b.nb_participants ? 1 : -1;
+        return (a: Thread, b: Thread) => a.nb_participants < b.nb_participants ? 1 : -1;
       case (SORT_BY.TITLE):
-        return (a: Thread, b: Thread) => a.title > b.title ? 1 : -1;
+        return (a: Thread, b: Thread) => a.title < b.title ? 1 : -1;
       default:
-        return (a: Thread, b: Thread) => a.nb_messsages > b.nb_messsages ? 1 : -1;
+        return (a: Thread, b: Thread) => a.nb_messsages < b.nb_messsages ? 1 : -1;
     }
   }
 }

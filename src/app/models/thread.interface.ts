@@ -11,7 +11,7 @@ export interface ParsedThread {
 }
 
 export interface Thread {
-    thread_id: string;
+    id: string;
     title: string;
     thread_type: string;
     participants: Array<{name: string}>;

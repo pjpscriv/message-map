@@ -1,5 +1,6 @@
 import { createReducer, on } from '@ngrx/store';
-import { Message, ThreadMap } from '../models/thread.interface';
+import * as assert from 'assert';
+import { Message, Thread, ThreadMap } from '../models/thread.interface';
 import { UpdateLoadProgressAction, UpdateMessagesAction, UpdateThreadsAction } from './app.actions';
 
 const initialMessagesState: Array<Message> = [];
@@ -27,10 +28,23 @@ export const loadProgressReducer = createReducer(
 export const threadsReducer = createReducer(
   initialThreadsState,
   on(UpdateThreadsAction,
-    (state, { threads }) => {
-      return threads;
+    (oldThreadMap, { threads }) => {
+      const newThreadMap = {};
+      Object.values(oldThreadMap).forEach(thread => addThread(thread, newThreadMap));
+      threads.forEach(thread => addThread(thread, newThreadMap));
+      return newThreadMap;
     }
   )
-  // on(AddThreadAction,
-  //   (threads, { thread }) => [...threads, thread])
 );
+
+function addThread(thread: Thread, threads: ThreadMap): void {
+  if (threads[thread.id]) {
+    console.log('Duplicate', thread.id, thread.title);
+    const oldThread = threads[thread.id];
+    const newThread = Object.assign({}, thread);
+    newThread.nb_messsages += oldThread.nb_messsages;
+    threads[oldThread.id] = newThread;
+  } else {
+    threads[thread.id] = thread;
+  }
+}

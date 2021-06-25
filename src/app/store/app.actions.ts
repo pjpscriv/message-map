@@ -1,5 +1,5 @@
 import {createAction, props} from '@ngrx/store';
-import {Message, Thread, ThreadMap} from '../models/thread.interface';
+import {Message, Thread } from '../models/thread.interface';
 
 export enum AppActionTypes {
   UPDATE_MESSAGES = '[Messages] Update Messages',
@@ -20,7 +20,7 @@ export const UpdateLoadProgressAction = createAction(
 
 export const UpdateThreadsAction = createAction(
   AppActionTypes.UPDATE_THREADS,
-  props<{ threads: ThreadMap }>()
+  props<{ threads: Array<Thread> }>()
 );
 
 export const AddThreadAction = createAction(
