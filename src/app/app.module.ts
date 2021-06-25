@@ -34,7 +34,7 @@ import {
   messagesReducer,
   loadProgressReducer,
   threadsReducer
-} from './store/reducers';
+} from './store/app.reducer';
 
 @NgModule({
   declarations: [

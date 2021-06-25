@@ -1,10 +1,10 @@
 import { createReducer, on } from '@ngrx/store';
-import { MessageAndThread, ThreadInfo } from '../models/thread.interface';
-import { AddThreadAction, UpdateLoadProgressAction, UpdateMessagesAction, UpdateThreadsAction } from './actions';
+import { Message, ThreadMap } from '../models/thread.interface';
+import { UpdateLoadProgressAction, UpdateMessagesAction, UpdateThreadsAction } from './app.actions';
 
-const initialMessagesState: Array<MessageAndThread> = [];
+const initialMessagesState: Array<Message> = [];
 const initialLoadProgressState = 0;
-const initialThreadsState: Array<ThreadInfo> = [];
+const initialThreadsState: ThreadMap = {};
 
 export const messagesReducer = createReducer(
   initialMessagesState,
@@ -30,7 +30,7 @@ export const threadsReducer = createReducer(
     (state, { threads }) => {
       return threads;
     }
-  ),
-  on(AddThreadAction,
-    (threads, { thread }) => [...threads, thread])
+  )
+  // on(AddThreadAction,
+  //   (threads, { thread }) => [...threads, thread])
 );

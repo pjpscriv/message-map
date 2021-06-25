@@ -1,25 +1,25 @@
 import { Injectable } from '@angular/core';
+import { select, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import {select, Store} from '@ngrx/store';
-import {AppState} from '../store/state';
-import {UpdateLoadProgressAction, UpdateMessagesAction, UpdateThreadsAction} from '../store/actions';
-import {selectLoadProgress} from '../store/selectors';
-import { ThreadInfo } from '../models/thread.interface';
+import { Message, ThreadMap } from '../models/thread.interface';
+import { UpdateLoadProgressAction, UpdateMessagesAction, UpdateThreadsAction } from '../store/app.actions';
+import { selectLoadProgress } from '../store/app.selectors';
+import { AppState } from '../store/app.state';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MessageDataService {
 
-  private messageArray: Array<any> = [];
+  private messageArray: Array<Message> = [];
 
   constructor(private store: Store<AppState>) {}
 
-  public addMessage(message: any): void {
+  public addMessage(message: Message): void {
     this.messageArray.push(message);
   }
 
-  public addThreads(threads: Array<ThreadInfo>): void {
+  public addThreads(threads: ThreadMap): void {
     this.store.dispatch(UpdateThreadsAction({ threads }))
   }
 

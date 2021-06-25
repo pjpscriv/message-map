@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { select, Store } from '@ngrx/store';
-import { selectLoadProgress } from '../../store/selectors';
-import { AppState } from '../../store/state';
+import { selectLoadProgress } from '../../store/app.selectors';
+import { AppState } from '../../store/app.state';
 
 @Component({
   selector: 'app-processing-modal',

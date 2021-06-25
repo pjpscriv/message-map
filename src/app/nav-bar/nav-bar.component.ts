@@ -1,9 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Store } from '@ngrx/store';
 import { ExplanationModalComponent } from '../modals/explanation-modal/explanation-modal.component';
 import { ExploreModalComponent } from '../modals/explore-modal/explore-modal.component';
-import { AppState } from '../store/state';
 
 @Component({
   selector: 'app-nav-bar',

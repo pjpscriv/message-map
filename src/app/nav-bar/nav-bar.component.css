@@ -11,6 +11,11 @@
   margin-left: 10px;
 }
 
+.title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 @media only screen and (min-width: 850px) {
   .icon-button {
     display: none;

@@ -1,14 +1,15 @@
 <mat-list>
-    <mat-list-item *ngFor="let thread of threads$ | async">
-      <mat-icon *ngIf="thread.nb_participants < 4" matListAvatar>
-        {{getIcon(thread)}}
-      </mat-icon>
-      <mat-icon *ngIf="thread.nb_participants > 3" matListAvatar [matBadge]="thread.nb_participants" matBadgePosition="below">
-        {{getIcon(thread)}}
-      </mat-icon>
-      <h3 matLine> {{thread.title}} </h3>
-      <p matLine>
-        <span> {{thread.thread_id}} </span>
-      </p>
-    </mat-list-item>
-  </mat-list>
+  <mat-list-item>
+    <h3 matLine>Threads</h3>
+  </mat-list-item>
+  <mat-list-item *ngFor="let thread of threads$ | async">
+    <mat-icon *ngIf="thread.nb_participants < 4" matListAvatar>
+      {{getIcon(thread)}}
+    </mat-icon>
+    <mat-icon *ngIf="thread.nb_participants > 3" matListAvatar [matBadge]="thread.nb_participants" matBadgePosition="below">
+      {{getIcon(thread)}}
+    </mat-icon>
+    <h3 matLine> {{thread.title}} </h3>
+    <p matLine><span> {{thread.thread_id}} </span></p>
+  </mat-list-item>
+</mat-list>
