@@ -2,6 +2,7 @@ import {Component, HostBinding} from '@angular/core';
 import {select, Store} from '@ngrx/store';
 import {AppState} from './store/app.state';
 import {selectDarkMode} from './store/app.selectors';
+import {OverlayContainer} from '@angular/cdk/overlay';
 
 @Component({
   selector: 'app-root',
@@ -10,12 +11,22 @@ import {selectDarkMode} from './store/app.selectors';
 })
 export class AppComponent {
   @HostBinding('class') className = '';
+  private darkModeClass = 'dark-mode';
 
   title = 'ngfbmessage';
 
-  constructor(private store: Store<AppState>) {
+  constructor(
+    private store: Store<AppState>,
+    private overlay: OverlayContainer
+  ) {
     this.store.pipe(select(selectDarkMode)).subscribe(darkMode => {
-      this.className = darkMode ? 'dark-mode' : '';
+      if (darkMode) {
+        this.className = this.darkModeClass;
+        this.overlay.getContainerElement().classList.add(this.darkModeClass);
+      } else {
+        this.className = '';
+        this.overlay.getContainerElement().classList.remove(this.darkModeClass);
+      }
     });
   }
 

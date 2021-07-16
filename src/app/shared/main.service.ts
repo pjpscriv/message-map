@@ -8,7 +8,7 @@ import * as crossfilter from 'crossfilter';
 })
 export class MainService {
 
-  constructor() { }
+  constructor() {}
 
   /** *
 

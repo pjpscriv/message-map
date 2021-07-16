@@ -1,5 +1,18 @@
+mat-list-item:nth-child(1) {
+  margin-bottom: 8px;
+  padding-left: 4px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+::ng-deep .mat-select-arrow {
+  opacity: 0;
+}
+
 [matListAvatar] {
-    width: 40px;
+  width: 40px;
   height: 40px;
   font-size: 40px;
 }

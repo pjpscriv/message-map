@@ -23,6 +23,8 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatBadgeModule } from '@angular/material/badge';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
@@ -71,9 +73,11 @@ import {
     }),
     EffectsModule.forRoot([]),
     StoreDevtoolsModule.instrument({}),
-    AngularResizedEventModule
+    AngularResizedEventModule,
+    MatFormFieldModule,
+    MatSelectModule
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}

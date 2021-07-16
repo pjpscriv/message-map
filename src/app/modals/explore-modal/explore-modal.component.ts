@@ -14,7 +14,7 @@ export class ExploreModalComponent {
     private preProcessingService: PreProcessingService,
     public dialog: MatDialog,
     public dialogRef: MatDialogRef<ExploreModalComponent>
-  ) { }
+  ) {}
 
   public readFiles(event: any): void {
     this.dialogRef.close();
