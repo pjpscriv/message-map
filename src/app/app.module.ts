@@ -33,7 +33,8 @@ import { AngularResizedEventModule } from 'angular-resize-event';
 import {
   messagesReducer,
   loadProgressReducer,
-  threadsReducer
+  threadsReducer,
+  darkModeReducer
 } from './store/app.reducer';
 
 @NgModule({
@@ -65,7 +66,8 @@ import {
     StoreModule.forRoot({
       messages: messagesReducer,
       loadProgress: loadProgressReducer,
-      threads: threadsReducer
+      threads: threadsReducer,
+      darkMode: darkModeReducer
     }),
     EffectsModule.forRoot([]),
     StoreDevtoolsModule.instrument({}),

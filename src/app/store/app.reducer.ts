@@ -1,14 +1,11 @@
 import { createReducer, on } from '@ngrx/store';
-import * as assert from 'assert';
-import { Message, Thread, ThreadMap } from '../models/thread.interface';
-import { UpdateLoadProgressAction, UpdateMessagesAction, UpdateThreadsAction } from './app.actions';
+import { Thread, ThreadMap } from '../models/thread.interface';
+import { UpdateLoadProgressAction, UpdateMessagesAction, UpdateThreadsAction, UpdateDarkModeAction } from './app.actions';
+import { initialState } from './app.state';
 
-const initialMessagesState: Array<Message> = [];
-const initialLoadProgressState = 0;
-const initialThreadsState: ThreadMap = {};
 
 export const messagesReducer = createReducer(
-  initialMessagesState,
+  initialState.messages,
   on(UpdateMessagesAction,
     (existingMessages, { messages }) => {
       return [...existingMessages, ...messages];
@@ -17,7 +14,7 @@ export const messagesReducer = createReducer(
 );
 
 export const loadProgressReducer = createReducer(
-  initialLoadProgressState,
+  initialState.loadProgress,
   on(UpdateLoadProgressAction,
     (oldProgress, { loadProgress }) => {
       return loadProgress;
@@ -26,13 +23,22 @@ export const loadProgressReducer = createReducer(
 );
 
 export const threadsReducer = createReducer(
-  initialThreadsState,
+  initialState.threads,
   on(UpdateThreadsAction,
     (oldThreadMap, { threads }) => {
       const newThreadMap = {};
       Object.values(oldThreadMap).forEach(thread => addThread(thread, newThreadMap));
       threads.forEach(thread => addThread(thread, newThreadMap));
       return newThreadMap;
+    }
+  )
+);
+
+export const darkModeReducer = createReducer(
+  initialState.darkMode,
+  on(UpdateDarkModeAction,
+    (oldDarkMode, { darkMode }) => {
+      return darkMode;
     }
   )
 );

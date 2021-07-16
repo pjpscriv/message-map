@@ -5,6 +5,7 @@ export enum AppActionTypes {
   UPDATE_MESSAGES = '[Messages] Update Messages',
   UPDATE_LOAD_PROGRESS = '[Load Progress] Update Load Progress',
   UPDATE_THREADS = '[Threads] Update Threads',
+  UPDATE_DARK_MODE = '[Dark Mode] Update Dark Mode',
   ADD_THREAD = '[Threads] Add Thread'
 }
 
@@ -21,6 +22,11 @@ export const UpdateLoadProgressAction = createAction(
 export const UpdateThreadsAction = createAction(
   AppActionTypes.UPDATE_THREADS,
   props<{ threads: Array<Thread> }>()
+);
+
+export const UpdateDarkModeAction = createAction(
+  AppActionTypes.UPDATE_DARK_MODE,
+  props<{ darkMode: boolean }>()
 );
 
 export const AddThreadAction = createAction(

@@ -16,3 +16,8 @@ export const selectThreads = createSelector(
   (state: AppState) => state.threads,
   (threads: ThreadMap) => threads
 );
+
+export const selectDarkMode = createSelector(
+  (state: AppState) => state.darkMode,
+  (darkMode: boolean) => darkMode
+);
