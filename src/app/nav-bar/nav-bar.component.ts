@@ -32,11 +32,11 @@ export class NavBarComponent implements OnInit {
   }
 
   public explore(): void {
-    this.dialog.open(ExploreModalComponent);
+    this.dialog.open(ExploreModalComponent, { autoFocus: false });
   }
 
   public explanation(): void {
-    this.dialog.open(ExplanationModalComponent);
+    this.dialog.open(ExplanationModalComponent, { autoFocus: false });
   }
 
   public toggleDarkMode(): void {
