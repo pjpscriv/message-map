@@ -11,6 +11,18 @@ mat-form-field {
   opacity: 0;
 }
 
+::ng-deep mat-form-field .mat-form-field-wrapper .mat-form-field-flex {
+  border-radius: 10px;
+}
+
+::ng-deep .mat-form-field-underline {
+  display: none;
+}
+
+[matPrefix] {
+  margin-right: 8px;
+}
+
 [matListAvatar] {
   width: 40px;
   height: 40px;

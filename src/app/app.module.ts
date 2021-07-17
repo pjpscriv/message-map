@@ -38,6 +38,7 @@ import {
   threadsReducer,
   darkModeReducer
 } from './store/app.reducer';
+import {FormsModule} from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -53,30 +54,31 @@ import {
     MainViewComponent,
     ThreadListComponent
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    MatToolbarModule,
-    MatButtonModule,
-    MatIconModule,
-    MatProgressBarModule,
-    MatSidenavModule,
-    MatListModule,
-    MatDialogModule,
-    MatBadgeModule,
-    StoreModule.forRoot({
-      messages: messagesReducer,
-      loadProgress: loadProgressReducer,
-      threads: threadsReducer,
-      darkMode: darkModeReducer
-    }),
-    EffectsModule.forRoot([]),
-    StoreDevtoolsModule.instrument({}),
-    AngularResizedEventModule,
-    MatFormFieldModule,
-    MatSelectModule
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        MatToolbarModule,
+        MatButtonModule,
+        MatIconModule,
+        MatProgressBarModule,
+        MatSidenavModule,
+        MatListModule,
+        MatDialogModule,
+        MatBadgeModule,
+        StoreModule.forRoot({
+            messages: messagesReducer,
+            loadProgress: loadProgressReducer,
+            threads: threadsReducer,
+            darkMode: darkModeReducer
+        }),
+        EffectsModule.forRoot([]),
+        StoreDevtoolsModule.instrument({}),
+        AngularResizedEventModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        FormsModule
+    ],
   providers: [],
   bootstrap: [AppComponent]
 })
