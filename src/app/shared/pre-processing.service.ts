@@ -1,12 +1,17 @@
-import { Injectable } from '@angular/core';
-import { ParsedMessage, ParsedThread, Reaction, Thread, ThreadMap, Message, MEDIA_TYPE, Media } from '../models/thread.interface';
-import { GoogleAnalyticsService } from './google-analytics.service';
-import { MessageDataService } from './message-data.service';
+import {Injectable} from '@angular/core';
+import {ParsedThread, Thread} from '../models/thread.interface';
+import {GoogleAnalyticsService} from './google-analytics.service';
+import {MessageDataService} from './message-data.service';
 import * as d3 from 'd3';
-import * as deepEqual from 'fast-deep-equal';
 import * as assert from 'assert';
+import {Media, MEDIA_TYPE, Message, ParsedMessage, Reaction} from '../models/message.interface';
 
 type WebkitFile = File & { webkitRelativePath: string };
+
+interface KeyThreadDates {
+  firstMessage: number;
+  lastMessage: number;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -61,17 +66,33 @@ export class PreProcessingService {
     this.threads.push(thread);
   }
 
+  private getKeyThreadDates(messages: Array<ParsedMessage>): KeyThreadDates {
+    const dates = {
+      firstMessage: Number.MAX_SAFE_INTEGER,
+      lastMessage: 0
+    };
+    for (const message of messages) {
+      const timestamp = this.getTimestamp(message);
+      dates.firstMessage = Math.min(timestamp, dates.firstMessage);
+      dates.lastMessage = Math.max(timestamp, dates.lastMessage);
+    }
+    return dates;
+  }
+
 
   private parseThread(parsedThread: ParsedThread): Thread {
+    const keyDates: KeyThreadDates = this.getKeyThreadDates(parsedThread.messages as Array<ParsedMessage>);
     return {
       is_still_participant: parsedThread.is_still_participant ?? false,
       title: parsedThread.title ? decodeURIComponent(escape(parsedThread.title)) : '',
       id: decodeURIComponent(escape(parsedThread.thread_path)),
-      thread_type: parsedThread.thread_type ?? "Unknown",
+      thread_type: parsedThread.thread_type ?? 'Unknown',
       nb_participants: parsedThread.participants ? parsedThread.participants.length : 0,
       participants: parsedThread.participants ?? [],
-      nb_messsages: parsedThread.messages ? parsedThread.messages.length : 0
-    }
+      nb_messages: parsedThread.messages ? parsedThread.messages.length : 0,
+      first_message: new Date(keyDates.firstMessage * 1000),
+      last_message: new Date(keyDates.lastMessage * 1000)
+    };
   }
 
 
@@ -88,7 +109,7 @@ export class PreProcessingService {
       media_files: media.uris,
       message: messageText,
       length: messageText.length,
-      date: this.getDate(message),
+      date: this.getTimeDate(message),
       timeSeconds: this.getTimeSeconds(message),
       reactions: this.getReactions(message),
     };
@@ -97,27 +118,27 @@ export class PreProcessingService {
 
   private getTimestamp(message: ParsedMessage): number {
     if (message.timestamp) {
-      return message.timestamp
+      return message.timestamp;
     } else if (message.timestamp_ms) {
-      return message.timestamp_ms / 1000
+      return message.timestamp_ms / 1000;
     } else {
       console.error(`Error parsing timestamp in messgae from ${message.sender_name}`);
-      return 0
+      return 0;
     }
   }
 
 
-  private getDate(message: ParsedMessage): Date {
-    const date = new Date(this.getTimestamp(message) * 1000)
-    const dateString = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
-    const parsedDate = d3.timeParse("%Y-%m-%d")(dateString)
+  private getTimeDate(message: ParsedMessage): Date {
+    const date = new Date(this.getTimestamp(message) * 1000);
+    const dateString = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+    const parsedDate = d3.timeParse('%Y-%m-%d')(dateString);
     assert(parsedDate, `Message from ${message.sender_name} date parse failed: ${parsedDate}`);
     return parsedDate ? parsedDate : new Date(2000, 0, 1);
   }
 
 
   private getTimeSeconds(message: ParsedMessage): Date {
-    const date = new Date(this.getTimestamp(message) * 1000)
+    const date = new Date(this.getTimestamp(message) * 1000);
     const day = new Date(2000, 0, 1);
     day.setHours(date.getHours());
     day.setMinutes(date.getMinutes());
@@ -127,22 +148,22 @@ export class PreProcessingService {
 
 
   private getMedia(message: ParsedMessage): Media {
-    const media: Media = { type: MEDIA_TYPE.NONE, uris: [] }
+    const media: Media = { type: MEDIA_TYPE.NONE, uris: [] };
     if (message.photos !== undefined) {
       media.type = MEDIA_TYPE.PHOTO;
-      message.photos.forEach(photo => media.uris.push(photo))
+      message.photos.forEach(photo => media.uris.push(photo));
       return media;
     } else if (message.videos !== undefined) {
       media.type = MEDIA_TYPE.VIDEO;
-      message.videos.forEach(video => media.uris.push(video))
+      message.videos.forEach(video => media.uris.push(video));
       return media;
     } else if (message.files !== undefined) {
       media.type = MEDIA_TYPE.FILE;
-      message.files.forEach(file => media.uris.push(file))
+      message.files.forEach(file => media.uris.push(file));
       return media;
     } else if (message.audio_files !== undefined) {
       media.type = MEDIA_TYPE.AUDIO;
-      message.audio_files.forEach(file => media.uris.push(file))
+      message.audio_files.forEach(file => media.uris.push(file));
       return media;
     } else if (message.gifs !== undefined) {
       media.type = MEDIA_TYPE.GIF;

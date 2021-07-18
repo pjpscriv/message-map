@@ -4,9 +4,9 @@ import { ResizedEvent } from 'angular-resize-event';
 import * as d3 from 'd3';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { debounceTime, filter, map } from 'rxjs/operators';
-import { Message } from 'src/app/models/thread.interface';
 import { selectMessages } from 'src/app/store/app.selectors';
 import { AppState } from 'src/app/store/app.state';
+import { Message } from '../../models/message.interface';
 
 @Component({
   selector: 'app-main-view',

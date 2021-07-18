@@ -1,13 +1,13 @@
 <app-nav-bar
   (resetClicked)="test()"
-  (menuClicked)="sidenav.toggle()"
+  (menuClicked)="threadsSidenav.toggle(); threadList.refreshList()"
   (filtersClicked)="filtersSidenav.toggle()">
 </app-nav-bar>
 
 <mat-sidenav-container>
 
-  <mat-sidenav #sidenav [mode]="'side'" class="example-sidenav">
-    <app-thread-list></app-thread-list>
+  <mat-sidenav #threadsSidenav [mode]="'side'" class="example-sidenav">
+    <app-thread-list #threadList></app-thread-list>
   </mat-sidenav>
 
   <mat-sidenav-content>

@@ -44,13 +44,14 @@ export const darkModeReducer = createReducer(
 );
 
 function addThread(thread: Thread, threads: ThreadMap): void {
-  if (threads[thread.id]) {
-    console.log('Duplicate', thread.id, thread.title);
+  if (!threads[thread.id]) {
+    threads[thread.id] = thread;
+  } else {
     const oldThread = threads[thread.id];
     const newThread = Object.assign({}, thread);
-    newThread.nb_messsages += oldThread.nb_messsages;
+    newThread.nb_messages += oldThread.nb_messages;
+    newThread.first_message = oldThread.first_message < newThread.first_message ? oldThread.first_message : newThread.first_message;
+    newThread.last_message = oldThread.first_message > newThread.first_message ? oldThread.first_message : newThread.first_message;
     threads[oldThread.id] = newThread;
-  } else {
-    threads[thread.id] = thread;
   }
 }

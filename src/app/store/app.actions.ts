@@ -1,5 +1,6 @@
 import {createAction, props} from '@ngrx/store';
-import {Message, Thread } from '../models/thread.interface';
+import {Thread } from '../models/thread.interface';
+import {Message} from '../models/message.interface';
 
 export enum AppActionTypes {
   UPDATE_MESSAGES = '[Messages] Update Messages',

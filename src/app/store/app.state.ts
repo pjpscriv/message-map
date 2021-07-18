@@ -1,4 +1,5 @@
-import { Message, ThreadMap } from '../models/thread.interface';
+import { ThreadMap } from '../models/thread.interface';
+import { Message } from '../models/message.interface';
 
 export interface AppState {
     messages: Array<Message>;

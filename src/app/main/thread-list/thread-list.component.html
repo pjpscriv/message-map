@@ -1,9 +1,12 @@
 <mat-list>
+
+  <div class="holder">
   <mat-list-item>
     <h1>Chats</h1>
   </mat-list-item>
 
-  <mat-list-item>
+  <!-- Sort Select -->
+  <mat-list-item class="thread-sort-list-item">
     <mat-form-field appearance="fill">
       <mat-label>Sort By</mat-label>
       <mat-icon matPrefix>sort</mat-icon>
@@ -17,18 +20,39 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
+    <mat-checkbox
+      class="all-threads-checkbox"
+      [checked]="allThreadsSelected"
+      [indeterminate]="someThreadsSelected()"
+      (change)="setAllThreadSelection($event.checked)"
+      [color]="'primary'">
+    </mat-checkbox>
   </mat-list-item>
+  </div>
 
-  <mat-list-item *ngFor="let thread of threads$ | async">
-    <mat-icon *ngIf="thread.nb_participants < 4" matListAvatar>
-      {{getIcon(thread)}}
-    </mat-icon>
-    <mat-icon *ngIf="thread.nb_participants > 3" matListAvatar [matBadge]="thread.nb_participants" matBadgePosition="below">
-      {{getIcon(thread)}}
-    </mat-icon>
-    <h3 matLine>{{thread.title}}</h3>
-    <p matLine><span>{{thread.id}}</span></p>
-    <p matLine><span>{{thread.nb_messsages}} Messages</span></p>
-  </mat-list-item>
+  <mat-list-item class="list-head-spacer"></mat-list-item>
+
+  <!-- Chat List -->
+  <mat-selection-list #threads>
+    <mat-list-option *ngFor="let thread of threads$ | async" [color]="'primary'" [selected]="true">
+      <mat-icon
+        matListAvatar
+        [matBadge]="thread.nb_participants > 3 ? thread.nb_participants : null"
+        matBadgePosition="below"
+        [style.backgroundColor]="''">
+        {{getIcon(thread)}}
+      </mat-icon>
+      <div matLine class="thread-list-line">
+        <h3>{{thread.title}}</h3>
+        <mat-chip-list [selectable]="false">
+          <mat-chip [selectable]="false">{{ thread.nb_messages | number }}</mat-chip>
+        </mat-chip-list>
+      </div>
+      <p matLine>
+        <span><i>{{ getSubtitle(thread) }}</i></span>
+      </p>
+  <!--    <p matLine><span>{{thread.nb_messsages}} Messages</span></p>-->
+    </mat-list-option>
+  </mat-selection-list>
 
 </mat-list>

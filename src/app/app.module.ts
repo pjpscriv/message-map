@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -14,7 +15,6 @@ import { MessageDisplayComponent } from './main/message-display/message-display.
 import { MainViewComponent } from './main/main-view/main-view.component';
 import { ThreadListComponent } from './main/thread-list/thread-list.component';
 
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -25,6 +25,8 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
+import {MatChipsModule} from '@angular/material/chips';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
@@ -54,31 +56,33 @@ import {FormsModule} from '@angular/forms';
     MainViewComponent,
     ThreadListComponent
   ],
-    imports: [
-        BrowserModule,
-        AppRoutingModule,
-        BrowserAnimationsModule,
-        MatToolbarModule,
-        MatButtonModule,
-        MatIconModule,
-        MatProgressBarModule,
-        MatSidenavModule,
-        MatListModule,
-        MatDialogModule,
-        MatBadgeModule,
-        StoreModule.forRoot({
-            messages: messagesReducer,
-            loadProgress: loadProgressReducer,
-            threads: threadsReducer,
-            darkMode: darkModeReducer
-        }),
-        EffectsModule.forRoot([]),
-        StoreDevtoolsModule.instrument({}),
-        AngularResizedEventModule,
-        MatFormFieldModule,
-        MatSelectModule,
-        FormsModule
-    ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatIconModule,
+    MatProgressBarModule,
+    MatSidenavModule,
+    MatListModule,
+    MatDialogModule,
+    MatBadgeModule,
+    StoreModule.forRoot({
+      messages: messagesReducer,
+      loadProgress: loadProgressReducer,
+      threads: threadsReducer,
+      darkMode: darkModeReducer
+    }),
+    EffectsModule.forRoot([]),
+    StoreDevtoolsModule.instrument({}),
+    AngularResizedEventModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    FormsModule,
+    MatChipsModule,
+    MatCheckboxModule
+  ],
   providers: [],
   bootstrap: [AppComponent]
 })

@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { Message, Thread } from '../models/thread.interface';
+import { Thread } from '../models/thread.interface';
 import { UpdateLoadProgressAction, UpdateMessagesAction, UpdateThreadsAction } from '../store/app.actions';
 import { selectLoadProgress } from '../store/app.selectors';
 import { AppState } from '../store/app.state';
+import { Message } from '../models/message.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,7 @@ export class MessageDataService {
   }
 
   public addThreads(threads: Array<Thread>): void {
-    this.store.dispatch(UpdateThreadsAction({ threads }))
+    this.store.dispatch(UpdateThreadsAction({ threads }));
   }
 
   public setProgress(value: number, total: number): void {

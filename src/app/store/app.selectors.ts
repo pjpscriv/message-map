@@ -1,6 +1,7 @@
 import {createSelector} from '@ngrx/store';
 import {AppState} from './app.state';
-import {Message, ThreadMap} from '../models/thread.interface';
+import {ThreadMap} from '../models/thread.interface';
+import {Message} from '../models/message.interface';
 
 export const selectMessages = createSelector(
   (state: AppState) => state.messages,

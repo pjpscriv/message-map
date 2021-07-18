@@ -3,6 +3,11 @@
     align-items: center;
     justify-content: center;
     width: 375px;
+    max-width: 60%;
+}
+
+::ng-deep .example-sidenav > .mat-drawer-inner-container {
+  overflow-x: hidden;
 }
 
 app-time-density {
