@@ -27,6 +27,10 @@ export class PreProcessingService {
     private messageService: MessageDataService
   ) {}
 
+  public loadDemoData(messages: Array<Message>): void {
+    console.log('Load Demo Data called');
+  }
+
   public readFiles(files: Array<WebkitFile>): void {
     this.googleAnalyticsService.gtag('event', 'Load', { event_category: 'Load', event_label: 'Custom' });
 
@@ -65,6 +69,7 @@ export class PreProcessingService {
   private addThread(thread: Thread): void {
     this.threads.push(thread);
   }
+
 
   private getKeyThreadDates(messages: Array<ParsedMessage>): KeyThreadDates {
     const dates = {
