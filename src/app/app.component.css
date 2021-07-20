@@ -4,6 +4,7 @@
     justify-content: center;
     width: 375px;
     max-width: 60%;
+    overflow-x: hidden;
 }
 
 ::ng-deep .example-sidenav > .mat-drawer-inner-container {
@@ -17,7 +18,7 @@ app-time-density {
 }
 
 app-main-view {
-    height: 80%;
+    height: 90%;
     width: 80%;
     display: inline-block;
 }
@@ -47,7 +48,7 @@ app-message-display {
 }
 
 mat-sidenav-container {
-    height: 93.4vh;
+    height: calc(100% - 64px);
 }
 
 mat-sidenav-content {
@@ -57,6 +58,13 @@ mat-sidenav-content {
 }
 
 .border {
-    box-shadow: #0002 0px 0px 20px;
-    border-radius: 16px;
+    box-shadow: #0002 0px 0px 8px;
+    border-radius: 8px;
+}
+
+@media only screen and (min-width: 1000px) {
+  ::ng-deep .cdk-overlay-pane {
+    max-width: 800px !important;
+  }
+
 }

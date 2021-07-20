@@ -7,23 +7,25 @@ mat-form-field {
   width: 90%;
 }
 
+
+/* Pinning Sort Select to top of page */
 @mixin holder-theme($theme) {
-  $background: map-get($theme, background);
-
-  app-thread-list {
-    .holder {
-      position: absolute;
-      z-index: 10;
-      width: 100%;
-      background-color: mat-color($background);
-    }
-  }
+  //$background: map-get($theme, background);
+  //
+  //app-thread-list {
+  //  .holder {
+  //    position: absolute;
+  //    z-index: 10;
+  //    width: 100%;
+  //    background-color: mat-color($background);
+  //  }
+  //}
 }
 
-
-.mat-list-base .mat-list-item.list-head-spacer {
-  height: 98px; /* Whoo magic number! */
-}
+//.mat-list-base .mat-list-item.list-head-spacer {
+//  height: 98px; /* Whoo magic number! */
+//}
+/* /End Select Pinning */
 
 /* Material Select Overrides */
 :host ::ng-deep .mat-list-item-content {
@@ -36,7 +38,7 @@ mat-form-field {
 }
 
 :host ::ng-deep mat-form-field .mat-form-field-wrapper .mat-form-field-flex {
-  border-radius: 10px;
+  border-radius: 8px;
 }
 
 :host ::ng-deep .mat-form-field-underline {

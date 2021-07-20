@@ -1,36 +1,36 @@
 <mat-list>
 
   <div class="holder">
-  <mat-list-item>
-    <h1>Chats</h1>
-  </mat-list-item>
+    <mat-list-item>
+      <h1>Chats</h1>
+    </mat-list-item>
 
-  <!-- Sort Select -->
-  <mat-list-item class="thread-sort-list-item">
-    <mat-form-field appearance="fill">
-      <mat-label>Sort By</mat-label>
-      <mat-icon matPrefix>sort</mat-icon>
-      <mat-select
-        [value]="selectedSort"
-        (valueChange)="sortChange($event)"
-        [compareWith]="compareSorts"
-        disableOptionCentering="true">
-        <mat-option *ngFor="let sort of sortTypes" [value]="sort">
-          {{ sort.text }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-checkbox
-      class="all-threads-checkbox"
-      [checked]="allThreadsSelected"
-      [indeterminate]="someThreadsSelected()"
-      (change)="setAllThreadSelection($event.checked)"
-      [color]="'primary'">
-    </mat-checkbox>
-  </mat-list-item>
+    <!-- Sort Select -->
+    <mat-list-item class="thread-sort-list-item">
+      <mat-form-field appearance="fill">
+        <mat-label>Sort By</mat-label>
+        <mat-icon matPrefix>sort</mat-icon>
+        <mat-select
+          [value]="selectedSort"
+          (valueChange)="sortChange($event)"
+          [compareWith]="compareSorts"
+          disableOptionCentering="true">
+          <mat-option *ngFor="let sort of sortTypes" [value]="sort">
+            {{ sort.text }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-checkbox
+        class="all-threads-checkbox"
+        [checked]="allThreadsSelected"
+        [indeterminate]="someThreadsSelected()"
+        (change)="setAllThreadSelection($event.checked)"
+        [color]="'primary'">
+      </mat-checkbox>
+    </mat-list-item>
   </div>
 
-  <mat-list-item class="list-head-spacer"></mat-list-item>
+  <!-- <mat-list-item class="list-head-spacer"></mat-list-item>-->
 
   <!-- Chat List -->
   <mat-selection-list #threads>

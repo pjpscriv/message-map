@@ -4,12 +4,8 @@ import {AppState} from './store/app.state';
 import {selectDarkMode} from './store/app.selectors';
 import {OverlayContainer} from '@angular/cdk/overlay';
 import {HttpClient} from '@angular/common/http';
-import {PreProcessingService} from './shared/pre-processing.service';
-import {Message} from './models/message.interface';
-
-interface DemoData {
-  messages_array: Array<Message>;
-};
+import {DemoDataService} from './shared/demo-data.service';
+import {DemoData} from './models/demo-data.interface';
 
 @Component({
   selector: 'app-root',
@@ -26,7 +22,7 @@ export class AppComponent implements AfterViewInit {
     private store: Store<AppState>,
     private overlay: OverlayContainer,
     private http: HttpClient,
-    private loader: PreProcessingService
+    private loader: DemoDataService
   ) {
     this.store.pipe(select(selectDarkMode)).subscribe(darkMode => {
       if (darkMode) {
@@ -40,11 +36,8 @@ export class AppComponent implements AfterViewInit {
   }
 
   public ngAfterViewInit(): void {
-    this.http.get('assets/demo_messages.json', { responseType: 'json' })
-      .subscribe((data) => {
-        console.log('Loaded demo messages');
-        // this.loader.loadDemoData((data as DemoData)?.messages_array);
-      });
+    this.http.get('assets/messages/demo_messages.json', { responseType: 'json' })
+      .subscribe((data) => this.loader.loadDemoData((data as DemoData)));
   }
 
   test(): void {

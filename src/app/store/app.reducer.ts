@@ -1,6 +1,6 @@
 import { createReducer, on } from '@ngrx/store';
 import { Thread, ThreadMap } from '../models/thread.interface';
-import { UpdateLoadProgressAction, UpdateMessagesAction, UpdateThreadsAction, UpdateDarkModeAction } from './app.actions';
+import {UpdateLoadProgressAction, UpdateMessagesAction, UpdateThreadsAction, UpdateDarkModeAction, AddThreadAction} from './app.actions';
 import { initialState } from './app.state';
 
 
@@ -8,7 +8,7 @@ export const messagesReducer = createReducer(
   initialState.messages,
   on(UpdateMessagesAction,
     (existingMessages, { messages }) => {
-      return [...existingMessages, ...messages];
+      return messages;
     }
   )
 );
@@ -27,8 +27,15 @@ export const threadsReducer = createReducer(
   on(UpdateThreadsAction,
     (oldThreadMap, { threads }) => {
       const newThreadMap = {};
-      Object.values(oldThreadMap).forEach(thread => addThread(thread, newThreadMap));
       threads.forEach(thread => addThread(thread, newThreadMap));
+      return newThreadMap;
+    }
+  ),
+  on(AddThreadAction,
+    (oldThreadMap, { thread }) => {
+      const newThreadMap = {};
+      Object.values(oldThreadMap).forEach(oldThread => addThread(oldThread, newThreadMap));
+      addThread(thread, newThreadMap);
       return newThreadMap;
     }
   )

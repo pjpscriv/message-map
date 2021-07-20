@@ -32,6 +32,10 @@ export class MessageDataService {
     }
   }
 
+  public resetProgress(): void {
+    this.store.dispatch(UpdateLoadProgressAction({ loadProgress: 0 }));
+  }
+
   public getProgress(): Observable<number> {
     return this.store.pipe(select(selectLoadProgress));
   }
@@ -39,5 +43,6 @@ export class MessageDataService {
   public messagesLoaded(): void {
     this.store.dispatch(UpdateLoadProgressAction({ loadProgress: 100 }));
     this.store.dispatch(UpdateMessagesAction({messages: this.messageArray }));
+    this.messageArray = [];
   }
 }

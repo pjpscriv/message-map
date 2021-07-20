@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {ParsedThread, Thread} from '../models/thread.interface';
+import {ParsedThread, Thread, ThreadMap} from '../models/thread.interface';
 import {GoogleAnalyticsService} from './google-analytics.service';
 import {MessageDataService} from './message-data.service';
 import * as d3 from 'd3';
@@ -27,12 +27,10 @@ export class PreProcessingService {
     private messageService: MessageDataService
   ) {}
 
-  public loadDemoData(messages: Array<Message>): void {
-    console.log('Load Demo Data called');
-  }
-
   public readFiles(files: Array<WebkitFile>): void {
     this.googleAnalyticsService.gtag('event', 'Load', { event_category: 'Load', event_label: 'Custom' });
+    this.messageService.resetProgress();
+    this.threads = [];
 
     for (const file of files) {
       if (this.hasValidFileName(file)) {
@@ -127,7 +125,7 @@ export class PreProcessingService {
     } else if (message.timestamp_ms) {
       return message.timestamp_ms / 1000;
     } else {
-      console.error(`Error parsing timestamp in messgae from ${message.sender_name}`);
+      console.error(`Error parsing timestamp in message from ${message.sender_name}`);
       return 0;
     }
   }

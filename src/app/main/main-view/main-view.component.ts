@@ -28,14 +28,14 @@ export class MainViewComponent implements AfterViewInit {
     private store: Store<AppState>
   ) {
     this.messages$ = this.store.pipe(select(selectMessages),
-      filter(messages => !!messages && messages?.length !== 0))
+      filter(messages => !!messages && messages?.length !== 0));
 
     const initialSize = new ResizedEvent(new ElementRef(null), 0, 0, 0, 0);
     this.canvasWrapperSize$ = new BehaviorSubject<ResizedEvent>(initialSize);
   }
 
   public ngAfterViewInit(): void {
-    this.canvasContext = this.canvasEl.nativeElement.getContext("2d");
+    this.canvasContext = this.canvasEl.nativeElement.getContext('2d');
 
     const canvasSize$ = this.canvasWrapperSize$.pipe(
       debounceTime(100),
@@ -53,7 +53,7 @@ export class MainViewComponent implements AfterViewInit {
         // const yAxis1 = d3.axisLeft(this.y1);
         this.canvasContext.clearRect(0, 0, this.canvasEl.width, this.canvasEl.height);
 
-        // console.log("Resized canvas: ", this.canvasContext.canvas.width, this.canvasContext.canvas.height);
+        // console.log('Resized canvas: ', this.canvasContext.canvas.width, this.canvasContext.canvas.height);
       })
     );
 
@@ -64,8 +64,8 @@ export class MainViewComponent implements AfterViewInit {
   /** *
   initialize_scatterplot() {
     //initialize domains
-    axis_time_focus.selectAll(".axis--y").remove();
-    axis_date_focus.selectAll(".axis--x").remove();
+    axis_time_focus.selectAll('.axis--y').remove();
+    axis_date_focus.selectAll('.axis--x').remove();
 
     axis_date_focus.append('g')
       .attr('transform', 'translate(' + this.margin1.left + ',' + 0 + ')')
@@ -94,7 +94,7 @@ export class MainViewComponent implements AfterViewInit {
 
   private drawScatterplot(messages: Array<Message>): void {
     this.canvasContext.clearRect(0, 0, this.canvasEl.width, this.canvasEl.height);
-    const color_base = '#0099FF';
+    const colorBase = '#0099FF';
 
     // messages.allFiltered()
     messages.forEach(d => {
@@ -102,10 +102,10 @@ export class MainViewComponent implements AfterViewInit {
       // const useColors = coloredBarchart && colorScale.domain().includes(coloredBarchart.get_data(d));
       const useColors = false;
       if (useColors) {
-        null;
+        let x = null;
         // this.canvasContext.fillStyle = colorScale(coloredBarchart.get_data(d));
       } else {
-        this.canvasContext.fillStyle = color_base;
+        this.canvasContext.fillStyle = colorBase;
       }
 
       // this.canvasContext.globalAlpha = 0.005;
@@ -116,9 +116,9 @@ export class MainViewComponent implements AfterViewInit {
       // console.log(`${i++} Try draw: ${d.date}, ${d.timeSeconds}`)
       // console.log(`Coords: ${this.x1(d.date)}, ${this.y1(d.timeSeconds)}`)
       this.canvasContext.arc(this.x1(d.date), this.y1(d.timeSeconds), 2, 0, 2 * Math.PI, true);
-      this.canvasContext.fill()
+      this.canvasContext.fill();
       this.canvasContext.closePath();
-    })
+    });
   }
 
 
