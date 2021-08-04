@@ -399,9 +399,9 @@ var barcharts = [
 
 function initialize_barchart_parameters() {
   // Initialize parameters and build html structure
-  div_filters.selectAll(".barchart-div").remove()
-  for (j = 0; j < barcharts.length; j++) {
-    bc = barcharts[j]
+  div_filters.selectAll(".barchart-div").remove();
+  for (let j = 0; j < barcharts.length; j++) {
+    let bc = barcharts[j]
     bc.dimension = messages.dimension(bc.get_data)
     bc.group = bc.dimension.group()
     bc.clicked = new Set()

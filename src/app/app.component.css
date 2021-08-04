@@ -11,56 +11,56 @@
   overflow-x: hidden;
 }
 
-app-time-density {
-    height: 70vh;
-    width: 11vw;
-    display: inline-block;
-}
+/*app-time-density {*/
+/*    height: 70vh;*/
+/*    width: 11vw;*/
+/*    display: inline-block;*/
+/*}*/
 
 app-main-view {
-    height: 90%;
-    width: 80%;
-    display: inline-block;
+    height: 100%;
+    width: 100%;
+    /*display: inline-block;*/
 }
 
-app-filters {
-    height: 70vh;
-    width: 19vw;
-    display: inline-block;
-}
+/*app-filters {*/
+/*    height: 70vh;*/
+/*    width: 19vw;*/
+/*    display: inline-block;*/
+/*}*/
 
-.placeholder {
-    height: 20vh;
-    width: 11vw;
-    display: inline-block;
-}
+/*.placeholder {*/
+/*    height: 20vh;*/
+/*    width: 11vw;*/
+/*    display: inline-block;*/
+/*}*/
 
-app-date-density {
-    height: 20vh;
-    width: 68vw;
-    display: inline-block;
-}
+/*app-date-density {*/
+/*    height: 20vh;*/
+/*    width: 68vw;*/
+/*    display: inline-block;*/
+/*}*/
 
-app-message-display {
-    height: 20vh;
-    width: 19vw;
-    display: inline-block;
-}
+/*app-message-display {*/
+/*    height: 20vh;*/
+/*    width: 19vw;*/
+/*    display: inline-block;*/
+/*}*/
 
 mat-sidenav-container {
     height: calc(100% - 64px);
 }
 
-mat-sidenav-content {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+/*mat-sidenav-content {*/
+/*    display: flex;*/
+/*    align-items: center;*/
+/*    justify-content: center;*/
+/*}*/
 
-.border {
-    box-shadow: #0002 0px 0px 8px;
-    border-radius: 8px;
-}
+/*.border {*/
+/*    box-shadow: #0002 0px 0px 8px;*/
+/*    border-radius: 8px;*/
+/*}*/
 
 @media only screen and (min-width: 1000px) {
   ::ng-deep .cdk-overlay-pane {

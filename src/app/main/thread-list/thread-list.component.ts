@@ -90,9 +90,9 @@ export class ThreadListComponent {
 
   public getSubtitle(thread: Thread): string {
     if (this.selectedSort.text === 'First Message') {
-      return `First message: ${ this.datePipe.transform(thread.first_message, 'd MMM y, h:mm aaaaa\'m\'') }`;
+      return `First: ${ this.datePipe.transform(thread.first_message, 'd MMM y, h:mm aaaaa\'m\'') }`;
     } else {
-      return `Last message: ${ this.datePipe.transform(thread.last_message, 'd MMM y, h:mm aaaaa\'m\'') }`;
+      return `Last: ${ this.datePipe.transform(thread.last_message, 'd MMM y, h:mm aaaaa\'m\'') }`;
     }
   }
 

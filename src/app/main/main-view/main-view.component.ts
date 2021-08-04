@@ -19,8 +19,14 @@ export class MainViewComponent implements AfterViewInit {
   private messages$: Observable<Array<Message>>;
   private canvasWrapperSize$: BehaviorSubject<ResizedEvent>;
   private canvasContext: any;
+
+  // Axes
   private x1: any;
   private y1: any;
+  private xAxis1: any;
+  private yAxis1: any;
+  private axis_time_focus: any;
+  private axis_date_focus: any;
 
   private margin1 = { top: 20, right: 20, bottom: 20, left: 20 };
 
@@ -36,9 +42,11 @@ export class MainViewComponent implements AfterViewInit {
 
   public ngAfterViewInit(): void {
     this.canvasContext = this.canvasEl.nativeElement.getContext('2d');
+    this.axis_time_focus = d3.select('.y-axis');
+    this.axis_date_focus = d3.select('.x-axis');
 
     const canvasSize$ = this.canvasWrapperSize$.pipe(
-      debounceTime(100),
+      debounceTime(1000),
       map((event: ResizedEvent) => {
         this.canvasEl.nativeElement.height = event.newHeight;
         this.canvasEl.nativeElement.width = event.newWidth;
@@ -49,11 +57,11 @@ export class MainViewComponent implements AfterViewInit {
         this.x1 = d3.scaleTime().range([this.margin1.left, w1]);
         this.y1 = d3.scaleTime().range([this.margin1.top, h1]);
 
-        // const xAxis1 = d3.axisBottom(this.x1);
-        // const yAxis1 = d3.axisLeft(this.y1);
+        this.xAxis1 = d3.axisBottom(this.x1);
+        this.yAxis1 = d3.axisLeft(this.y1);
         this.canvasContext.clearRect(0, 0, this.canvasEl.width, this.canvasEl.height);
 
-        // console.log('Resized canvas: ', this.canvasContext.canvas.width, this.canvasContext.canvas.height);
+        console.log('Resized canvas: ', this.canvasContext.canvas.width, this.canvasContext.canvas.height);
       })
     );
 
@@ -61,21 +69,21 @@ export class MainViewComponent implements AfterViewInit {
       .subscribe(([messages, _]) => this.drawMessages(messages));
   }
 
-  /** *
-  initialize_scatterplot() {
-    //initialize domains
-    axis_time_focus.selectAll('.axis--y').remove();
-    axis_date_focus.selectAll('.axis--x').remove();
+  /** */
+  private initialize_scatterplot(): void {
+    // Initialize domains
+    this.axis_time_focus.selectAll('.axis--y').remove();
+    this.axis_date_focus.selectAll('.axis--x').remove();
 
-    axis_date_focus.append('g')
+    this.axis_date_focus.append('g')
       .attr('transform', 'translate(' + this.margin1.left + ',' + 0 + ')')
       .attr('class', 'x axis--x')
-      .call(xAxis1);
+      .call(this.xAxis1);
 
-    axis_time_focus.append('g')
+    this.axis_time_focus.append('g')
       .attr('transform', 'translate(' + (this.margin1.left - 1) + ',' + this.margin1.top + ')')
       .attr('class', 'y axis--y')
-      .call(yAxis1);
+      .call(this.yAxis1);
   }
   /** */
 
@@ -87,7 +95,7 @@ export class MainViewComponent implements AfterViewInit {
     // this.y1.domain set to 1 full day by default
 
     // this.x2.domain([mindate_total, maxdate_total]);
-    // this.initialize_scatterplot()
+    this.initialize_scatterplot();
     this.drawScatterplot(messages);
   }
 

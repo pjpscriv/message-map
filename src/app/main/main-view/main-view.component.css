@@ -1,9 +1,33 @@
+.main-view-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .canvas-wrapper {
-    width: 100%;
-    height: 100%;
+    width: 80%;
+    height: 90%;
 }
 
 .scatterplot {
     width: 100%;
     height: 100%;
+}
+
+
+.y-axis {
+    height: 90%;
+    width: 20px;
+}
+
+.x-axis {
+    width: 80%;
+    height: 20px;
+}
+
+.border {
+  box-shadow: #0002 0px 0px 8px;
+  border-radius: 8px;
 }
