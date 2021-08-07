@@ -446,7 +446,7 @@ function initialize_barchart_parameters() {
 }
 
 // Create the function that will create all barcharts.
-chart = barChart({})
+let chart = barChart({});
 
 function main() {
   parse_date();
@@ -498,8 +498,8 @@ function define_colored_barchart(name) {
 
 
 function draw_barcharts() {
-  for (j = 0; j < barcharts.length; j++) {
-    bc = barcharts[j]
+  for (let j = 0; j < barcharts.length; j++) {
+    let bc = barcharts[j]
 
     if (bc.n_bars == "all") {
       bc.nested_data = bc.group.all()
@@ -582,7 +582,7 @@ function reset_filters() {
 function reset() {
   // if(cnt_reset>0){
   // try {
-  dimensions_list = barcharts.map(x => x.dimension)
+  let dimensions_list = barcharts.map(x => x.dimension)
   resetData(messages, dimensions_list)
   initialize_crossfilter();
   update_all();

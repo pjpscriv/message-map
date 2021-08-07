@@ -113,7 +113,7 @@ export class MainViewComponent implements AfterViewInit {
       .attr('class', 'y axis--y')
       .call(this.axisY);
 
-    this.xAxisBottom = yAxisShift - 20;
+    setTimeout(() => this.xAxisBottom = yAxisShift - 20, 0);
   }
 
 
