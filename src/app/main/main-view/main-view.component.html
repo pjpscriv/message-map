@@ -1,7 +1,7 @@
 <div #mainViewContainer class="main-view-container">
-  <svg class="y-axis"></svg>
+  <svg class="y-axis" [style.width]="axisYWidth"></svg>
   <div class="canvas-wrapper border" (resized)="onResized($event)">
     <canvas #scatterplot class="scatterplot"></canvas>
   </div>
-  <svg class="x-axis" [style.bottom]="xAxisBottom$ | async"></svg>
+  <svg class="x-axis" [style.bottom]="xAxisBottom"></svg>
 </div>

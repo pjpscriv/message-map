@@ -3,10 +3,11 @@ import { select, Store } from '@ngrx/store';
 import { ResizedEvent } from 'angular-resize-event';
 import * as d3 from 'd3';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
-import {debounceTime, filter, map, tap} from 'rxjs/operators';
+import { debounceTime, filter, map, tap } from 'rxjs/operators';
 import { selectMessages } from 'src/app/store/app.selectors';
 import { AppState } from 'src/app/store/app.state';
 import { Message } from '../../models/message.interface';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-main-view',
@@ -31,10 +32,8 @@ export class MainViewComponent implements AfterViewInit {
   private axisY: any;
   private d3ElAxisY: any;
   private d3ElAxisX: any;
-  private axisYWidth = 40;
-  public xAxisBottom$: BehaviorSubject<number>;
-
-  private margin1 = { top: 20, right: 20, bottom: 20, left: 20 };
+  public axisYWidth = 50;
+  public xAxisBottom = 0;
 
   private margin = 10;
 
@@ -49,7 +48,6 @@ export class MainViewComponent implements AfterViewInit {
       }));
     const initialSize = new ResizedEvent(new ElementRef(null), 0, 0, 0, 0);
     this.canvasWrapperSize$ = new BehaviorSubject<ResizedEvent>(initialSize);
-    this.xAxisBottom$ = new BehaviorSubject<number>(0);
   }
 
 
@@ -85,7 +83,13 @@ export class MainViewComponent implements AfterViewInit {
     this.scaleY = d3.scaleTime().range([this.margin, h1]);
 
     this.axisX = d3.axisBottom(this.scaleX);
-    this.axisY = d3.axisLeft(this.scaleY);
+    this.axisY = d3.axisLeft(this.scaleY)
+      .ticks(d3.timeHour.every(2), '%I %p')
+      .tickFormat(x => {
+          let s = new DatePipe('en-US').transform(x as Date, 'haaaaa\'m\'') as string;
+          s = s === '12am' ? 'midnight' : s === '12pm' ? 'midday' : s;
+          return s;
+      });
 
     this.scaleX.domain([this.minDate, this.maxDate]);
 
@@ -109,11 +113,12 @@ export class MainViewComponent implements AfterViewInit {
       .attr('class', 'y axis--y')
       .call(this.axisY);
 
-    this.xAxisBottom$.next(yAxisShift - 20);
+    this.xAxisBottom = yAxisShift - 20;
   }
 
 
   private drawScatterplot(messages: Array<Message>): void {
+    this.drawAxes();
     this.canvasContext.clearRect(0, 0, this.canvasEl.width, this.canvasEl.height);
     const colorBase = '#0099FF';
 
