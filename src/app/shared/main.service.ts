@@ -32,6 +32,7 @@ export class MainService {
 
   // Define div, svg, etc..
   {
+  {
     //D3 elements
     var div_title = d3.select('#title')
     var div_density_time = d3.select('#density_time')
