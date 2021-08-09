@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, HostBinding} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, HostBinding, ViewChild} from '@angular/core';
 import {select, Store} from '@ngrx/store';
 import {AppState} from './store/app.state';
 import {selectDarkMode} from './store/app.selectors';
@@ -6,7 +6,8 @@ import {OverlayContainer} from '@angular/cdk/overlay';
 import {HttpClient} from '@angular/common/http';
 import {DemoDataService} from './shared/demo-data.service';
 import {DemoData} from './models/demo-data.interface';
-import {MatDrawerMode} from '@angular/material/sidenav';
+import {MatDrawerMode, MatSidenav} from '@angular/material/sidenav';
+import {ThreadListComponent} from './main/thread-list/thread-list.component';
 
 @Component({
   selector: 'app-root',
@@ -15,6 +16,9 @@ import {MatDrawerMode} from '@angular/material/sidenav';
 })
 export class AppComponent implements AfterViewInit {
   @HostBinding('class') className = '';
+  @ViewChild('threadsSidenav') threadsSidenav?: MatSidenav;
+  @ViewChild('filtersSidenav') filtersSidenav?: MatSidenav;
+  @ViewChild('threadList') threadList?: ThreadListComponent;
   private darkModeClass = 'dark-mode';
 
   title = 'ngfbmessage';
@@ -46,7 +50,30 @@ export class AppComponent implements AfterViewInit {
     return this.el.nativeElement.clientWidth > 1100 ? 'side' : 'over';
   }
 
-  public test(): void {
+  private oneSideNavOnly(): boolean {
+    return this.getSideNavMode() === 'over';
+  }
+
+  public menuClicked(): void {
+    if (!!this.threadsSidenav && !!this.threadList) {
+      if (this.filtersSidenav?.opened && !this.threadsSidenav.opened) {
+        this.filtersSidenav.toggle();
+      }
+      this.threadsSidenav.toggle();
+      this.threadList.refreshList();
+    }
+  }
+
+  public filtersClicked(): void {
+    if (!!this.filtersSidenav) {
+      if (!this.filtersSidenav.opened && this.threadsSidenav?.opened) {
+        this.threadsSidenav.toggle();
+      }
+      this.filtersSidenav.toggle();
+    }
+  }
+
+  public resetClicked(): void {
     console.log('Whoo test clicked');
   }
 }

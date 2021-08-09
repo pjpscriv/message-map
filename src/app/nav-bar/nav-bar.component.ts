@@ -6,7 +6,6 @@ import {select, Store} from '@ngrx/store';
 import {AppState} from '../store/app.state';
 import {selectDarkMode} from '../store/app.selectors';
 import {UpdateDarkModeAction} from '../store/app.actions';
-import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-nav-bar',
