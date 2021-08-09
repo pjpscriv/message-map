@@ -3,11 +3,17 @@
 # A script to create a git-version.json before the commit is pushed and deployed via GitHub Actions.
 #
 
-node ./src/git-version.ts
+IS_AMEND=$(ps -ocommand= -p $PPID | grep -e '--amend');
 
-git add ./src/assests/git-version.json
-git commit --amend
+if [ -n "$IS_AMEND" ]; then
 
-rev=git rev-parse --short HEAD
+  node ./src/git-version.js
 
-echo "[Pre-commit] Added git-version.json for rev"
+  git add ./src/assets/git-version.json
+  git commit --amend
+
+  rev=git rev-parse --short HEAD
+
+  echo "[Pre-commit] Added git-version.json for rev"
+
+fi
