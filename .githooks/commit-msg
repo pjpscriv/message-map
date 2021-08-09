@@ -3,19 +3,13 @@
 # A script to create a git-version.json before the commit is pushed and deployed via GitHub Actions.
 #
 
-#IS_AMEND=$(ps -ocommand= -p $PPID | grep -e '--amend');
-#
-#echo "AMEND: $IS_AMEND"
+branch=$(git branch | grep '*' | sed 's/* //')
+shortSHA=$(git rev-parse --short branch)
+SHA=$(git rev-parse --short branch)
 
-#if ! [ -n "$IS_AMEND" ]; then
-
-node ./src/git-version.js
+node ./src/git-version.js $branch $shortSHA $SHA
 
 git add ./src/assets/git-version.json
 git commit --amend --no-verify
 
-rev=git rev-parse --short HEAD
-
-echo "[Commit-msg] Added git-version.json for $rev"
-
-#fi
+echo "[Commit-msg] Added git-version.json for $shortSHA"
