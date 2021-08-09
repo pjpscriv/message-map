@@ -12,16 +12,16 @@ const FILE_NAME = 'git-version.json';
 // const commitNumber = child.execSync('git rev-list --count HEAD').toString().trim();
 
 const branch = process.argv[2];
-const shortSHA = process.argv[3];
-const SHA = process.argv[4];
+const commitMessage = process.argv[3];
+// const SHA = process.argv[4];
 
 const versionInfo = {
   branch,
-  shortSHA,
-  SHA,
+  // shortSHA,
+  // SHA,
   // author,
   // commitTime,
-  // commitMessage,
+  commitMessage,
   // commitNumber
 };
 
@@ -31,6 +31,6 @@ fs.writeFile(`./src/assets/${FILE_NAME}`, versionInfoJson, { flag: 'w' }, err =>
   if (!!err) {
       throw err;
   } else {
-    console.log(`${FILE_NAME} created for ${shortSHA}!`);
+    console.log(`${FILE_NAME} created for "${commitMessage}"!`);
   }
 });

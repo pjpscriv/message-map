@@ -4,12 +4,14 @@
 #
 
 branch=$(git branch | grep '*' | sed 's/* //')
-shortSHA=$(git rev-parse --short branch)
-SHA=$(git rev-parse --short branch)
+commitMessage=$(cat "${1:?Missing commit message file}")
 
-node ./src/git-version.js $branch $shortSHA $SHA
+#shortSHA=$(git rev-parse --short branch)
+#SHA=$(git rev-parse --short branch)
+
+node ./src/git-version.js $branch $commitMessage $SHA
 
 git add ./src/assets/git-version.json
 git commit --amend --no-verify
 
-echo "[Commit-msg] Added git-version.json for $shortSHA"
+echo "[Commit-msg] Added git-version.json for \"$commitMessage\""
