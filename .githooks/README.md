@@ -3,3 +3,5 @@
 These scripts should be copied to your local repo's `.git/hooks`.
 
 For more information: https://stackoverflow.com/questions/3462955/putting-git-hooks-into-repository
+
+**NB:** This hook currently doesn't work. Needs more investigation.

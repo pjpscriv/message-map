@@ -46,4 +46,4 @@ testem.log
 Thumbs.db
 
 # Git version
-#*/assets/git-version.json
+*/assets/git-version.json
