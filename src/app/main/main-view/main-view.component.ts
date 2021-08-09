@@ -32,7 +32,7 @@ export class MainViewComponent implements AfterViewInit {
   private axisY: any;
   private d3ElAxisY: any;
   private d3ElAxisX: any;
-  public axisYWidth = 50;
+  public yAxisWidth = 50;
   public xAxisBottom = 0;
 
   private margin = 10;
@@ -100,7 +100,7 @@ export class MainViewComponent implements AfterViewInit {
     const containerEl = this.containerEl.nativeElement;
     const canvasEl = this.canvasEl.nativeElement;
 
-    const xAxisShift = ((containerEl.clientWidth - canvasEl.clientWidth) + this.axisYWidth) / 2;
+    const xAxisShift = ((containerEl.clientWidth - canvasEl.clientWidth) + this.yAxisWidth) / 2;
     const yAxisShift = (containerEl.clientHeight - canvasEl.clientHeight) / 2;
 
     this.d3ElAxisX.append('g')
@@ -109,7 +109,7 @@ export class MainViewComponent implements AfterViewInit {
       .call(this.axisX);
 
     this.d3ElAxisY.append('g')
-      .attr('transform', `translate(${this.axisYWidth - 1}, ${yAxisShift})`)
+      .attr('transform', `translate(${this.yAxisWidth - 1}, ${yAxisShift})`)
       .attr('class', 'y axis--y')
       .call(this.axisY);
 
@@ -128,7 +128,7 @@ export class MainViewComponent implements AfterViewInit {
       // const useColors = coloredBarchart && colorScale.domain().includes(coloredBarchart.get_data(d));
       const useColors = false;
       if (useColors) {
-        let x = null;
+        const x = null;
         // this.canvasContext.fillStyle = colorScale(coloredBarchart.get_data(d));
       } else {
         this.canvasContext.fillStyle = colorBase;
