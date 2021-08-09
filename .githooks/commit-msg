@@ -9,7 +9,7 @@ commitMessage=$(cat "${1:?Missing commit message file}")
 #shortSHA=$(git rev-parse --short branch)
 #SHA=$(git rev-parse --short branch)
 
-node ./src/git-version.js $branch $commitMessage $SHA
+node ./src/git-version.js $branch "$commitMessage"
 
 git add ./src/assets/git-version.json
 git commit --amend --no-verify
