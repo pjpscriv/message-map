@@ -6,7 +6,7 @@
 
 <mat-sidenav-container>
 
-  <mat-sidenav #threadsSidenav [mode]="'side'" class="example-sidenav">
+  <mat-sidenav #threadsSidenav [mode]="getSideNavMode()" class="example-sidenav">
     <app-thread-list #threadList></app-thread-list>
   </mat-sidenav>
 
@@ -19,7 +19,7 @@
     <!-- <app-message-display class="border"></app-message-display> -->
   </mat-sidenav-content>
 
-  <mat-sidenav #filtersSidenav [mode]="'side'" position="end" class="example-sidenav">
+  <mat-sidenav #filtersSidenav [mode]="getSideNavMode()" position="end" class="example-sidenav">
     <app-filters></app-filters>
   </mat-sidenav>
 
