@@ -23,7 +23,7 @@ const versionInfo = {
 
 const versionInfoJson = JSON.stringify(versionInfo, null, 2);
 
-fs.writeFile(`./src/assets/${FILE_NAME}`, versionInfoJson, { flag: 'w' }, (err: any) => {
+fs.writeFile(`./src/assets/${FILE_NAME}`, versionInfoJson, { flag: 'w' }, err => {
   if (!!err) {
       throw err;
   } else {

@@ -1,0 +1,13 @@
+#!/bin/sh
+#
+# A script to create a git-version.json before the commit is pushed and deployed via GitHub Actions.
+#
+
+node ./src/git-version.ts
+
+git add ./src/assests/git-version.json
+git commit --amend
+
+rev=git rev-parse --short HEAD
+
+echo "[Pre-commit] Added git-version.json for rev"

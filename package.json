@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "node ./src/git-version.ts && ng build",
+    "build": "node src/git-version.js && ng build",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
