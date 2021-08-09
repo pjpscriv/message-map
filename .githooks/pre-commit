@@ -5,6 +5,8 @@
 
 IS_AMEND=$(ps -ocommand= -p $PPID | grep -e '--amend');
 
+echo "AMEND: $IS_AMEND"
+
 if [ -n "$IS_AMEND" ]; then
 
   node ./src/git-version.js
@@ -14,6 +16,6 @@ if [ -n "$IS_AMEND" ]; then
 
   rev=git rev-parse --short HEAD
 
-  echo "[Pre-commit] Added git-version.json for rev"
+  echo "[Pre-commit] Added git-version.json for $rev"
 
 fi
