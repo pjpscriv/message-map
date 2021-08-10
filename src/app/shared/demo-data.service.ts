@@ -3,6 +3,7 @@ import {ThreadMap} from '../models/thread.interface';
 import {MEDIA_TYPE, Message} from '../models/message.interface';
 import {MessageDataService} from './message-data.service';
 import {DemoData, DemoMessage} from '../models/demo-data.interface';
+import {HttpClient} from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -11,8 +12,14 @@ export class DemoDataService {
   threadMap: ThreadMap = {};
 
   constructor(
-    private messageService: MessageDataService
+    private messageService: MessageDataService,
+    private http: HttpClient
   ) {}
+
+  public getDemoData(): void {
+    this.http.get('assets/messages/demo_messages.json', { responseType: 'json' })
+      .subscribe((data) => this.loadDemoData((data as DemoData)));
+  }
 
   public loadDemoData(data: DemoData): void {
     for (const message of data.messages_array) {
