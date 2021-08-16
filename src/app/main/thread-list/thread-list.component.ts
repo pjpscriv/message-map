@@ -113,4 +113,9 @@ export class ThreadListComponent {
     const selected = this.threads?.selectedOptions.selected.length;
     return 0 < selected && selected < this.threadCount;
   }
+
+  public toggleColors(): void {
+    // Something interesting here with colors no doubt
+    console.log(`Colors toggled!`);
+  }
 }
