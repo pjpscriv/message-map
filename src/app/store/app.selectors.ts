@@ -1,11 +1,12 @@
-import {createSelector} from '@ngrx/store';
-import {AppState} from './app.state';
-import {ThreadMap} from '../models/thread.interface';
-import {Message} from '../models/message.interface';
+import { createSelector } from '@ngrx/store';
+import { Crossfilter } from '../models/crossfilter.aliases';
+import { Message } from '../models/message.interface';
+import { ThreadMap } from '../models/thread.interface';
+import { AppState } from './app.state';
 
 export const selectMessages = createSelector(
   (state: AppState) => state.messages,
-  (messages: Array<Message>) => messages
+  (messages: Crossfilter<Message>) => messages
 );
 
 export const selectLoadProgress = createSelector(

@@ -8,6 +8,7 @@ import { selectMessages } from 'src/app/store/app.selectors';
 import { AppState } from 'src/app/store/app.state';
 import { Message } from '../../models/message.interface';
 import { DatePipe } from '@angular/common';
+import { Crossfilter } from 'src/app/models/crossfilter.aliases';
 
 @Component({
   selector: 'app-main-view',
@@ -17,7 +18,7 @@ import { DatePipe } from '@angular/common';
 export class MainViewComponent implements AfterViewInit {
   @ViewChild('mainViewContainer') containerEl: any;
   @ViewChild('scatterplot') canvasEl: any;
-  private messages$: Observable<Array<Message>>;
+  private messages$: Observable<Crossfilter<Message>>;
   private canvasWrapperSize$: BehaviorSubject<ResizedEvent>;
   private canvasContext: any;
 
@@ -40,14 +41,17 @@ export class MainViewComponent implements AfterViewInit {
   constructor(
     private store: Store<AppState>
   ) {
-    this.messages$ = this.store.pipe(select(selectMessages),
-      filter(messages => !!messages && messages?.length !== 0),
-      tap(messages => {
-        this.minDate = d3.min(messages, (message: Message) => message.date) as Date;
-        this.maxDate = d3.max(messages, (message: Message) => message.date) as Date;
-      }));
+
     const initialSize = new ResizedEvent(new ElementRef(null), 0, 0, 0, 0);
     this.canvasWrapperSize$ = new BehaviorSubject<ResizedEvent>(initialSize);
+
+    this.messages$ = this.store.pipe(select(selectMessages),
+      filter(messages => !!messages && messages?.size() !== 0),
+      tap(messages => {
+        const dateRange = messages.dimension((message: Message) => message.date);
+        this.minDate = dateRange.bottom(1)[0].date;
+        this.maxDate = dateRange.top(1)[0].date;
+      }));
   }
 
 
@@ -117,13 +121,12 @@ export class MainViewComponent implements AfterViewInit {
   }
 
 
-  private drawScatterplot(messages: Array<Message>): void {
+  private drawScatterplot(messages: any): void {
     this.drawAxes();
     this.canvasContext.clearRect(0, 0, this.canvasEl.width, this.canvasEl.height);
     const colorBase = '#0099FF';
 
-    // messages.allFiltered()
-    messages.forEach(d => {
+    messages.allFiltered().forEach((d: Message) => {
       this.canvasContext.beginPath();
       // const useColors = coloredBarchart && colorScale.domain().includes(coloredBarchart.get_data(d));
       const useColors = false;

@@ -1,6 +1,7 @@
 import { createReducer, on } from '@ngrx/store';
+import crossfilter from 'crossfilter2';
 import { Thread, ThreadMap } from '../models/thread.interface';
-import {UpdateLoadProgressAction, UpdateMessagesAction, UpdateThreadsAction, UpdateDarkModeAction, AddThreadAction} from './app.actions';
+import { AddThreadAction, UpdateDarkModeAction, UpdateLoadProgressAction, UpdateMessagesAction, UpdateThreadsAction } from './app.actions';
 import { initialState } from './app.state';
 
 
@@ -8,7 +9,7 @@ export const messagesReducer = createReducer(
   initialState.messages,
   on(UpdateMessagesAction,
     (existingMessages, { messages }) => {
-      return messages;
+      return crossfilter(messages);
     }
   )
 );

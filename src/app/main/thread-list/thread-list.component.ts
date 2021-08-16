@@ -75,7 +75,6 @@ export class ThreadListComponent {
     if (newSort) {
       this.selectedSort = newSort;
       this.sortType$.next(newSort);
-      console.log(newSort.name);
     }
   }
 
@@ -89,6 +88,7 @@ export class ThreadListComponent {
   }
 
   public getSubtitle(thread: Thread): string {
+    // TODO: Make this cooler: "6 Aug", "4 Jan '19", etc
     if (this.selectedSort.text === 'First Message') {
       return `First: ${ this.datePipe.transform(thread.first_message, 'd MMM y, h:mm aaaaa\'m\'') }`;
     } else {
@@ -106,11 +106,7 @@ export class ThreadListComponent {
 
   public setAllThreadSelection(allSelected: boolean): void {
     this.allThreadsSelected = allSelected;
-    if (allSelected) {
-      this.threads.selectAll();
-    } else {
-      this.threads.deselectAll();
-    }
+    allSelected ? this.threads.selectAll() : this.threads.deselectAll();
   }
 
   public someThreadsSelected(): boolean {

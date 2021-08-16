@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable } from '@angular/core';
 import * as d3 from 'd3';
-import * as crossfilter from 'crossfilter';
+import * as crossfilter from 'crossfilter2';
 
 @Injectable({
   providedIn: 'root'
