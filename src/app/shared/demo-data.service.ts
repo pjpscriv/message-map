@@ -5,11 +5,13 @@ import {MessageDataService} from './message-data.service';
 import {DemoData, DemoMessage} from '../models/demo-data.interface';
 import {HttpClient} from '@angular/common/http';
 
+const DATA_TIMEZONE_OFFSET = 12* 60 * 60 * 1000;
+
 @Injectable({
   providedIn: 'root'
 })
 export class DemoDataService {
-  threadMap: ThreadMap = {};
+  private threadMap: ThreadMap = {};
 
   constructor(
     private messageService: MessageDataService,
@@ -74,7 +76,7 @@ export class DemoDataService {
   }
 
   private getTimeSeconds(message: DemoMessage): Date {
-    const date = new Date(message.timestamp * 1000);
+    const date = new Date((message.timestamp * 1000) + DATA_TIMEZONE_OFFSET);
     const day = new Date(2000, 0, 1);
     day.setHours(date.getHours());
     day.setMinutes(date.getMinutes());
