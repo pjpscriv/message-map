@@ -1,12 +1,16 @@
-import {Component, ViewChild} from '@angular/core';
+import {Component, OnDestroy, ViewChild} from '@angular/core';
 import {select, Store} from '@ngrx/store';
 import {combineLatest, Observable, Subject} from 'rxjs';
-import {map} from 'rxjs/operators';
+import {map, takeUntil, filter} from 'rxjs/operators';
 import {Thread} from 'src/app/models/thread.interface';
 import {selectThreads} from 'src/app/store/app.selectors';
 import {AppState} from 'src/app/store/app.state';
 import {DatePipe} from '@angular/common';
 import {MatSelectionList} from '@angular/material/list';
+import {FilterService} from '../../shared/filter.service';
+import {Crossfilter} from '../../models/crossfilter.aliases';
+import {Message} from '../../models/message.interface';
+import crossfilter from 'crossfilter2';
 
 type SortType = {
   name: string;
@@ -20,7 +24,7 @@ type SortType = {
   styleUrls: ['./thread-list.component.scss'],
   providers: [ DatePipe ]
 })
-export class ThreadListComponent {
+export class ThreadListComponent implements OnDestroy {
   public threads$: Observable<Array<Thread>>;
   public sortType$: Subject<SortType> = new Subject<SortType>();
   public sortTypes: Array<SortType> = [
@@ -54,11 +58,15 @@ export class ThreadListComponent {
   public threadCount = 0;
   public allThreadsSelected = true;
 
+  private destroyed$ = new Subject();
+  private filter: Crossfilter<Message>;
+
   // @ts-ignore
   @ViewChild('threads') threads: MatSelectionList;
 
   constructor(
     private store: Store<AppState>,
+    private filterService: FilterService,
     private datePipe: DatePipe
   ) {
     this.threads$ = combineLatest([this.sortType$,
@@ -69,6 +77,19 @@ export class ThreadListComponent {
         return threads.sort(sortType.method);
       })
     );
+
+    this.filter = crossfilter([]);
+    this.filterService.getMessageFilter().pipe(
+      takeUntil(this.destroyed$),
+      filter(messages => !!messages && messages?.size() !== 0))
+      .subscribe((messagesFilter: Crossfilter<Message>) => {
+        this.filter = messagesFilter;
+        const threadDimension = messagesFilter.dimension((message: Message) => message.thread_id);
+      });
+  }
+
+  public ngOnDestroy(): void {
+    this.destroyed$.next();
   }
 
   public sortChange(newSort: SortType | null): void {
