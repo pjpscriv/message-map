@@ -172,3 +172,9 @@ li {
 input[type="file"] {
     display: none;
 }
+
+.tick text {
+  font-weight: 700;
+  font-style: oblique;
+  text-transform: lowercase;
+}

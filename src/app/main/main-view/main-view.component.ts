@@ -1,31 +1,36 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
-import { select, Store } from '@ngrx/store';
-import { ResizedEvent } from 'angular-resize-event';
+import {AfterViewInit, Component, ElementRef, OnDestroy, ViewChild} from '@angular/core';
+import {Store} from '@ngrx/store';
+import {ResizedEvent} from 'angular-resize-event';
 import * as d3 from 'd3';
-import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
-import { debounceTime, filter, map, take, tap } from 'rxjs/operators';
-import { selectMessages } from 'src/app/store/app.selectors';
-import { AppState } from 'src/app/store/app.state';
-import { Message } from '../../models/message.interface';
-import { DatePipe } from '@angular/common';
-import { Crossfilter } from 'src/app/models/crossfilter.aliases';
-import { ZoomTransform } from 'd3';
+import {ZoomTransform} from 'd3';
+import {BehaviorSubject, Subject} from 'rxjs';
+import {debounceTime, filter, map, takeUntil, tap} from 'rxjs/operators';
+import {AppState} from 'src/app/store/app.state';
+import {Message} from '../../models/message.interface';
+import {Crossfilter} from 'src/app/models/crossfilter.aliases';
+import {FilterService} from '../../shared/filter.service';
+import crossfilter from 'crossfilter2';
+
+const SECONDS_PER_DAY = 86400;
 
 @Component({
   selector: 'app-main-view',
   templateUrl: './main-view.component.html',
   styleUrls: ['./main-view.component.css']
 })
-export class MainViewComponent implements AfterViewInit {
+export class MainViewComponent implements AfterViewInit, OnDestroy {
   @ViewChild('mainViewContainer') containerEl: any;
   @ViewChild('scatterplot') canvasEl: any;
   private canvasWrapperSize$: BehaviorSubject<ResizedEvent>;
   private canvasContext: any;
-  private messages$: Observable<Crossfilter<Message>>;
+  private destroyed$ = new Subject();
+  private filter: Crossfilter<Message>;
 
   // Dates
   private minDate = new Date(2010, 1, 1);
   private maxDate = new Date(2020, 1, 1);
+  private minTime = new Date(2000, 0, 1, 0, 0, 1);
+  private maxTime = new Date(2000, 0, 1, 23, 59, 59);
 
   // Axes
   private scaleX: any;
@@ -39,25 +44,21 @@ export class MainViewComponent implements AfterViewInit {
   private margin = 10;
 
   constructor(
-    private store: Store<AppState>
+    private store: Store<AppState>,
+    private filterService: FilterService
   ) {
     const initialSize = new ResizedEvent(new ElementRef(null), 0, 0, 0, 0);
     this.canvasWrapperSize$ = new BehaviorSubject<ResizedEvent>(initialSize);
 
-    this.messages$ = this.store.pipe(select(selectMessages),
-      filter(messages => !!messages && messages?.size() !== 0),
-      tap(messages => {
-        const dateRange = messages.dimension((message: Message) => message.date);
-        this.minDate = dateRange.bottom(1)[0].date;
-        this.maxDate = dateRange.top(1)[0].date;
-      }));
+    this.filter = crossfilter([]);
   }
 
 
   public ngAfterViewInit(): void {
     this.canvasContext = this.canvasEl.nativeElement.getContext('2d');
 
-    const canvasSize$ = this.canvasWrapperSize$.pipe(
+    this.canvasWrapperSize$.pipe(
+      takeUntil(this.destroyed$),
       tap(() => this.drawAxes()),
       debounceTime(1000),
       map((event: ResizedEvent) => {
@@ -65,19 +66,37 @@ export class MainViewComponent implements AfterViewInit {
         this.canvasEl.nativeElement.width = event.newWidth;
         this.canvasContext.clearRect(0, 0, this.canvasEl.nativeElement.width, this.canvasEl.nativeElement.height);
 
-        d3.select(this.canvasEl.nativeElement).call(
-          d3.zoom()
-          .scaleExtent([1, 300])
+        const zoom = d3.zoom()
+          .scaleExtent([1, 1600])
           .translateExtent([[0, 0], [this.canvasEl.nativeElement.clientWidth, this.canvasEl.nativeElement.clientHeight]])
-          .on('zoom', (transform: ZoomTransform) => this.onZoom(transform))
-        );
+          .on('zoom', (transform: ZoomTransform) => this.onZoom(transform));
+
+        d3.select(this.canvasEl.nativeElement).call(zoom);
+
+        // TODO: remember zoom level - broken atm
+        this.drawScatterplot();
+
         console.log('Resized canvas: ', this.canvasContext.canvas.width, this.canvasContext.canvas.height);
       })
-    );
+    ).subscribe();
 
-    combineLatest([this.messages$, canvasSize$])
-      .pipe(debounceTime(1000))
-      .subscribe(([messages, _]) => this.drawScatterplot(messages));
+    this.filterService.getMessageFilter().pipe(
+        takeUntil(this.destroyed$),
+        filter(messages => !!messages && messages?.size() !== 0))
+      .subscribe((messagesFilter: Crossfilter<Message>) => {
+        this.filter = messagesFilter;
+        const dateRange = messagesFilter.dimension((message: Message) => message.date);
+        this.minDate = dateRange.bottom(1)[0].date;
+        this.maxDate = dateRange.top(1)[0].date;
+        console.log(`Messages received: ${messagesFilter.size()}`);
+        // this.drawScatterplot();
+        this.onZoom({ transform: {x: 0, y: 0, k: 1}});
+      });
+  }
+
+
+  public ngOnDestroy(): void {
+    this.destroyed$.next();
   }
 
 
@@ -92,21 +111,26 @@ export class MainViewComponent implements AfterViewInit {
 
     // Set up Axes
     this.scaleX = d3.scaleTime().range([this.margin, w1]).domain([this.minDate, this.maxDate]);
-    this.scaleY = d3.scaleTime().range([this.margin, h1]);
+    this.scaleY = d3.scaleTime().range([this.margin, h1]).domain([this.minTime, this.maxTime]);
 
-    if (transform) {
-      this.scaleX = transform.rescaleX(this.scaleX)//.interpolate(d3.interpolateRound);
-      this.scaleY = transform.rescaleY(this.scaleY)//.interpolate(d3.interpolateRound);
+    if (transform?.rescaleX) {
+      this.scaleX = transform.rescaleX(this.scaleX); // .interpolate(d3.interpolateRound);
+      this.scaleY = transform.rescaleY(this.scaleY); // .interpolate(d3.interpolateRound);
     }
 
-    this.axisX = d3.axisBottom(this.scaleX);
-    this.axisY = d3.axisLeft(this.scaleY)
-      .ticks(d3.timeHour.every(2), '%I %p')
-      .tickFormat(x => {
-          let s = new DatePipe('en-US').transform(x as Date, 'haaaaa\'m\'') as string;
-          s = s === '12am' ? 'midnight' : s === '12pm' ? 'midday' : s;
-          return s;
-      });
+    const tickSeconds = (this.scaleX.ticks()[1] - this.scaleX.ticks()[0]) / 1000;
+    if (tickSeconds < SECONDS_PER_DAY) {
+      this.axisX = d3.axisBottom(this.scaleX).tickValues(this.customTicks(this.scaleX.domain()));
+    } else {
+      this.axisX = d3.axisBottom(this.scaleX);
+    }
+
+    this.axisY = d3.axisLeft(this.scaleY).ticks(12);
+      // .tickFormat(x => {
+      //     let s = new DatePipe('en-US').transform(x as Date, 'haaaaa\'m\'') as string;
+      //     s = s === '12am' ? 'midnight' : s === '12pm' ? 'midday' : s;
+      //     return s;
+      // });
 
     // Clear Axes
     d3.select('.y-axis').selectAll('.axis--y').remove();
@@ -116,37 +140,30 @@ export class MainViewComponent implements AfterViewInit {
     d3.select('.x-axis').append('g').attr('class', 'x axis--x')
       .attr('transform', `translate(${xAxisShift}, 1)`).call(this.axisX);
     d3.select('.y-axis').append('g').attr('class', 'y axis--y')
-      .attr('transform', `translate(${this.yAxisWidth-1}, ${yAxisShift})`).call(this.axisY);
+      .attr('transform', `translate(${this.yAxisWidth - 1}, ${yAxisShift})`).call(this.axisY);
 
-    // Timeout to get around https://angular.io/errors/NG0100
-    setTimeout(() => this.xAxisBottom = yAxisShift - 20, 0);
+    setTimeout(() => this.xAxisBottom = yAxisShift - 20, 0); // To fix NG0100 Error
   }
 
 
-  private drawScatterplot(messages: Crossfilter<Message>, scale?: number): void {
+  private drawScatterplot(scale: number = 1): void {
     // this.drawAxes();
     this.canvasContext.clearRect(0, 0, this.canvasEl.nativeElement.width, this.canvasEl.nativeElement.height);
     const colorBase = '#0099FF';
 
-      // this.canvasContext.globalAlpha = 1;
-      // this.canvasContext.fillStyle = '#00FF00';
-      // this.canvasContext.rect(0, 0, this.canvasEl.nativeElement.width, this.canvasEl.nativeElement.height)
-      // this.canvasContext.fill()
-
-    messages.allFiltered().forEach((d: Message) => {
+    this.filter.allFiltered().forEach((d: Message) => {
       this.canvasContext.beginPath();
       // const useColors = coloredBarchart && colorScale.domain().includes(coloredBarchart.get_data(d));
       const useColors = false;
+
+      // console.count('draw');
       // this.canvasContext.fillStyle = colorScale(coloredBarchart.get_data(d));
       this.canvasContext.fillStyle = useColors ? '' : colorBase;
-      this.canvasContext.globalAlpha = 0.5;
+      this.canvasContext.globalAlpha = 0.3;
 
-      if (!scale || scale < 40){
-        this.canvasContext.arc(this.scaleX(d.date), this.scaleY(d.timeSeconds), 2, 0, 2 * Math.PI, true);
-      } else {
-        const radius = 2// + ((scale - 40) / 2);
-        this.canvasContext.arc(this.scaleX(d.date), this.scaleY(d.timeSeconds), radius, 0, 2 * Math.PI, true);
-      }
+      const radius = 2 * Math.log(scale + 1);
+      this.canvasContext.arc(this.scaleX(d.date), this.scaleY(d.timeSeconds), radius, 0, 2 * Math.PI, true);
+
       this.canvasContext.fill();
       this.canvasContext.closePath();
     });
@@ -158,16 +175,25 @@ export class MainViewComponent implements AfterViewInit {
   }
 
 
+  private customTicks(domain: Array<any>): Array<Date> {
+    const time = d3.timeDay.ceil(domain[0]);
+    const timeEnd = d3.timeDay.ceil(domain[1]);
+    const times = [];
+    while (time < timeEnd) {
+      times.push(new Date(+time));
+      time.setDate(time.getDate() + 1);
+    }
+    return times;
+  }
+
+
   private onZoom({transform}: any): void {
-    console.log(`Zoomed!: ${transform.x}, ${transform.y}, ${transform.k}`)
-    this.messages$.pipe(take(1))
-      .subscribe((messages: Crossfilter<Message>) => {
-        this.canvasContext.save()
-        // this.canvasContext.translate(transform.x, transform.y);
-        // this.canvasContext.scale(transform.k, transform.k);
-        this.drawAxes(transform);
-        this.drawScatterplot(messages, transform.k);
-        this.canvasContext.restore();
-      })
+    console.log(`Zoomed!: ${transform.x}, ${transform.y}, ${transform.k}`);
+    this.canvasContext.save();
+    // this.canvasContext.translate(transform.x, transform.y);
+    // this.canvasContext.scale(transform.k, transform.k);
+    this.drawAxes(transform);
+    this.drawScatterplot(transform.k);
+    this.canvasContext.restore();
   }
 }
