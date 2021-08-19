@@ -2,16 +2,26 @@ import {AfterViewInit, Component, ElementRef, OnDestroy, ViewChild} from '@angul
 import {Store} from '@ngrx/store';
 import {ResizedEvent} from 'angular-resize-event';
 import * as d3 from 'd3';
-import {ZoomTransform} from 'd3';
+import {zoomTransform, ZoomTransform} from 'd3';
 import {BehaviorSubject, Subject} from 'rxjs';
 import {debounceTime, filter, map, takeUntil, tap} from 'rxjs/operators';
 import {AppState} from 'src/app/store/app.state';
 import {Message} from '../../models/message.interface';
 import {Crossfilter} from 'src/app/models/crossfilter.aliases';
 import {FilterService} from '../../shared/filter.service';
-import crossfilter from 'crossfilter2';
+import crossfilter, { Dimension } from 'crossfilter2';
 
 const SECONDS_PER_DAY = 86400;
+
+class mockTransform {
+  x = 0;
+  y = 0;
+  k = 1;
+  translate(x: number, y: number) {
+    this.x = x;
+    this.y = y;
+  }
+}
 
 @Component({
   selector: 'app-main-view',
@@ -24,7 +34,11 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
   private canvasWrapperSize$: BehaviorSubject<ResizedEvent>;
   private canvasContext: any;
   private destroyed$ = new Subject();
+
+  // Filters
   private filter: Crossfilter<Message>;
+  private dateDimension: Dimension<Message, Date>;
+  private timeDimenion: Dimension<Message, Date>;
 
   // Dates
   private minDate = new Date(2010, 1, 1);
@@ -37,6 +51,7 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
   private scaleY: any;
   private axisX: any;
   private axisY: any;
+  private transform: ZoomTransform = new mockTransform() as ZoomTransform;
 
   // UI Constants
   public yAxisWidth = 50;
@@ -51,6 +66,8 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
     this.canvasWrapperSize$ = new BehaviorSubject<ResizedEvent>(initialSize);
 
     this.filter = crossfilter([]);
+    this.dateDimension = this.filter.dimension((message: Message) => message.date);
+    this.timeDimenion = this.filter.dimension((message: Message) => message.timeSeconds);
   }
 
 
@@ -62,32 +79,47 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
       tap(() => this.drawAxes()),
       debounceTime(1000),
       map((event: ResizedEvent) => {
+        // TODO: FIGURE OUT HOW TO scale the Zoom transform
+        this.transform.translate(
+          this.transform.x * (event.newWidth / this.canvasEl.nativeElement.width),
+          this.transform.y * (event.newHeight / this.canvasEl.nativeElement.height)
+        )
+
+        // Set new canvas size
         this.canvasEl.nativeElement.height = event.newHeight;
         this.canvasEl.nativeElement.width = event.newWidth;
         this.canvasContext.clearRect(0, 0, this.canvasEl.nativeElement.width, this.canvasEl.nativeElement.height);
 
-        const zoom = d3.zoom()
-          .scaleExtent([1, 1600])
-          .translateExtent([[0, 0], [this.canvasEl.nativeElement.clientWidth, this.canvasEl.nativeElement.clientHeight]])
-          .on('zoom', (transform: ZoomTransform) => this.onZoom(transform));
-
-        d3.select(this.canvasEl.nativeElement).call(zoom);
+        // Reset zoom parameters
+        // const zoom = d3.zoom()
+        //   .scaleExtent([1, 1600])
+        //   .translateExtent([[0, 0], [this.canvasEl.nativeElement.clientWidth, this.canvasEl.nativeElement.clientHeight]])
+        //   .on('zoom', (transform: ZoomTransform) => this.onZoom(transform));
+        // d3.select(this.canvasEl.nativeElement).call(zoom);
 
         // TODO: remember zoom level - broken atm
+        this.drawAxes();
         this.drawScatterplot();
 
         console.log('Resized canvas: ', this.canvasContext.canvas.width, this.canvasContext.canvas.height);
       })
     ).subscribe();
 
+    const zoom = d3.zoom()
+          .scaleExtent([1, 1600])
+          .translateExtent([[0, 0], [this.canvasEl.nativeElement.clientWidth, this.canvasEl.nativeElement.clientHeight]])
+          .on('zoom', (transform: ZoomTransform) => this.onZoom(transform));
+        d3.select(this.canvasEl.nativeElement).call(zoom);
+
     this.filterService.getMessageFilter().pipe(
         takeUntil(this.destroyed$),
         filter(messages => !!messages && messages?.size() !== 0))
       .subscribe((messagesFilter: Crossfilter<Message>) => {
         this.filter = messagesFilter;
-        const dateRange = messagesFilter.dimension((message: Message) => message.date);
-        this.minDate = dateRange.bottom(1)[0].date;
-        this.maxDate = dateRange.top(1)[0].date;
+        this.dateDimension = messagesFilter.dimension((message: Message) => message.date);
+        this.timeDimenion = messagesFilter.dimension((message: Message) => message.timeSeconds);
+        this.minDate = this.dateDimension.bottom(1)[0].date;
+        this.maxDate = this.dateDimension.top(1)[0].date;
         console.log(`Messages received: ${messagesFilter.size()}`);
         // this.drawScatterplot();
         this.onZoom({ transform: {x: 0, y: 0, k: 1}});
@@ -100,7 +132,7 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
   }
 
 
-  private drawAxes(transform?: any): void {
+  private drawAxes(): void {
     // Get New Values
     const canvasEl = this.canvasEl.nativeElement;
     const containerEl = this.containerEl.nativeElement;
@@ -113,9 +145,9 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
     this.scaleX = d3.scaleTime().range([this.margin, w1]).domain([this.minDate, this.maxDate]);
     this.scaleY = d3.scaleTime().range([this.margin, h1]).domain([this.minTime, this.maxTime]);
 
-    if (transform?.rescaleX) {
-      this.scaleX = transform.rescaleX(this.scaleX); // .interpolate(d3.interpolateRound);
-      this.scaleY = transform.rescaleY(this.scaleY); // .interpolate(d3.interpolateRound);
+    if (this.transform?.rescaleX) {
+      this.scaleX = this.transform.rescaleX(this.scaleX).interpolate(d3.interpolateRound);
+      this.scaleY = this.transform.rescaleY(this.scaleY); // .interpolate(d3.interpolateRound);
     }
 
     const tickSeconds = (this.scaleX.ticks()[1] - this.scaleX.ticks()[0]) / 1000;
@@ -146,10 +178,13 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
   }
 
 
-  private drawScatterplot(scale: number = 1): void {
+  private drawScatterplot(): void {
     // this.drawAxes();
     this.canvasContext.clearRect(0, 0, this.canvasEl.nativeElement.width, this.canvasEl.nativeElement.height);
     const colorBase = '#0099FF';
+
+    this.dateDimension.filterRange(this.scaleX.domain());
+    this.timeDimenion.filterRange(this.scaleY.domain());
 
     this.filter.allFiltered().forEach((d: Message) => {
       this.canvasContext.beginPath();
@@ -161,7 +196,7 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
       this.canvasContext.fillStyle = useColors ? '' : colorBase;
       this.canvasContext.globalAlpha = 0.3;
 
-      const radius = 2 * Math.log(scale + 1);
+      const radius = 2 * Math.log(this.transform.k + 1);
       this.canvasContext.arc(this.scaleX(d.date), this.scaleY(d.timeSeconds), radius, 0, 2 * Math.PI, true);
 
       this.canvasContext.fill();
@@ -192,8 +227,10 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
     this.canvasContext.save();
     // this.canvasContext.translate(transform.x, transform.y);
     // this.canvasContext.scale(transform.k, transform.k);
-    this.drawAxes(transform);
-    this.drawScatterplot(transform.k);
+
+    this.transform = transform;
+    this.drawAxes();
+    this.drawScatterplot();
     this.canvasContext.restore();
   }
 }
