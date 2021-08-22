@@ -13,11 +13,11 @@ import crossfilter, { Dimension } from 'crossfilter2';
 
 const SECONDS_PER_DAY = 86400;
 
-class mockTransform {
+class MockTransform {
   x = 0;
   y = 0;
   k = 1;
-  translate(x: number, y: number) {
+  translate(x: number, y: number): void {
     this.x = x;
     this.y = y;
   }
@@ -51,7 +51,7 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
   private scaleY: any;
   private axisX: any;
   private axisY: any;
-  private transform: ZoomTransform = new mockTransform() as ZoomTransform;
+  private transform: ZoomTransform = new MockTransform() as ZoomTransform;
 
   // UI Constants
   public yAxisWidth = 50;
@@ -79,11 +79,11 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
       tap(() => this.drawAxes()),
       debounceTime(1000),
       map((event: ResizedEvent) => {
-        // TODO: FIGURE OUT HOW TO scale the Zoom transform
-        this.transform.translate(
-          this.transform.x * (event.newWidth / this.canvasEl.nativeElement.width),
-          this.transform.y * (event.newHeight / this.canvasEl.nativeElement.height)
-        )
+        // TODO: FIGURE OUT HOW TO scale the Zoom transform properly
+        // this.transform.translate(
+        //   this.transform.x * (event.newWidth / this.canvasEl.nativeElement.width),
+        //   this.transform.y * (event.newHeight / this.canvasEl.nativeElement.height)
+        // )
 
         // Set new canvas size
         this.canvasEl.nativeElement.height = event.newHeight;
@@ -91,11 +91,11 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
         this.canvasContext.clearRect(0, 0, this.canvasEl.nativeElement.width, this.canvasEl.nativeElement.height);
 
         // Reset zoom parameters
-        // const zoom = d3.zoom()
-        //   .scaleExtent([1, 1600])
-        //   .translateExtent([[0, 0], [this.canvasEl.nativeElement.clientWidth, this.canvasEl.nativeElement.clientHeight]])
-        //   .on('zoom', (transform: ZoomTransform) => this.onZoom(transform));
-        // d3.select(this.canvasEl.nativeElement).call(zoom);
+        const zoom = d3.zoom()
+          .scaleExtent([1, 1600])
+          .translateExtent([[0, 0], [this.canvasEl.nativeElement.clientWidth, this.canvasEl.nativeElement.clientHeight]])
+          .on('zoom', (transform: ZoomTransform) => this.onZoom(transform));
+        d3.select(this.canvasEl.nativeElement).call(zoom);
 
         // TODO: remember zoom level - broken atm
         this.drawAxes();
@@ -104,12 +104,6 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
         console.log('Resized canvas: ', this.canvasContext.canvas.width, this.canvasContext.canvas.height);
       })
     ).subscribe();
-
-    const zoom = d3.zoom()
-          .scaleExtent([1, 1600])
-          .translateExtent([[0, 0], [this.canvasEl.nativeElement.clientWidth, this.canvasEl.nativeElement.clientHeight]])
-          .on('zoom', (transform: ZoomTransform) => this.onZoom(transform));
-        d3.select(this.canvasEl.nativeElement).call(zoom);
 
     this.filterService.getMessageFilter().pipe(
         takeUntil(this.destroyed$),
@@ -124,11 +118,6 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
         // this.drawScatterplot();
         this.onZoom({ transform: {x: 0, y: 0, k: 1}});
       });
-  }
-
-
-  public ngOnDestroy(): void {
-    this.destroyed$.next();
   }
 
 
@@ -232,5 +221,10 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
     this.drawAxes();
     this.drawScatterplot();
     this.canvasContext.restore();
+  }
+
+
+  public ngOnDestroy(): void {
+    this.destroyed$.next();
   }
 }
