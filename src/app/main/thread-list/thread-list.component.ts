@@ -1,7 +1,7 @@
 import {Component, OnDestroy, ViewChild} from '@angular/core';
 import {select, Store} from '@ngrx/store';
 import {combineLatest, Observable, Subject} from 'rxjs';
-import {map, takeUntil, filter} from 'rxjs/operators';
+import {filter, map, takeUntil} from 'rxjs/operators';
 import {Thread} from 'src/app/models/thread.interface';
 import {selectThreads} from 'src/app/store/app.selectors';
 import {AppState} from 'src/app/store/app.state';
@@ -10,7 +10,7 @@ import {MatSelectionList, MatSelectionListChange} from '@angular/material/list';
 import {FilterService} from '../../shared/filter.service';
 import {Crossfilter} from '../../models/crossfilter.aliases';
 import {Message} from '../../models/message.interface';
-import crossfilter, {Dimension} from 'crossfilter2';
+import crossfilter from 'crossfilter2';
 
 type SortType = {
   name: string;
@@ -25,6 +25,8 @@ type SortType = {
   providers: [ DatePipe ]
 })
 export class ThreadListComponent implements OnDestroy {
+  // @ts-ignore
+  @ViewChild('threads') threads: MatSelectionList;
   public threads$: Observable<Array<Thread>>;
   public sortType$: Subject<SortType> = new Subject<SortType>();
   public sortTypes: Array<SortType> = [
@@ -58,13 +60,10 @@ export class ThreadListComponent implements OnDestroy {
   public threadCount = 0;
   public allThreadsSelected = true;
 
-  private destroyed$ = new Subject();
   private filter = crossfilter([] as Message[]);
-
   private threadDimension = this.filter.dimension(m => m.thread_id);
 
-  // @ts-ignore
-  @ViewChild('threads') threads: MatSelectionList;
+  private destroyed$ = new Subject();
 
   constructor(
     private store: Store<AppState>,
@@ -91,13 +90,9 @@ export class ThreadListComponent implements OnDestroy {
 
   public onSelectionChange(event: MatSelectionListChange): void {
     const selectedIds = new Set(event.source.selectedOptions.selected.map(option => option._getHostElement().id));
-    console.log(`Selected ${selectedIds.size} threads`);
-    this.threadDimension.filter(id => {
-      // console.log(`Filter check: ${id}`);
-      return selectedIds.has(id as string);
-    });
-    // FIXME: This is def a bad way to do this - figure out a better way
-    this.filterService.setMessageFiler(this.filter);
+    // console.log(`Selected ${selectedIds.size} threads`);
+    this.threadDimension.filter(id => selectedIds.has(id as string));
+    this.filterService.redrawFilter();
   }
 
   public ngOnDestroy(): void {
@@ -151,6 +146,7 @@ export class ThreadListComponent implements OnDestroy {
       this.threads.deselectAll();
       this.threadDimension.filter('');
     }
+    this.filterService.redrawFilter();
   }
 
   public someThreadsSelected(): boolean {

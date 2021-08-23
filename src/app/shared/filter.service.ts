@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {Crossfilter} from '../models/crossfilter.aliases';
 import {Message} from '../models/message.interface';
 import {AppState} from '../store/app.state';
@@ -12,6 +12,8 @@ import {UpdateMessageFilterAction} from '../store/app.actions';
 })
 export class FilterService {
 
+  private redraw$ = new Subject();
+
   constructor(private store: Store<AppState>) { }
 
   public getMessageFilter(): Observable<Crossfilter<Message>> {
@@ -20,5 +22,13 @@ export class FilterService {
 
   public setMessageFiler(messageFilter: Crossfilter<Message>): void {
     this.store.dispatch(UpdateMessageFilterAction({ messageFilter }));
+  }
+
+  public redrawFilter(): void {
+    this.redraw$.next();
+  }
+
+  public getFilterRedraw(): Subject<any> {
+    return this.redraw$;
   }
 }

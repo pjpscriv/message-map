@@ -68,7 +68,6 @@ export class DemoDataService {
       media_files: [],
       message: message.message,
       length: message.length,
-      // TODO: Fix demo data time / date
       date: new Date(message.date),
       timeSeconds: this.getTimeSeconds(message),
       reactions: [],
