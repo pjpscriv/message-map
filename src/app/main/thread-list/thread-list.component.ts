@@ -2,14 +2,14 @@ import {Component, OnDestroy, ViewChild} from '@angular/core';
 import {select, Store} from '@ngrx/store';
 import {combineLatest, Observable, Subject} from 'rxjs';
 import {filter, map, takeUntil} from 'rxjs/operators';
-import {Thread} from 'src/app/models/thread.interface';
+import {Thread} from 'src/app/types/thread.interface';
 import {selectThreads} from 'src/app/store/app.selectors';
 import {AppState} from 'src/app/store/app.state';
 import {DatePipe} from '@angular/common';
 import {MatSelectionList, MatSelectionListChange} from '@angular/material/list';
 import {FilterService} from '../../shared/filter.service';
-import {Crossfilter} from '../../models/crossfilter.aliases';
-import {Message} from '../../models/message.interface';
+import {Crossfilter} from '../../types/crossfilter.aliases';
+import {Message} from '../../types/message.interface';
 import crossfilter from 'crossfilter2';
 
 type SortType = {

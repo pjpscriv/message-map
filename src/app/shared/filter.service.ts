@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Observable, Subject} from 'rxjs';
-import {Crossfilter} from '../models/crossfilter.aliases';
-import {Message} from '../models/message.interface';
+import {Crossfilter} from '../types/crossfilter.aliases';
+import {Message} from '../types/message.interface';
 import {AppState} from '../store/app.state';
 import {select, Store} from '@ngrx/store';
 import {selectMessages} from '../store/app.selectors';

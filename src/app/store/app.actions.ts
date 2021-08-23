@@ -1,7 +1,7 @@
 import {createAction, props} from '@ngrx/store';
-import {Thread } from '../models/thread.interface';
-import {Message} from '../models/message.interface';
-import {Crossfilter} from '../models/crossfilter.aliases';
+import {Thread } from '../types/thread.interface';
+import {Message} from '../types/message.interface';
+import {Crossfilter} from '../types/crossfilter.aliases';
 
 export enum AppActionTypes {
   UPDATE_MESSAGES = '[Messages] Update Messages',

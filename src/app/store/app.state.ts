@@ -1,7 +1,7 @@
 import crossfilter from 'crossfilter2';
-import { Crossfilter } from '../models/crossfilter.aliases';
-import { Message } from '../models/message.interface';
-import { ThreadMap } from '../models/thread.interface';
+import { Crossfilter } from '../types/crossfilter.aliases';
+import { Message } from '../types/message.interface';
+import { ThreadMap } from '../types/thread.interface';
 
 export interface AppState {
     messages: Crossfilter<Message>;

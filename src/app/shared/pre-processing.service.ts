@@ -1,10 +1,10 @@
 import {Injectable} from '@angular/core';
-import {ParsedThread, Thread, ThreadMap} from '../models/thread.interface';
+import {ParsedThread, Thread, ThreadMap} from '../types/thread.interface';
 import {GoogleAnalyticsService} from './google-analytics.service';
 import {MessageDataService} from './message-data.service';
 import * as d3 from 'd3';
 import * as assert from 'assert';
-import {Media, MEDIA_TYPE, Message, ParsedMessage, Reaction} from '../models/message.interface';
+import {Media, MEDIA_TYPE, Message, ParsedMessage, Reaction} from '../types/message.interface';
 
 type WebkitFile = File & { webkitRelativePath: string };
 

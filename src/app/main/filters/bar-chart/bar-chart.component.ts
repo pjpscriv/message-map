@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Message } from 'src/app/models/message.interface';
+import { Message } from 'src/app/types/message.interface';
 
 interface BarChartConfig {
   getData: (m: Message) => any;

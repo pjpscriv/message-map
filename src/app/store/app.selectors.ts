@@ -1,7 +1,7 @@
 import { createSelector } from '@ngrx/store';
-import { Crossfilter } from '../models/crossfilter.aliases';
-import { Message } from '../models/message.interface';
-import { ThreadMap } from '../models/thread.interface';
+import { Crossfilter } from '../types/crossfilter.aliases';
+import { Message } from '../types/message.interface';
+import { ThreadMap } from '../types/thread.interface';
 import { AppState } from './app.state';
 
 export const selectMessages = createSelector(

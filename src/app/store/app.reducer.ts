@@ -1,6 +1,6 @@
 import { createReducer, on } from '@ngrx/store';
 import crossfilter from 'crossfilter2';
-import { Thread, ThreadMap } from '../models/thread.interface';
+import { Thread, ThreadMap } from '../types/thread.interface';
 import {
   AddThreadAction,
   UpdateDarkModeAction,

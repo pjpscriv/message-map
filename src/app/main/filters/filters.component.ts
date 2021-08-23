@@ -8,11 +8,11 @@ import { Component } from '@angular/core';
 export class FiltersComponent {
 
   public barcharts = [
-    { name: 'Chart 1' },
-    { name: 'Chart 2' },
-    { name: 'Chart 3' },
-    { name: 'Chart 4' },
-    { name: 'Chart 5' }
+    { name: 'Sent / Received' },
+    { name: '# of Participants' },
+    { name: 'Media Messages' },
+    { name: 'Message Length' },
+    { name: 'Week Day' }
   ];
 
   constructor() {}

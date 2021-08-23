@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
-import {ThreadMap} from '../models/thread.interface';
-import {MEDIA_TYPE, Message} from '../models/message.interface';
+import {ThreadMap} from '../types/thread.interface';
+import {MEDIA_TYPE, Message} from '../types/message.interface';
 import {MessageDataService} from './message-data.service';
-import {DemoData, DemoMessage} from '../models/demo-data.interface';
+import {DemoData, DemoMessage} from '../types/demo-data.interface';
 import {HttpClient} from '@angular/common/http';
 
 const DATA_TIMEZONE_OFFSET = 12* 60 * 60 * 1000;
