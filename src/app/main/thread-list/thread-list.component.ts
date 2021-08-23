@@ -59,9 +59,9 @@ export class ThreadListComponent implements OnDestroy {
   public allThreadsSelected = true;
 
   private destroyed$ = new Subject();
-  private filter: Crossfilter<Message>;
+  private filter = crossfilter([] as Message[]);
 
-  private threadDimension: Dimension<Message, string>;
+  private threadDimension = this.filter.dimension(m => m.thread_id);
 
   // @ts-ignore
   @ViewChild('threads') threads: MatSelectionList;
@@ -80,8 +80,6 @@ export class ThreadListComponent implements OnDestroy {
       })
     );
 
-    this.filter = crossfilter([]);
-    this.threadDimension = this.filter.dimension(m => m.thread_id);
     this.filterService.getMessageFilter().pipe(
       takeUntil(this.destroyed$),
       filter(messages => !!messages && messages?.size() !== 0))
@@ -120,6 +118,11 @@ export class ThreadListComponent implements OnDestroy {
       case 3: return 'people'; break;
       default: return 'groups';
     }
+  }
+
+  public getColors(thread: Thread): any {
+    // return `#${Math.random().toString(16).slice(-6)}`;
+    return { backgroundColor: '#0099FF', color: 'white' };
   }
 
   public getSubtitle(thread: Thread): string {

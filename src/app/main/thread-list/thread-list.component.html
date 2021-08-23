@@ -2,7 +2,7 @@
 
   <div class="holder">
     <mat-list-item>
-      <h1>Chats</h1>
+      <h1>{{threadCount}} Chats</h1>
       <button mat-icon-button (click)="toggleColors()" class="color-button">
         <mat-icon>palette</mat-icon>
       </button>
@@ -42,7 +42,7 @@
         matListAvatar
         [matBadge]="thread.nb_participants > 3 ? thread.nb_participants : null"
         matBadgePosition="below"
-        [style.backgroundColor]="''">
+        [style]="getColors(thread)">
         {{getIcon(thread)}}
       </mat-icon>
       <div matLine class="thread-list-line">

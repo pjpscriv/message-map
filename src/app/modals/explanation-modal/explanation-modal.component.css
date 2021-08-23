@@ -1,0 +1,9 @@
+.with-icon {
+  display: flex;
+  align-items: center;
+}
+
+.with-icon mat-icon {
+  margin-left: 3px;
+  margin-right: 3px;
+}
