@@ -1,14 +1,17 @@
 import * as d3 from 'd3';
 import {Axis, ScaleTime} from 'd3';
+import * as fc from 'd3fc';
 
 const SECONDS_PER_DAY = 86400;
 
 export function dayLimitedAxis(scale: ScaleTime<any, any>): Axis<any>  {
   const tickSeconds = (scale.ticks()[1]?.getTime() - scale.ticks()[0]?.getTime()) / 1000;
   if (tickSeconds < SECONDS_PER_DAY) {
-    return d3.axisBottom(scale).tickValues(createDayTicks(scale.domain()));
+    return fc.axisBottom(scale)
+      .tickValues(createDayTicks(scale.domain()))
+      .tickCenterLabel(true);
   } else {
-    return d3.axisBottom(scale);
+    return fc.axisLabelRotate(fc.axisBottom(scale));
   }
 }
 

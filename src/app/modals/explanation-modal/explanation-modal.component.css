@@ -1,9 +1,6 @@
-.with-icon {
-  display: flex;
-  align-items: center;
-}
-
-.with-icon mat-icon {
-  margin-left: 3px;
-  margin-right: 3px;
+p mat-icon {
+  vertical-align: top;
+  font-size: 1.25em;
+  padding-left: 2px;
+  margin-right: -4px;
 }

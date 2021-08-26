@@ -2,6 +2,12 @@
   margin: 15px;
 }
 
+.mat-icon-button {
+  position: absolute;
+  right: 20px;
+  top: 10px;
+}
+
 .spaced {
   margin-bottom: 20px;
 }

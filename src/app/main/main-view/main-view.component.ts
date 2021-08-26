@@ -48,14 +48,14 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
   private minTime = new Date(2000, 0, 1, 0, 0, 1);
   private maxTime = new Date(2000, 0, 1, 23, 59, 59);
 
-  // Axes
+  // Scales
   private scaleX = d3.scaleTime().domain([this.minDate, this.maxDate]);
   private scaleY = d3.scaleTime().domain([this.minTime, this.maxTime]);
   private transform: ZoomTransform = new MockTransform() as ZoomTransform;
 
-  // UI Constants
+  // UI Values
   public yAxisWidth = 50;
-  public xAxisBottom = 0;
+  public xAxisHeight = 20;
   private margin = 10;
 
   constructor(
@@ -79,7 +79,6 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
       debounceTime(400)
     ).subscribe((event: ResizedEvent) => {
       this.setCanvasSize(event);
-      this.drawAxes();
       this.drawScatterplot();
     });
 
@@ -118,16 +117,14 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
     const clientWidth = this.canvasEl.nativeElement.clientWidth;
     const clientHeight = this.canvasEl.nativeElement.clientHeight;
 
-    // Add Zoom & Scales
+    // Add Zoom
     const zoom = d3.zoom()
       .scaleExtent([1, 1600])
       .translateExtent([[0, 0], [clientWidth, clientHeight]])
       .on('zoom', (transform: ZoomTransform) => this.onZoom(transform));
     d3.select(this.canvasEl.nativeElement).call(zoom);
-    this.scaleX.range([this.margin, clientWidth - this.margin]);
-    this.scaleY.range([this.margin, clientHeight - this.margin]);
 
-    // Fancy maths to get correct resize shift
+    // Fancy maths to shift view after resize
     const k = this.transform.k;
     const x1 = this.transform.x;
     const y1 = this.transform.y;
@@ -167,13 +164,17 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
     const xAxisShift = ((container.clientWidth - canvas.clientWidth) + this.yAxisWidth) / 2;
     const yAxisShift = (container.clientHeight - canvas.clientHeight) / 2;
 
+    // Scales
+    this.scaleX.range([this.margin, canvas.clientWidth - this.margin]);
+    this.scaleY.range([this.margin, canvas.clientHeight - this.margin]);
+
     // Draw New Axes
     d3.select('.x-axis').append('g').attr('class', 'x axis--x')
       .attr('transform', `translate(${xAxisShift}, 1)`).call(axisX);
     d3.select('.y-axis').append('g').attr('class', 'y axis--y')
       .attr('transform', `translate(${this.yAxisWidth - 1}, ${yAxisShift})`).call(axisY);
 
-    setTimeout(() => this.xAxisBottom = yAxisShift - 20, 0); // To fix NG0100 Error
+    setTimeout(() => this.xAxisHeight = yAxisShift, 0); // To fix NG0100 Error
   }
 
   private drawScatterplot(): void {

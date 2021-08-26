@@ -174,7 +174,7 @@ input[type="file"] {
 }
 
 .tick text {
-  font-weight: 700;
+  /*font-weight: 700;*/
   font-style: oblique;
-  text-transform: lowercase;
+  /*text-transform: lowercase;*/
 }

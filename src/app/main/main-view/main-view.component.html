@@ -3,5 +3,5 @@
   <div class="canvas-wrapper border" (resized)="canvasWrapperSize$.next($event)">
     <canvas #scatterplot class="scatterplot"></canvas>
   </div>
-  <svg class="x-axis" [style.bottom]="xAxisBottom+'px'"></svg>
+  <svg class="x-axis" [style.height]="xAxisHeight+'px'"></svg>
 </div>
