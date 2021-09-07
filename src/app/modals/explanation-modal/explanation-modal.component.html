@@ -9,19 +9,20 @@
   <h1 mat-dialog-title>What am I seeing?</h1>
   <div>
     <p>
-      In the central pane, you can see all your messages. Horizontally you've got the date,
-      and vertically the time of day. Each dot represents a message that you sent or received.
+      In the central pane, you can see all your messages. Horizontally you've got the date, and vertically the time of
+      day. Each dot represents a message that you sent or received. This central pane can be zoomed to see more detail
+
     </p>
     <p>
-      You can zoom in on this
+      Clicking the menu icon in the top left <mat-icon [color]="'primary'">menu</mat-icon>, will open a pane containing
+      a list of all your chats. From here you can select and the central view will be updated accordingly. You can also
+      give each chat a unique color by clicking the palette icon <mat-icon>palette</mat-icon> at the top of the pane.
     </p>
     <p>
-      If you click the <mat-icon [color]="'primary'">menu</mat-icon> it will open a list of your chats
-    </p>
-    <p>
-      On the right side of the screen, there are a bunch of histograms. These histograms give
-      you statistics about your messages (number of messsages sent, most active conversation, etc..),
-      but more interestingly, <mat-icon [color]="'primary'">filter_list</mat-icon> they allow you to filter your analysis. If you click on a bar, you
+      Clicking the <b>Filters</b> <mat-icon [color]="'primary'">filter_list</mat-icon> button in the top right
+      will open a pane containing a bunch of histograms. These histograms give
+      you statistics about your messages (number of messages sent, most active conversation, etc..),
+      but more interestingly,  they allow you to filter your analysis. If you click on a bar, you
       can keep only the messages corresponding to this attribute, and all the other graphs will
       update automatically. This way, you can analyse for example who sends more messages in a
       particular conversation. Or what conversations are more active on the weekend versus during the week.
@@ -36,7 +37,7 @@
   <div>
     <p>
       The data displayed behind this window is random data. Do some tests to understand
-      how it works, then click on "Explore your own data" to play with your messages.
+      how it works, then click on "Explore my data" to play with your messages.
     </p>
     <p>
       Authors :

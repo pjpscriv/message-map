@@ -11,6 +11,7 @@ import {FilterService} from '../../shared/filter.service';
 import {Crossfilter} from '../../types/crossfilter.aliases';
 import {Message} from '../../types/message.interface';
 import crossfilter from 'crossfilter2';
+import {COLOR_ENUM, ColorService} from '../../shared/color.service';
 
 type SortType = {
   name: string;
@@ -60,7 +61,6 @@ export class ThreadListComponent implements OnDestroy {
   public threadCount = 0;
   public allThreadsSelected = true;
 
-  private colorListItems = false;
   private filter = crossfilter([] as Message[]);
   private threadDimension = this.filter.dimension(m => m.thread_id);
 
@@ -69,6 +69,7 @@ export class ThreadListComponent implements OnDestroy {
   constructor(
     private store: Store<AppState>,
     private filterService: FilterService,
+    private colorService: ColorService,
     private datePipe: DatePipe
   ) {
     this.threads$ = combineLatest([this.sortType$,
@@ -146,16 +147,20 @@ export class ThreadListComponent implements OnDestroy {
   }
 
   public getColors(thread: Thread): any {
-    if (this.colorListItems) {
-      const rand = `#${Math.random().toString(16).slice(-6)}`;
-      return this.stringToColor(thread.id);
+    if (this.colorService.getColoredState() === COLOR_ENUM.ThreadsColored) {
+      return this.colorService.stringToColor(thread.id);
     } else {
       return '#0099FF';
     }
   }
 
   public toggleColors(): void {
-    this.colorListItems = !this.colorListItems;
+    if (this.colorService.getColoredState() === COLOR_ENUM.None) {
+      this.colorService.setColoredState(COLOR_ENUM.ThreadsColored);
+    } else {
+      this.colorService.setColoredState(COLOR_ENUM.None);
+    }
+    this.filterService.redrawFilter();
   }
 
   public trackByThreadId(index: number, item: Thread): string {
@@ -168,15 +173,5 @@ export class ThreadListComponent implements OnDestroy {
 
   public ngOnDestroy(): void {
     this.destroyed$.next();
-  }
-
-  // tslint:disable:no-bitwise
-  private stringToColor(str: string): string {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-      hash = str.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    const c = (hash & 0x00FFFFFF).toString(16).toUpperCase();
-    return '#' + '00000'.substring(0, 6 - c.length) + c;
   }
 }

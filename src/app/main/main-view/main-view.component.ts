@@ -11,6 +11,7 @@ import {Crossfilter} from 'src/app/types/crossfilter.aliases';
 import {FilterService} from '../../shared/filter.service';
 import crossfilter from 'crossfilter2';
 import {dayLimitedAxis} from './d3-helper.functions';
+import {COLOR_ENUM, ColorService} from '../../shared/color.service';
 
 class MockTransform {
   x = 0;
@@ -71,7 +72,8 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
 
   constructor(
     private store: Store<AppState>,
-    private filterService: FilterService
+    private filterService: FilterService,
+    private colorService: ColorService
   ) {}
 
 
@@ -200,9 +202,17 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
 
     this.filter.allFiltered().forEach((d: Message) => {
       this.canvasContext.beginPath();
-      // const useColors = coloredBarchart && colorScale.domain().includes(coloredBarchart.get_data(d));
-      const useColors = false;
-      this.canvasContext.fillStyle = useColors ? '' : colorBase;
+      let color = colorBase;
+      switch (this.colorService.getColoredState()) {
+        case COLOR_ENUM.ThreadsColored:
+          color = this.colorService.stringToColor(d.thread_id);
+          break;
+        case COLOR_ENUM.BarChartColored:
+          // coloredBarchart && colorScale.domain().includes(coloredBarchart.get_data(d));
+          color = this.colorService.randomColor();
+          break;
+      }
+      this.canvasContext.fillStyle = color;
       this.canvasContext.globalAlpha = 0.3;
       this.canvasContext.arc(this.scaleX(d.date), this.scaleY(d.timeSeconds), radius, 0, 2 * Math.PI, true);
       this.canvasContext.fill();
