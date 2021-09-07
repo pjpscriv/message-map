@@ -51,6 +51,11 @@ mat-form-field {
   display: none;
 }
 
+// TODO: This hack not working atm. Fix checkbox bgColors
+:host ::ng-deep .mat-list-item .mat-pseudo-checkbox:not(.mat-pseudo-checkbox-checked) {
+  background-color: transparent;
+}
+
 [matPrefix] {
   margin-right: 8px;
 }

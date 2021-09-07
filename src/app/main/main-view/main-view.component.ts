@@ -52,9 +52,20 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
   private scaleX = d3.scaleTime().domain([this.minDate, this.maxDate]);
   private scaleY = d3.scaleTime().domain([this.minTime, this.maxTime]);
   private transform: ZoomTransform = new MockTransform() as ZoomTransform;
+  private colorScale = d3.scaleOrdinal().range(([
+    '#009688',
+    '#8bc34a',
+    '#ffeb3b',
+    '#ff9800',
+    '#f44336',
+    '#ff66cc',
+    '#9c27b0',
+    '#673ab7',
+    '#704880',
+    '#795548']));
 
   // UI Values
-  public yAxisWidth = 50;
+  public yAxisWidth = 40;
   public xAxisHeight = 20;
   private margin = 10;
 
@@ -87,11 +98,11 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
       takeUntil(this.destroyed$),
       filter(messages => !!messages && messages?.size() > 0)
     ).subscribe((messagesFilter: Crossfilter<Message>) => {
-        console.log(`Messages received: ${messagesFilter.size()}`);
-        this.setData(messagesFilter);
-        this.drawAxes();
-        this.drawScatterplot();
-      });
+      console.log(`Messages received: ${messagesFilter.size()}`);
+      this.setData(messagesFilter);
+      this.drawAxes();
+      this.drawScatterplot();
+    });
 
     // Redraw
     this.filterService.getFilterRedraw().subscribe(() => {
@@ -159,9 +170,10 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
     d3.select('.x-axis').selectAll('.axis--x').remove();
 
     // Get Translate Values
+    const spacer = 20;
     const canvas = this.canvasEl.nativeElement;
     const container = this.containerEl.nativeElement;
-    const xAxisShift = ((container.clientWidth - canvas.clientWidth) + this.yAxisWidth) / 2;
+    const xAxisShift = (container.clientWidth + spacer - canvas.clientWidth) / 2;
     const yAxisShift = (container.clientHeight - canvas.clientHeight) / 2;
 
     // Scales
@@ -174,6 +186,7 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
     d3.select('.y-axis').append('g').attr('class', 'y axis--y')
       .attr('transform', `translate(${this.yAxisWidth - 1}, ${yAxisShift})`).call(axisY);
 
+    setTimeout(() => this.yAxisWidth = xAxisShift, 0);
     setTimeout(() => this.xAxisHeight = yAxisShift, 0); // To fix NG0100 Error
   }
 

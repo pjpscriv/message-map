@@ -37,12 +37,15 @@
 
   <!-- Chat List -->
   <mat-selection-list #threads (selectionChange)="onSelectionChange($event)">
-    <mat-list-option *ngFor="let thread of threads$ | async" [color]="'primary'" [selected]="true" id="{{thread.id}}">
+    <mat-list-option *ngFor="let thread of threads$ | async; trackBy: trackByThreadId"
+         [appMatListColor]="getColors(thread)"
+         [color]="'primary'"
+         [selected]="true"
+         id="{{thread.id}}">
       <mat-icon
         matListAvatar
         [matBadge]="thread.nb_participants > 3 ? thread.nb_participants : null"
-        matBadgePosition="below"
-        [style]="getColors(thread)">
+        matBadgePosition="below">
         {{getIcon(thread)}}
       </mat-icon>
       <div matLine class="thread-list-line">

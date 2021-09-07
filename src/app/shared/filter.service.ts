@@ -20,7 +20,7 @@ export class FilterService {
     return this.store.pipe(select(selectMessages));
   }
 
-  public setMessageFiler(messageFilter: Crossfilter<Message>): void {
+  public setMessageFilter(messageFilter: Crossfilter<Message>): void {
     this.store.dispatch(UpdateMessageFilterAction({ messageFilter }));
   }
 

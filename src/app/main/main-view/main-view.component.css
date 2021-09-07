@@ -16,9 +16,14 @@
     height: 100%;
 }
 
+.spacer {
+  width: 20px;
+}
 
 .y-axis {
     height: 100%;
+    position: absolute;
+    left: 0;
 }
 
 .x-axis {

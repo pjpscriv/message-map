@@ -39,6 +39,7 @@ import { ExploreModalComponent } from './modals/explore-modal/explore-modal.comp
 import { ProcessingModalComponent } from './modals/processing-modal/processing-modal.component';
 import { NavBarComponent } from './nav-bar/nav-bar.component';
 import { darkModeReducer, loadProgressReducer, messagesReducer, threadsReducer} from './store/app.reducer';
+import { MatListColorDirective } from './main/thread-list/mat-list-color.directive';
 
 
 @NgModule({
@@ -54,7 +55,8 @@ import { darkModeReducer, loadProgressReducer, messagesReducer, threadsReducer} 
     MessageDisplayComponent,
     MainViewComponent,
     ThreadListComponent,
-    BarChartComponent
+    BarChartComponent,
+    MatListColorDirective
   ],
   imports: [
     BrowserModule,
@@ -85,7 +87,7 @@ import { darkModeReducer, loadProgressReducer, messagesReducer, threadsReducer} 
     MatCheckboxModule,
     MatCardModule
   ],
-  providers: [],
+  providers: [MatListColorDirective],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

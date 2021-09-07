@@ -1,4 +1,5 @@
 <div #mainViewContainer class="main-view-container">
+  <div class="spacer"></div>
   <svg class="y-axis" [style.maxWidth]="yAxisWidth+'px'"></svg>
   <div class="canvas-wrapper border" (resized)="canvasWrapperSize$.next($event)">
     <canvas #scatterplot class="scatterplot"></canvas>

@@ -60,6 +60,7 @@ export class ThreadListComponent implements OnDestroy {
   public threadCount = 0;
   public allThreadsSelected = true;
 
+  private colorListItems = false;
   private filter = crossfilter([] as Message[]);
   private threadDimension = this.filter.dimension(m => m.thread_id);
 
@@ -88,17 +89,7 @@ export class ThreadListComponent implements OnDestroy {
       });
   }
 
-  public onSelectionChange(event: MatSelectionListChange): void {
-    const selectedIds = new Set(event.source.selectedOptions.selected.map(option => option._getHostElement().id));
-    // console.log(`Selected ${selectedIds.size} threads`);
-    this.threadDimension.filter(id => selectedIds.has(id as string));
-    this.filterService.redrawFilter();
-  }
-
-  public ngOnDestroy(): void {
-    this.destroyed$.next();
-  }
-
+  // Sorting Functions //
   public sortChange(newSort: SortType | null): void {
     if (newSort) {
       this.selectedSort = newSort;
@@ -106,35 +97,16 @@ export class ThreadListComponent implements OnDestroy {
     }
   }
 
-  public getIcon(thread: Thread): string {
-    switch (thread.nb_participants) {
-      case 0: return 'person_off'; break;
-      case 1: case 2: return 'person'; break;
-      case 3: return 'people'; break;
-      default: return 'groups';
-    }
-  }
-
-  public getColors(thread: Thread): any {
-    // return `#${Math.random().toString(16).slice(-6)}`;
-    return { backgroundColor: '#0099FF', color: 'white' };
-  }
-
-  public getSubtitle(thread: Thread): string {
-    // TODO: Make this cooler: "6 Aug", "4 Jan '19", etc
-    if (this.selectedSort.text === 'First Message') {
-      return `First: ${ this.datePipe.transform(thread.first_message, 'd MMM y, h:mm aaaaa\'m\'') }`;
-    } else {
-      return `Last: ${ this.datePipe.transform(thread.last_message, 'd MMM y, h:mm aaaaa\'m\'') }`;
-    }
-  }
-
   public compareSorts(a: SortType, b: SortType): boolean {
     return a.name === b.name;
   }
 
-  public refreshList(): void {
-    this.sortType$.next(this.selectedSort);
+  // Chat Selection Functions //
+  public onSelectionChange(event: MatSelectionListChange): void {
+    const selectedIds = new Set(event.source.selectedOptions.selected.map(option => option._getHostElement().id));
+    // console.log(`Selected ${selectedIds.size} threads`);
+    this.threadDimension.filter(id => selectedIds.has(id as string));
+    this.filterService.redrawFilter();
   }
 
   public setAllThreadSelection(allSelected: boolean): void {
@@ -154,8 +126,57 @@ export class ThreadListComponent implements OnDestroy {
     return 0 < selected && selected < this.threadCount;
   }
 
+  // UI Functions //
+  public getIcon(thread: Thread): string {
+    switch (thread.nb_participants) {
+      case 0: return 'person_off';
+      case 1: case 2: return 'person';
+      case 3: return 'people';
+      default: return 'groups';
+    }
+  }
+
+  public getSubtitle(thread: Thread): string {
+    // TODO: Make this cooler: "6 Aug", "4 Jan '19", etc
+    if (this.selectedSort.name === 'FIRST_MESSAGE_NEWEST_FIRST') {
+      return `First: ${ this.datePipe.transform(thread.first_message, 'd MMM y, h:mm aaaaa\'m\'') }`;
+    } else {
+      return `Last: ${ this.datePipe.transform(thread.last_message, 'd MMM y, h:mm aaaaa\'m\'') }`;
+    }
+  }
+
+  public getColors(thread: Thread): any {
+    if (this.colorListItems) {
+      const rand = `#${Math.random().toString(16).slice(-6)}`;
+      return this.stringToColor(thread.id);
+    } else {
+      return '#0099FF';
+    }
+  }
+
   public toggleColors(): void {
-    // Something interesting here with colors no doubt
-    console.log(`Colors toggled!`);
+    this.colorListItems = !this.colorListItems;
+  }
+
+  public trackByThreadId(index: number, item: Thread): string {
+    return item.id;
+  }
+
+  public refreshList(): void {
+    this.sortType$.next(this.selectedSort);
+  }
+
+  public ngOnDestroy(): void {
+    this.destroyed$.next();
+  }
+
+  // tslint:disable:no-bitwise
+  private stringToColor(str: string): string {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const c = (hash & 0x00FFFFFF).toString(16).toUpperCase();
+    return '#' + '00000'.substring(0, 6 - c.length) + c;
   }
 }
