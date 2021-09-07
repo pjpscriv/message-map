@@ -52,7 +52,9 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
   // Scales
   private scaleX = d3.scaleTime().domain([this.minDate, this.maxDate]);
   private scaleY = d3.scaleTime().domain([this.minTime, this.maxTime]);
-  private transform: ZoomTransform = new MockTransform() as ZoomTransform;
+  private transform: ZoomTransform = d3.zoomIdentity;
+  private transformX: ZoomTransform = d3.zoomIdentity;
+  private transformY: ZoomTransform = d3.zoomIdentity;
   private colorScale = d3.scaleOrdinal().range(([
     '#009688',
     '#8bc34a',
@@ -130,11 +132,22 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
     const clientWidth = this.canvasEl.nativeElement.clientWidth;
     const clientHeight = this.canvasEl.nativeElement.clientHeight;
 
+    // 2nd Zooms
+    const zoomX = d3.zoom()
+      .scaleExtent([1, 1600])
+      .on('zoom', e => this.onZoomX(e));
+    const zoomY = d3.zoom()
+      .scaleExtent([1, 1600])
+      .on('zoom', e => this.onZoomY(e));
+
+    d3.select('.axis--x').call(zoomX as any);
+    d3.select('.axis--y').call(zoomY as any);
+
     // Add Zoom
     const zoom = d3.zoom()
       .scaleExtent([1, 1600])
       .translateExtent([[0, 0], [clientWidth, clientHeight]])
-      .on('zoom', (transform: ZoomTransform) => this.onZoom(transform));
+      .on('zoom', e => this.onZoom(e));
     d3.select(this.canvasEl.nativeElement).call(zoom);
 
     // Fancy maths to shift view after resize
@@ -163,14 +176,6 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
       this.scaleY = this.transform.rescaleY(this.scaleY.domain([this.minTime, this.maxTime]));
     }
 
-    // Draw Ticks
-    const axisX = dayLimitedAxis(this.scaleX);
-    const axisY = d3.axisLeft(this.scaleY).ticks(12); // .tickFormat(x => timeTickFormat(x))
-
-    // Clear Axes
-    d3.select('.y-axis').selectAll('.axis--y').remove();
-    d3.select('.x-axis').selectAll('.axis--x').remove();
-
     // Get Translate Values
     const spacer = 20;
     const canvas = this.canvasEl.nativeElement;
@@ -182,11 +187,17 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
     this.scaleX.range([this.margin, canvas.clientWidth - this.margin]);
     this.scaleY.range([this.margin, canvas.clientHeight - this.margin]);
 
+    // Draw Ticks
+    const axisX = dayLimitedAxis(this.scaleX);
+    const axisY = d3.axisLeft(this.scaleY).ticks(12); // .tickFormat(x => timeTickFormat(x))
+
     // Draw New Axes
-    d3.select('.x-axis').append('g').attr('class', 'x axis--x')
-      .attr('transform', `translate(${xAxisShift}, 1)`).call(axisX);
-    d3.select('.y-axis').append('g').attr('class', 'y axis--y')
-      .attr('transform', `translate(${this.yAxisWidth - 1}, ${yAxisShift})`).call(axisY);
+    d3.select('.axis--x')
+      .attr('transform', `translate(${xAxisShift}, 1)`)
+      .call(axisX as any);
+    d3.select('.axis--y')
+      .attr('transform', `translate(${this.yAxisWidth - 1}, ${yAxisShift})`)
+      .call(axisY as any);
 
     setTimeout(() => this.yAxisWidth = xAxisShift, 0);
     setTimeout(() => this.xAxisHeight = yAxisShift, 0); // To fix NG0100 Error
@@ -224,6 +235,14 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
     this.transform = transform;
     this.drawAxes();
     this.drawScatterplot();
+  }
+
+  private onZoomX({transform}: any): void {
+    console.log('Zoomed X:', transform);
+  }
+
+  private onZoomY({transform}: any): void {
+    console.log('Zoomed Y:', transform);
   }
 
   public ngOnDestroy(): void {

@@ -1,8 +1,12 @@
 <div #mainViewContainer class="main-view-container">
   <div class="spacer"></div>
-  <svg class="y-axis" [style.maxWidth]="yAxisWidth+'px'"></svg>
+  <svg class="y-axis" [style.maxWidth]="yAxisWidth+'px'">
+    <g class="axis--y"></g>
+  </svg>
   <div class="canvas-wrapper border" (resized)="canvasWrapperSize$.next($event)">
     <canvas #scatterplot class="scatterplot"></canvas>
   </div>
-  <svg class="x-axis" [style.height]="xAxisHeight+'px'"></svg>
+  <svg class="x-axis" [style.height]="xAxisHeight+'px'">
+    <g class="axis--x"></g>
+  </svg>
 </div>
