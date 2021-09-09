@@ -13,17 +13,6 @@ import crossfilter from 'crossfilter2';
 import {dayLimitedAxis} from './d3-helper.functions';
 import {COLOR_ENUM, ColorService} from '../../shared/color.service';
 
-class MockTransform {
-  x = 0;
-  y = 0;
-  k = 1;
-  translate(x: number, y: number): MockTransform {
-    this.x = x;
-    this.y = y;
-    return this;
-  }
-}
-
 @Component({
   selector: 'app-main-view',
   templateUrl: './main-view.component.html',
@@ -55,17 +44,6 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
   private transform: ZoomTransform = d3.zoomIdentity;
   private transformX: ZoomTransform = d3.zoomIdentity;
   private transformY: ZoomTransform = d3.zoomIdentity;
-  private colorScale = d3.scaleOrdinal().range(([
-    '#009688',
-    '#8bc34a',
-    '#ffeb3b',
-    '#ff9800',
-    '#f44336',
-    '#ff66cc',
-    '#9c27b0',
-    '#673ab7',
-    '#704880',
-    '#795548']));
 
   // UI Values
   public yAxisWidth = 40;
@@ -134,10 +112,10 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
 
     // 2nd Zooms
     const zoomX = d3.zoom()
-      .scaleExtent([1, 1600])
+      .scaleExtent([1, 4000])
       .on('zoom', e => this.onZoomX(e));
     const zoomY = d3.zoom()
-      .scaleExtent([1, 1600])
+      .scaleExtent([1, 4000])
       .on('zoom', e => this.onZoomY(e));
 
     d3.select('.axis--x').call(zoomX as any);
@@ -145,7 +123,7 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
 
     // Add Zoom
     const zoom = d3.zoom()
-      .scaleExtent([1, 1600])
+      .scaleExtent([1, 4000])
       .translateExtent([[0, 0], [clientWidth, clientHeight]])
       .on('zoom', e => this.onZoom(e));
     d3.select(this.canvasEl.nativeElement).call(zoom);
@@ -205,14 +183,12 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
 
   private drawScatterplot(): void {
     const colorBase = '#0099FF';
-    const radius = 2 * Math.log(this.transform.k + 1);
 
     this.canvasContext.clearRect(0, 0, this.canvasEl.nativeElement.width, this.canvasEl.nativeElement.height);
     this.dateDimension.filterRange([this.scaleX.domain()[0], this.scaleX.domain()[1]]);
     this.timeDimension.filterRange([this.scaleY.domain()[0], this.scaleX.domain()[1]]);
 
     this.filter.allFiltered().forEach((d: Message) => {
-      this.canvasContext.beginPath();
       let color = colorBase;
       switch (this.colorService.getColoredState()) {
         case COLOR_ENUM.ThreadsColored:
@@ -223,16 +199,73 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
           color = this.colorService.randomColor();
           break;
       }
-      this.canvasContext.fillStyle = color;
+
+      if (d.is_user) {
+        this.canvasContext.fillStyle = 'lightgrey';
+        this.canvasContext.strokeStyle = 'lightgrey';
+      } else {
+        this.canvasContext.fillStyle = color;
+        this.canvasContext.strokeStyle = color;
+      }
+      this.drawMessage(d);
+    });
+  }
+
+  private drawMessage(d: Message): void {
+    // Shape
+    this.canvasContext.beginPath();
+
+    // TODO: Make transition between Dot and Not Dot way smoother
+    // DOT
+    if (this.transform.k < 250) {
+      const radius = 2 * Math.log(this.transform.k + 1);
       this.canvasContext.globalAlpha = 0.3;
       this.canvasContext.arc(this.scaleX(d.date), this.scaleY(d.timeSeconds), radius, 0, 2 * Math.PI, true);
       this.canvasContext.fill();
       this.canvasContext.closePath();
-    });
+
+    // NOT DOT
+    } else {
+      // Variables
+      this.canvasContext.globalAlpha = 0.6;
+      const fontSize = 16;
+      const lineHeight = fontSize + 2;
+      const round = 20;
+      this.canvasContext.lineJoin = 'round';
+      this.canvasContext.lineWidth = round;
+
+      // Dimensions
+      const left = this.scaleX(new Date(new Date(d.date).setHours(d.date.getHours() - 11)));
+      const right = this.scaleX(new Date(new Date(d.date).setHours(d.date.getHours() + 11)));
+      const width = right - left;
+      const lines = this.wrapText(d.message, width - 10);
+      const height = (lineHeight * lines.length) + 20;
+
+      // Border
+      this.canvasContext.strokeRect(
+        left + (round / 2),
+        this.scaleY(d.timeSeconds) + (round / 2),
+        width - round,
+        height - round);
+      // Fill
+      this.canvasContext.fillRect(
+        left + round,
+        this.scaleY(d.timeSeconds) + round,
+        Math.max(0, width - (round * 2)),
+        Math.max(0, height - (round * 2)));
+
+      // Text
+      this.canvasContext.font = `${fontSize}px Roboto`;
+      this.canvasContext.fillStyle = 'black';
+      for (let i = 0; i < lines.length; i++) {
+        this.canvasContext.fillText(lines[i], left + 5, this.scaleY(d.timeSeconds) + ((i + 1) * lineHeight) + 5);
+      }
+    }
   }
 
   private onZoom({transform}: any): void {
     this.transform = transform;
+    console.log('Zoom:', transform.k);
     this.drawAxes();
     this.drawScatterplot();
   }
@@ -243,6 +276,39 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
 
   private onZoomY({transform}: any): void {
     console.log('Zoomed Y:', transform);
+  }
+
+  private wrapText(text: string, maxWidth: number): Array<string> {
+    const words = text.split(' ');
+    const lines = [];
+    let word = words[0];
+    let line = '';
+    let n = 0;
+
+    while (n < words.length) {
+      const testLine = `${line} ${word} `;
+      // There is space for new word
+      if (this.canvasContext.measureText(testLine).width < maxWidth) {
+        line = testLine;
+        word = words[++n];
+      // No space for new word -> Draw line
+      } else if (line !== '') {
+        lines.push(line);
+        line = '';
+      // Single word is too long
+      } else {
+        // TODO: Make more efficient. Surely use split approximator from maxWidth
+        let remainder = '';
+        while (this.canvasContext.measureText(word).width > maxWidth) {
+          remainder = word.slice(-1, word.length) + remainder;
+          word = word.slice(0, -1);
+        }
+        word = remainder;
+      }
+    }
+    lines.push(line);
+
+    return lines;
   }
 
   public ngOnDestroy(): void {

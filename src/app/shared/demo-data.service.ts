@@ -5,7 +5,8 @@ import {MessageDataService} from './message-data.service';
 import {DemoData, DemoMessage} from '../types/demo-data.interface';
 import {HttpClient} from '@angular/common/http';
 
-const DATA_TIMEZONE_OFFSET = 12* 60 * 60 * 1000;
+// Offset the demo data 12 hours bc it's TRASH
+const DATA_TIMEZONE_OFFSET = 12 * 60 * 60 * 1000;
 
 @Injectable({
   providedIn: 'root'
@@ -63,6 +64,7 @@ export class DemoDataService {
       type: message.type,
       is_unsent: message.sent,
       thread_id: message.thread,
+      is_user: false,
       timestamp: message.timestamp,
       media: (MEDIA_TYPE as any)[message.media],
       media_files: [],

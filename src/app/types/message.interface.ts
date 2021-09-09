@@ -21,6 +21,7 @@ export interface Message {
   type: string;
   is_unsent: boolean;
   thread_id: string;
+  is_user: boolean;
   // Message
   media: MEDIA_TYPE;
   media_files: Array<File>;

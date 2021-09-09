@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import * as d3 from 'd3';
 
 export enum COLOR_ENUM {
   None,
@@ -11,6 +12,17 @@ export enum COLOR_ENUM {
 })
 export class ColorService {
   private coloredState = COLOR_ENUM.None;
+  private colorScale = d3.scaleOrdinal().range(([
+    '#009688',
+    '#8bc34a',
+    '#ffeb3b',
+    '#ff9800',
+    '#f44336',
+    '#ff66cc',
+    '#9c27b0',
+    '#673ab7',
+    '#704880',
+    '#795548']));
 
   constructor() { }
 

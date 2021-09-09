@@ -107,6 +107,7 @@ export class PreProcessingService {
       type: message.type,
       is_unsent: message.is_unsent,
       thread_id: threadId,
+      is_user: false, // TODO: Can this be calculated as we load?
       timestamp: this.getTimestamp(message),
       media: media.type,
       media_files: media.uris,
