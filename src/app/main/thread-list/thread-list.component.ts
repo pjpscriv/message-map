@@ -150,7 +150,7 @@ export class ThreadListComponent implements OnDestroy {
     if (this.colorService.getColoredState() === COLOR_ENUM.ThreadsColored) {
       return this.colorService.stringToColor(thread.id);
     } else {
-      return '#0099FF';
+      return null; // '#0099FF';
     }
   }
 

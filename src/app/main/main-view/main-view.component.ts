@@ -237,9 +237,9 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
       // Dimensions
       const left = this.scaleX(new Date(new Date(d.date).setHours(d.date.getHours() - 11)));
       const right = this.scaleX(new Date(new Date(d.date).setHours(d.date.getHours() + 11)));
-      const width = right - left;
-      const lines = this.wrapText(d.message, width - 10);
-      const height = (lineHeight * lines.length) + 20;
+      const lines = this.wrapText(d.message, (right - left) - 10);
+      const width = lines.longest + 20;
+      const height = (lineHeight * lines.lines.length) + 20;
 
       // Border
       this.canvasContext.strokeRect(
@@ -257,8 +257,8 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
       // Text
       this.canvasContext.font = `${fontSize}px Roboto`;
       this.canvasContext.fillStyle = 'black';
-      for (let i = 0; i < lines.length; i++) {
-        this.canvasContext.fillText(lines[i], left + 5, this.scaleY(d.timeSeconds) + ((i + 1) * lineHeight) + 5);
+      for (let i = 0; i < lines.lines.length; i++) {
+        this.canvasContext.fillText(lines.lines[i], left + 5, this.scaleY(d.timeSeconds) + ((i + 1) * lineHeight) + 5);
       }
     }
   }
@@ -278,37 +278,51 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
     console.log('Zoomed Y:', transform);
   }
 
-  private wrapText(text: string, maxWidth: number): Array<string> {
+  private wrapText(text: string, maxWidth: number): { lines: Array<string>, longest: number } {
     const words = text.split(' ');
     const lines = [];
     let word = words[0];
     let line = '';
+    let remainder = '';
     let n = 0;
+    let longest = 0;
 
     while (n < words.length) {
-      const testLine = `${line} ${word} `;
-      // There is space for new word
-      if (this.canvasContext.measureText(testLine).width < maxWidth) {
+      const testLine = line === '' ? word : `${line} ${word}`;
+      const lineWidth = this.canvasContext.measureText(testLine).width;
+
+      // There is space for the new word
+      if (lineWidth < maxWidth) {
         line = testLine;
         word = words[++n];
-      // No space for new word -> Draw line
+        if (lineWidth > longest) { longest = lineWidth; }
+
+      // No space for new word. If line isn't empty: save it, start new line.
       } else if (line !== '') {
         lines.push(line);
         line = '';
-      // Single word is too long
+        // word = words[++n];
+
+      // Single word is too long. Add it anyway.
+      // TODO: Fix so this does pretty word wrapping
       } else {
+        lines.push(word);
+        line = '';
+        word = words[++n];
+
         // TODO: Make more efficient. Surely use split approximator from maxWidth
-        let remainder = '';
-        while (this.canvasContext.measureText(word).width > maxWidth) {
-          remainder = word.slice(-1, word.length) + remainder;
-          word = word.slice(0, -1);
-        }
-        word = remainder;
+        // remainder = '';
+        // while (this.canvasContext.measureText(word).width > maxWidth && word.length > 1) {
+        //   remainder = word.slice(-1, word.length) + remainder;
+        //   word = word.slice(0, -1);
+        // }
+        // word = remainder;
       }
     }
+
     lines.push(line);
 
-    return lines;
+    return { lines, longest };
   }
 
   public ngOnDestroy(): void {
