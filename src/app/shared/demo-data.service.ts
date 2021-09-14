@@ -66,7 +66,7 @@ export class DemoDataService {
       thread_id: message.thread,
       is_user: false,
       timestamp: message.timestamp,
-      media: (MEDIA_TYPE as any)[message.media],
+      media: MEDIA_TYPE.NONE,
       media_files: [],
       message: message.message,
       length: message.length,

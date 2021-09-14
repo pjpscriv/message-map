@@ -38,7 +38,9 @@
   <!-- Chat List -->
   <mat-selection-list #threads (selectionChange)="onSelectionChange($event)">
     <mat-list-option *ngFor="let thread of threads$ | async; trackBy: trackByThreadId"
-         [appMatListColor]="getColors(thread)"
+         [appOptionColor]="getColors(thread)"
+         [refreshColor]="refreshList$ | async"
+         [colorId]="thread.id"
          [color]="'primary'"
          [selected]="true"
          id="{{thread.id}}">

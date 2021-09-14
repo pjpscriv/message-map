@@ -18,6 +18,7 @@ interface KeyThreadDates {
 })
 export class PreProcessingService {
   private messagesRegEx = new RegExp('.*message.*.json'); // new RegExp('messages/.*message.*\.json');
+  private imagesRegEx = new RegExp('.*.png');
   private threads: Array<Thread> = [];
   private filesToRead = 0;
   private filesRead = 0;
@@ -33,7 +34,7 @@ export class PreProcessingService {
     this.threads = [];
 
     for (const file of files) {
-      if (this.hasValidFileName(file)) {
+      if (this.isMessagesFile(file)) {
         this.filesToRead += 1;
 
         const reader = new FileReader();
@@ -59,6 +60,8 @@ export class PreProcessingService {
           }
         };
         reader.readAsText(file);
+      } else {
+        // TODO: Load Images into memory here
       }
     }
   }
@@ -197,7 +200,7 @@ export class PreProcessingService {
   }
 
 
-  private hasValidFileName(file: WebkitFile): boolean {
+  private isMessagesFile(file: WebkitFile): boolean {
     return this.messagesRegEx.test(file.webkitRelativePath);
   }
 }

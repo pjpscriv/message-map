@@ -6,7 +6,7 @@ import {ZoomTransform} from 'd3';
 import {BehaviorSubject, Subject} from 'rxjs';
 import {debounceTime, filter, takeUntil, tap} from 'rxjs/operators';
 import {AppState} from 'src/app/store/app.state';
-import {Message} from '../../types/message.interface';
+import {MEDIA_TYPE, Message} from '../../types/message.interface';
 import {Crossfilter} from 'src/app/types/crossfilter.aliases';
 import {FilterService} from '../../shared/filter.service';
 import crossfilter from 'crossfilter2';
@@ -207,11 +207,11 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
         this.canvasContext.fillStyle = color;
         this.canvasContext.strokeStyle = color;
       }
-      this.drawMessage(d);
+      this.drawMessage(d, color);
     });
   }
 
-  private drawMessage(d: Message): void {
+  private drawMessage(d: Message, color: string): void {
     // Shape
     this.canvasContext.beginPath();
 
@@ -228,37 +228,65 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
     } else {
       // Variables
       this.canvasContext.globalAlpha = 0.6;
-      const fontSize = 16;
-      const lineHeight = fontSize + 2;
-      const round = 20;
+      // const fontSize = Math.log(this.transform.k ** 9) - 40;
+      const fontSize = Math.min((0.005 * this.transform.k) + 9, 20) ;
+      this.canvasContext.font = `${fontSize}px Roboto`;
+      const lineHeight = fontSize + 0;
+      const borderRadius = 20;
       this.canvasContext.lineJoin = 'round';
-      this.canvasContext.lineWidth = round;
+      this.canvasContext.lineWidth = borderRadius;
+
+      const PAD = 6;
 
       // Dimensions
-      const left = this.scaleX(new Date(new Date(d.date).setHours(d.date.getHours() - 11)));
-      const right = this.scaleX(new Date(new Date(d.date).setHours(d.date.getHours() + 11)));
-      const lines = this.wrapText(d.message, (right - left) - 10);
-      const width = lines.longest + 20;
-      const height = (lineHeight * lines.lines.length) + 20;
+      const leftLimit = this.scaleX(new Date(new Date(d.date).setHours(d.date.getHours() - 11)));
+      const rightLimit = this.scaleX(new Date(new Date(d.date).setHours(d.date.getHours() + 11)));
+      const top = this.scaleY(d.timeSeconds);
+      const maxWidth = (rightLimit - leftLimit) - (PAD * 2);
+
+      // Text
+      const lines = this.wrapText(d.message, maxWidth);
+
+      const width = lines.longest + (PAD * 2);
+      const height = (lineHeight * lines.lines.length) + (PAD * 2);
+      const left = d.is_user ? (rightLimit - width) : leftLimit;
 
       // Border
       this.canvasContext.strokeRect(
-        left + (round / 2),
-        this.scaleY(d.timeSeconds) + (round / 2),
-        width - round,
-        height - round);
+        left + (borderRadius / 2), top + (borderRadius / 2),
+        width - borderRadius, height - borderRadius);
       // Fill
       this.canvasContext.fillRect(
-        left + round,
-        this.scaleY(d.timeSeconds) + round,
-        Math.max(0, width - (round * 2)),
-        Math.max(0, height - (round * 2)));
+        left + borderRadius, top + borderRadius,
+        Math.max(0, width - (borderRadius * 2)), Math.max(0, height - (borderRadius * 2)));
 
       // Text
-      this.canvasContext.font = `${fontSize}px Roboto`;
       this.canvasContext.fillStyle = 'black';
+
       for (let i = 0; i < lines.lines.length; i++) {
-        this.canvasContext.fillText(lines.lines[i], left + 5, this.scaleY(d.timeSeconds) + ((i + 1) * lineHeight) + 5);
+        const downShift = ((i + 0.85) * lineHeight) + PAD;
+        this.canvasContext.fillText(lines.lines[i], left + PAD, top + downShift);
+      }
+
+      // Draw media type
+      // TODO: Draw Timestamp here?
+      if (d.media !== MEDIA_TYPE.NONE) {
+        const timeStampShift = 14;
+        this.canvasContext.font = `${10}px Roboto`;
+        this.canvasContext.fillStyle = 'lightgrey';
+        const thing = `Media Type: ${d.media}`;
+        this.canvasContext.fillText(thing, left + 5, top + height + timeStampShift);
+      }
+
+      // Draw Photos
+      const imageSize = Math.min(maxWidth, 50);
+      if (d.media === MEDIA_TYPE.PHOTO) {
+        d.media_files.forEach(photo => {
+          // console.log(`Photo: ${photo.uri}`);
+          const image = new Image();
+          image.onload = () => this.canvasContext.drawImage(image, left, top + height, imageSize, imageSize);
+          image.src = `https://via.placeholder.com/150/${color.slice(1)}`;
+        });
       }
     }
   }

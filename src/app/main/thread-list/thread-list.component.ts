@@ -60,6 +60,9 @@ export class ThreadListComponent implements OnDestroy {
   public selectedSort = this.sortTypes[0];
   public threadCount = 0;
   public allThreadsSelected = true;
+  public refreshList$ = new Subject<any>();
+
+  private allThreadIds: Set<string> = new Set();
 
   private filter = crossfilter([] as Message[]);
   private threadDimension = this.filter.dimension(m => m.thread_id);
@@ -76,6 +79,7 @@ export class ThreadListComponent implements OnDestroy {
       this.store.pipe(select(selectThreads))]).pipe(
       map(([sortType, threadMap]) => {
         const threads = Object.values(threadMap);
+        this.allThreadIds = new Set(threads.map(thread => thread.id));
         this.threadCount = threads.length;
         return threads.sort(sortType.method);
       })
@@ -105,6 +109,7 @@ export class ThreadListComponent implements OnDestroy {
   // Chat Selection Functions //
   public onSelectionChange(event: MatSelectionListChange): void {
     const selectedIds = new Set(event.source.selectedOptions.selected.map(option => option._getHostElement().id));
+    this.refreshList$.next(selectedIds);
     // console.log(`Selected ${selectedIds.size} threads`);
     this.threadDimension.filter(id => selectedIds.has(id as string));
     this.filterService.redrawFilter();
@@ -115,9 +120,11 @@ export class ThreadListComponent implements OnDestroy {
     if (allSelected) {
       this.threads.selectAll();
       this.threadDimension.filterAll();
+      this.refreshList$.next(this.allThreadIds);
     } else {
       this.threads.deselectAll();
       this.threadDimension.filter('');
+      this.refreshList$.next(new Set());
     }
     this.filterService.redrawFilter();
   }
@@ -150,7 +157,7 @@ export class ThreadListComponent implements OnDestroy {
     if (this.colorService.getColoredState() === COLOR_ENUM.ThreadsColored) {
       return this.colorService.stringToColor(thread.id);
     } else {
-      return null; // '#0099FF';
+      return 'clear'; // '#0099FF';
     }
   }
 
