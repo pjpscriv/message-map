@@ -18,6 +18,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatCarouselModule } from '@ngbmodule/material-carousel';
 
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
@@ -40,7 +41,6 @@ import { ProcessingModalComponent } from './modals/processing-modal/processing-m
 import { NavBarComponent } from './nav-bar/nav-bar.component';
 import { darkModeReducer, loadProgressReducer, messagesReducer, threadsReducer} from './store/app.reducer';
 import { MatListColorDirective } from './main/thread-list/mat-list-color.directive';
-
 
 @NgModule({
   declarations: [
@@ -85,7 +85,8 @@ import { MatListColorDirective } from './main/thread-list/mat-list-color.directi
     FormsModule,
     MatChipsModule,
     MatCheckboxModule,
-    MatCardModule
+    MatCardModule,
+    MatCarouselModule
   ],
   providers: [MatListColorDirective],
   bootstrap: [AppComponent]
