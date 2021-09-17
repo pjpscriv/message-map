@@ -27,13 +27,10 @@ import { AngularResizedEventModule } from 'angular-resize-event';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { DateDensityComponent } from './main/date-density/date-density.component';
 import { BarChartComponent } from './main/filters/bar-chart/bar-chart.component';
 import { FiltersComponent } from './main/filters/filters.component';
 import { MainViewComponent } from './main/main-view/main-view.component';
-import { MessageDisplayComponent } from './main/message-display/message-display.component';
 import { ThreadListComponent } from './main/thread-list/thread-list.component';
-import { TimeDensityComponent } from './main/time-density/time-density.component';
 import { ExplanationModalComponent } from './modals/explanation-modal/explanation-modal.component';
 import { ExploreModalComponent } from './modals/explore-modal/explore-modal.component';
 import { ProcessingModalComponent } from './modals/processing-modal/processing-modal.component';
@@ -50,9 +47,6 @@ import { MatListColorDirective } from './main/thread-list/mat-list-color.directi
     ExploreModalComponent,
     NavBarComponent,
     FiltersComponent,
-    DateDensityComponent,
-    TimeDensityComponent,
-    MessageDisplayComponent,
     MainViewComponent,
     ThreadListComponent,
     BarChartComponent,

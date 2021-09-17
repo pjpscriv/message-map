@@ -3,7 +3,8 @@
   <button mat-icon-button class="spaced">
     <mat-icon>refresh</mat-icon>
   </button>
-  <mat-card *ngFor="let chart of barcharts" class="spaced">
-    {{ chart.name }}
+  <mat-card *ngFor="let chart of barCharts" class="spaced">
+    <app-bar-chart [chart]="chart">
+    </app-bar-chart>
   </mat-card>
 </div>
