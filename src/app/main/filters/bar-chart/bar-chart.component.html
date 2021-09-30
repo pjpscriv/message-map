@@ -3,11 +3,9 @@
     <button mat-icon-button (click)="toggleColors()" class="color-button">
       <mat-icon>palette</mat-icon>
     </button>
-    <span>{{ chart?.name }}</span>
+    <span>{{ config?.name }}</span>
   </div>
-
   <div class="body">
-
+    <svg #chartBody class="{{config.id}}-chart"></svg>
   </div>
-
 </div>

@@ -162,7 +162,8 @@ export class ThreadListComponent implements OnDestroy {
   }
 
   public toggleColors(): void {
-    if (this.colorService.getColoredState() === COLOR_ENUM.None) {
+    const coloredState = this.colorService.getColoredState();
+    if (coloredState !== COLOR_ENUM.ThreadsColored) {
       this.colorService.setColoredState(COLOR_ENUM.ThreadsColored);
     } else {
       this.colorService.setColoredState(COLOR_ENUM.None);

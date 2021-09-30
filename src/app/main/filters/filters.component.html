@@ -4,7 +4,6 @@
     <mat-icon>refresh</mat-icon>
   </button>
   <mat-card *ngFor="let chart of barCharts" class="spaced">
-    <app-bar-chart [chart]="chart">
-    </app-bar-chart>
+    <app-bar-chart [config]="chart"></app-bar-chart>
   </mat-card>
 </div>
