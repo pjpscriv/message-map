@@ -26,10 +26,26 @@ function createDayTicks(domain: Array<any>): Array<Date> {
   return dates;
 }
 
+const formatSecond = d3.timeFormat(':%S');
+const formatMinute = d3.timeFormat('%I:%M');
+const formatHour = d3.timeFormat('%I %p');
+const BIG_HOURS = new Set([10, 11, 12, 22, 23, 0]);
 
-// TODO: Use normal D3 Tick function except for midnight and midday
-export function timeTickFormat(x: Date): string {
-  // let s = new DatePipe('en-US').transform(x as Date, 'haaaaa\'m\'') as string;
-  // s = s === '12am' ? 'midnight' : s === '12pm' ? 'midday' : s;
-  return 'Whoop!';
+export function timeTickFormat(time: any): string {
+  // console.log(`This is the thing: ${time}`);
+  if (time.getSeconds() !== 0 ) {
+    return formatSecond(time);
+  } else if (time.getMinutes() !== 0 && BIG_HOURS.has(time.getHours())) {
+    return formatMinute(time);
+  } else if (time.getMinutes() !== 0) {
+    return formatMinute(time).slice(1);
+  } else if (time.getHours() === 0) {
+    return 'midnight';
+  } else if (time.getHours() === 12) {
+    return 'midday';
+  } else if (BIG_HOURS.has(time.getHours())) {
+    return formatHour(time).toLowerCase();
+  } else {
+    return formatHour(time).toLowerCase().slice(1);
+  }
 }

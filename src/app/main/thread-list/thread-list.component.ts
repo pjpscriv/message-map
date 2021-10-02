@@ -92,6 +92,10 @@ export class ThreadListComponent implements OnDestroy {
         this.filter = messagesFilter;
         this.threadDimension = messagesFilter.dimension((message: Message) => message.thread_id);
       });
+
+    // this.filterService.getFilterRedraw().subscribe(() => {
+    //   const x = null;
+    // });
   }
 
   // Sorting Functions //
@@ -169,6 +173,10 @@ export class ThreadListComponent implements OnDestroy {
       this.colorService.setColoredState(COLOR_ENUM.None);
     }
     this.filterService.redrawFilter();
+  }
+
+  public participantsList(thread: Thread): string {
+    return thread.participants.reduce((s, p) => `${s}\n${p.name}`, '');
   }
 
   public trackByThreadId(index: number, item: Thread): string {

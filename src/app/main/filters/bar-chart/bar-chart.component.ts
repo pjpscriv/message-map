@@ -60,7 +60,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
-    console.log(`Check Bar Char Config isn't null: ${this.config}`);
+    // console.log(`Check Bar Char Config isn't null: ${this.config}`);
     this.config$.next(this.config);
   }
 
@@ -69,11 +69,12 @@ export class BarChartComponent implements OnInit, OnDestroy {
   }
 
   private drawChart(): void {
-    const chartId = `.${this.config.id}-chart`;
 
-    const svg = d3.select(chartId).data([this.data]);
+    const chartClass = `.${this.config.id}-chart`;
 
-    d3.selectAll(`${chartId} .bar-element`).remove();
+    const svg = d3.select(chartClass).data([this.data]);
+
+    d3.selectAll(`${chartClass} .bar-element`).remove();
 
     const barEls = svg.selectAll()
       .remove()
@@ -84,37 +85,37 @@ export class BarChartComponent implements OnInit, OnDestroy {
 
     this.scale.domain([0, d3.max(this.data, (d: any) => d.value)]);
 
+    // TODO: implement colors
     // Add bars
     barEls.append('rect')
-      .attr('class', 'bar')
+      .attr('class', (d: any) => 'bar ' + this.getBarClass(d.key))
       .attr('height', this.barHeight)
       .attr('width', (d: any) => this.scale(d.value))
       .attr('transform', `translate(${this.leftMargin}, 0)`)
       // .style('fill', d => bc.isColoredBarchart ? colorScale(d.key) : '')
-      .classed('unclicked', (d: any) => !(this.clicked.size === 0 || this.clicked.has(d.key)))
       .on('click', this.onClick(this.clicked))
       .on('mouseover', this.onMouseOver)
       .on('mouseout', this.onMouseOut);
 
-    // Add number-labels to bar charts
+    // Add counts
     barEls.append('text')
+      .text((d: any) => d.value.toLocaleString())
       .attr('class', 'legend_hist_num')
       .attr('dy', '0.35em')
       .attr('y', `${this.barHeight / 2}px`)
       .attr('x', (d: any) => this.scale(d.value) + this.barSpacing)
       .attr('text-anchor', 'left')
-      .text((d: any) => d.value)
       .attr('transform', `translate(${this.leftMargin}, 0)`)
       .on('click', this.onClick(this.clicked))
       .on('mouseover', this.onMouseOver)
       .on('mouseout', this.onMouseOut);
 
-    // Add labels to bar charts
+    // Add labels
     barEls.append('text')
+      .text((d: any) => this.config.getLabel(d.key))
       .attr('class', 'legend_hist_text')
       .attr('dy', '0.35em')
       .attr('y', `${this.barHeight / 2}px`)
-      .text((d: any) => this.getLegend(d.key))
       .on('click', this.onClick(this.clicked))
       .on('mouseover', this.onMouseOver)
       .on('mouseout', this.onMouseOut);
@@ -131,13 +132,26 @@ export class BarChartComponent implements OnInit, OnDestroy {
     return (String(s)).substring(0, 5);
   }
 
-  private onClick(clickSet: Set<any>): any {
+  private onClick(clickSet: Set<any>): (d: any) => void {
     return (d: any) => {
-      // Register click
+
+      const chartClass = `.${this.config.id}-chart`;
       const key = d.target.__data__.key;
+
       clickSet.has(key) ? clickSet.delete(key) : clickSet.add(key);
 
       // console.log(`Clicked: ${Array.from(clickSet)}`);
+
+      // Add styles
+      if (clickSet.size === 0) {
+        d3.selectAll(chartClass + ' .bar').classed('unclicked', false);
+      } else {
+        d3.selectAll(chartClass + ' .bar').classed('unclicked', true);
+        for (const clickedKey of clickSet) {
+          const barClass = '.' + this.getBarClass(clickedKey);
+          d3.select(barClass).classed('unclicked', false);
+        }
+      }
 
       // Apply filters
       clickSet.size === 0
@@ -153,6 +167,11 @@ export class BarChartComponent implements OnInit, OnDestroy {
 
   private onMouseOut(): void {
 
+  }
+
+  private getBarClass(key: string): string {
+    const label = this.config.getLabel(key);
+    return 'bar-' + label.toLowerCase().trim().replace(' ', '-');
   }
 
   public ngOnDestroy(): void {

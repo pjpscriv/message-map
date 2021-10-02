@@ -10,7 +10,7 @@ import {MEDIA_TYPE, Message} from '../../types/message.interface';
 import {Crossfilter} from 'src/app/types/crossfilter.aliases';
 import {FilterService} from '../../shared/filter.service';
 import crossfilter from 'crossfilter2';
-import {dayLimitedAxis} from './d3-helper.functions';
+import {dayLimitedAxis, timeTickFormat} from './d3-helper.functions';
 import {COLOR_ENUM, ColorService} from '../../shared/color.service';
 
 @Component({
@@ -35,8 +35,8 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
   // Dates
   private minDate = new Date(2010, 1, 1);
   private maxDate = new Date(2020, 1, 1);
-  private minTime = new Date(2000, 0, 1, 0, 0, 1);
-  private maxTime = new Date(2000, 0, 1, 23, 59, 59);
+  private minTime = new Date(2000, 0, 1);
+  private maxTime = new Date(2000, 0, 2);
 
   // Scales
   private scaleX = d3.scaleTime().domain([this.minDate, this.maxDate]);
@@ -167,7 +167,7 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
 
     // Draw Ticks
     const axisX = dayLimitedAxis(this.scaleX);
-    const axisY = d3.axisLeft(this.scaleY).ticks(12); // .tickFormat(x => timeTickFormat(x))
+    const axisY = d3.axisLeft(this.scaleY).ticks(12).tickFormat(x => timeTickFormat(x));
 
     // Draw New Axes
     d3.select('.axis--x')
