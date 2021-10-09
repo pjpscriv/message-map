@@ -5,7 +5,10 @@ export type BarChartConfig = {
   id: string
   name: string
   getData: (m: Message) => any
+  dimension?: any
   getLabel: (v: any) => string
   scale: ScaleLinear<any, any>
-  numberOfBars: any
+  clicked: Set<any>
+  numberOfBars?: number
+  ordering?: any
 };

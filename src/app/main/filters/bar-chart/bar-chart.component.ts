@@ -19,8 +19,6 @@ export class BarChartComponent implements OnInit, OnDestroy {
   @Input() config: BarChartConfig = {} as BarChartConfig;
 
   private filter = crossfilter([] as Message[]);
-  private dimension = this.filter.dimension(m => m.is_user);
-  private clicked: Set<any> = new Set();
   private data: any;
   // isColoredBarChart;
   private scale: any;
@@ -33,6 +31,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
   private barHeight = 20;
   private barSpacing = 4;
   private leftMargin = 40;
+  private barRadius = 10;
 
   constructor(
     private filterService: FilterService,
@@ -46,34 +45,39 @@ export class BarChartComponent implements OnInit, OnDestroy {
       filter(([_, config]) => config !== null))
       .subscribe(([messagesFilter, config]) => {
         this.filter = messagesFilter;
-        this.dimension = this.filter.dimension(config.getData);
         this.scale = config.scale;
 
         const bars = this.config?.numberOfBars;
-        this.data = (bars === 'all') ? this.dimension.group().all() : this.dimension.group().top(bars);
+        this.data = (!bars) ? config.dimension.group().all() : config.dimension.group().top(bars);
 
-        const maxVal = d3.max(this.data, (d: any) => d.value) as any;
-        this.scale.domain([0, maxVal]);
+        const maxVal = d3.max(this.data, (d: any) => d.value);
+        this.scale.domain([0, (maxVal ? maxVal : 1)]);
 
         this.drawChart();
       });
+
+    this.filterService.getFilterRedraw().subscribe(() => {
+      this.drawChart();
+    });
   }
 
   public ngOnInit(): void {
-    // console.log(`Check Bar Char Config isn't null: ${this.config}`);
     this.config$.next(this.config);
   }
 
-  public toggleColors(): void {
-    console.log(`${this.config?.name} colors clicked`);
-  }
-
   private drawChart(): void {
-
     const chartClass = `.${this.config.id}-chart`;
+    // console.log(`Draw ${chartClass}`);
 
+    const bars = this.config?.numberOfBars;
+    this.data = (!bars) ? this.config.dimension.group().all() : this.config.dimension.group().top(bars);
+
+    // Connect to data source
     const svg = d3.select(chartClass).data([this.data]);
+    const maxVal = d3.max(this.data, (d: any) => d.value);
+    this.scale.domain([0, (maxVal ? maxVal : 1)]);
 
+    // Clear chart
     d3.selectAll(`${chartClass} .bar-element`).remove();
 
     const barEls = svg.selectAll()
@@ -83,17 +87,18 @@ export class BarChartComponent implements OnInit, OnDestroy {
       .attr('class', 'bar-element')
       .attr('transform', (d, i) => `translate(0,${i * (this.barHeight + this.barSpacing)})`);
 
-    this.scale.domain([0, d3.max(this.data, (d: any) => d.value)]);
-
-    // TODO: implement colors
     // Add bars
     barEls.append('rect')
       .attr('class', (d: any) => 'bar ' + this.getBarClass(d.key))
       .attr('height', this.barHeight)
       .attr('width', (d: any) => this.scale(d.value))
+      .attr('rx', this.barRadius)
+      .attr('ry', this.barRadius)
       .attr('transform', `translate(${this.leftMargin}, 0)`)
+      .classed('unclicked', (d: any) => this.getUnClicked(d))
+      // TODO: Implement colors
       // .style('fill', d => bc.isColoredBarchart ? colorScale(d.key) : '')
-      .on('click', this.onClick(this.clicked))
+      .on('click', this.onClick(this.config.clicked))
       .on('mouseover', this.onMouseOver)
       .on('mouseout', this.onMouseOut);
 
@@ -106,7 +111,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
       .attr('x', (d: any) => this.scale(d.value) + this.barSpacing)
       .attr('text-anchor', 'left')
       .attr('transform', `translate(${this.leftMargin}, 0)`)
-      .on('click', this.onClick(this.clicked))
+      .on('click', this.onClick(this.config.clicked))
       .on('mouseover', this.onMouseOver)
       .on('mouseout', this.onMouseOut);
 
@@ -116,47 +121,24 @@ export class BarChartComponent implements OnInit, OnDestroy {
       .attr('class', 'legend_hist_text')
       .attr('dy', '0.35em')
       .attr('y', `${this.barHeight / 2}px`)
-      .on('click', this.onClick(this.clicked))
+      .on('click', this.onClick(this.config.clicked))
       .on('mouseover', this.onMouseOver)
       .on('mouseout', this.onMouseOut);
 
-    // Adjust svg size
-    // @ts-ignore
+    // @ts-ignore Adjust svg size
+    // TODO: Set correct dimensions *before* drawing chart instead of after
     const bbox = svg?.nodes()[0]?.getBBox();
-    svg.attr('width', bbox.x + bbox.width  + 'px')
+    svg.attr('width', bbox.x + (bbox.width + 8)  + 'px')
       .attr('height', bbox.y + bbox.height + 'px');
-
-  }
-
-  private getLegend(s: string): string {
-    return (String(s)).substring(0, 5);
   }
 
   private onClick(clickSet: Set<any>): (d: any) => void {
     return (d: any) => {
-
-      const chartClass = `.${this.config.id}-chart`;
       const key = d.target.__data__.key;
-
       clickSet.has(key) ? clickSet.delete(key) : clickSet.add(key);
-
-      // console.log(`Clicked: ${Array.from(clickSet)}`);
-
-      // Add styles
-      if (clickSet.size === 0) {
-        d3.selectAll(chartClass + ' .bar').classed('unclicked', false);
-      } else {
-        d3.selectAll(chartClass + ' .bar').classed('unclicked', true);
-        for (const clickedKey of clickSet) {
-          const barClass = '.' + this.getBarClass(clickedKey);
-          d3.select(barClass).classed('unclicked', false);
-        }
-      }
-
-      // Apply filters
-      clickSet.size === 0
-        ? this.dimension.filterAll()
-        : this.dimension.filter((a: any) => clickSet.has(a));
+      (clickSet.size === 0)
+        ? this.config.dimension.filterAll()
+        : this.config.dimension.filter((a: any) => clickSet.has(a));
       this.filterService.redrawFilter();
     };
   }
@@ -169,9 +151,21 @@ export class BarChartComponent implements OnInit, OnDestroy {
 
   }
 
+  public toggleColors(): void {
+    console.log(`${this.config?.name} colors clicked`);
+  }
+
   private getBarClass(key: string): string {
     const label = this.config.getLabel(key);
     return 'bar-' + label.toLowerCase().trim().replace(' ', '-');
+  }
+
+  private getUnClicked(d: any): boolean {
+    if (this.config.clicked.size === 0) {
+      return false;
+    } else {
+      return !this.config.clicked.has(d.key);
+    }
   }
 
   public ngOnDestroy(): void {

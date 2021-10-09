@@ -3,6 +3,8 @@ import {MEDIA_TYPE, Message} from '../../types/message.interface';
 import {BarChartConfig} from './bar-chart/bar-chart-config.type';
 import {Subject} from 'rxjs';
 import * as d3 from 'd3';
+import {FilterService} from '../../shared/filter.service';
+import crossfilter, {Crossfilter} from 'crossfilter2';
 
 @Component({
   selector: 'app-filters',
@@ -12,23 +14,25 @@ import * as d3 from 'd3';
 export class FiltersComponent implements OnDestroy {
   private lengths = [0, 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000];
   private daysShort = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  private thingWidth = 170;
+  private thingWidth = 220;
+  // TODO: Add sort ordering for different charts
   public barCharts: Array<BarChartConfig> = [
     {
       id: 'sent-received',
       name: 'Sent / Received',
       getData: (m: Message) => m.is_user,
-      getLabel: (v: boolean) => v ? 'Sent' : 'Received',
+      getLabel: (v: boolean) => v ? 'Sent' : 'Recv',
       scale: d3.scaleLinear().range([0, this.thingWidth]),
-      numberOfBars: 'all'
+      clicked: new Set()
     },
     {
       id: 'top-senders',
-      name: 'Top 10 Sender',
+      name: 'Top 10 Senders',
       getData: (m: Message) => m.sender_name,
       getLabel: (v: string) => v,
       scale: d3.scaleLinear().range([0, this.thingWidth]),
-      numberOfBars: 10
+      numberOfBars: 10,
+      clicked: new Set()
     },
     {
       id: 'message-type',
@@ -36,7 +40,7 @@ export class FiltersComponent implements OnDestroy {
       getData: (m: Message) => m.media,
       getLabel: (v: MEDIA_TYPE) => this.mediaTypeToString(v),
       scale: d3.scaleLinear().range([0, this.thingWidth]),
-      numberOfBars: 'all'
+      clicked: new Set()
     },
     {
       id: 'message-length',
@@ -44,7 +48,7 @@ export class FiltersComponent implements OnDestroy {
       getData: (m: Message) => this.findLengthTick(m),
       getLabel: (v: number) => String(v),
       scale: d3.scaleLinear().range([0, this.thingWidth]),
-      numberOfBars: 'all'
+      clicked: new Set()
     },
     {
       id: 'week-day',
@@ -52,10 +56,38 @@ export class FiltersComponent implements OnDestroy {
       getData: (m: Message) => m.date.getDay(),
       getLabel: (v: number) => this.daysShort[v],
       scale: d3.scaleLinear().range([0, this.thingWidth]),
-      numberOfBars: 'all'
+      clicked: new Set()
     }
   ];
   private destroyed$ = new Subject();
+  private filter = crossfilter([] as Message[]);
+  public messageCount = 0;
+  public totalMessages = 0;
+
+  constructor(private filterService: FilterService) {
+    this.filterService.getMessageFilter().subscribe(filter => {
+      this.filter = filter;
+      this.totalMessages = filter.size();
+      this.messageCount = filter.allFiltered().length;
+      this.createDimensions(filter);
+    });
+
+    this.filterService.getFilterRedraw().subscribe(() => {
+      this.messageCount = this.filter.allFiltered().length;
+    });
+  }
+
+  private createDimensions(filter: Crossfilter<Message>): void {
+    this.barCharts.forEach(config => config.dimension = filter.dimension(config.getData));
+  }
+
+  public clearFilters(): void {
+    this.barCharts.forEach(config => {
+      config.clicked.clear();
+      config.dimension.filterAll();
+    });
+    this.filterService.redrawFilter();
+  }
 
   public ngOnDestroy(): void {
     this.destroyed$.next();

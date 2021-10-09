@@ -48,10 +48,10 @@ export enum MESSAGE_TYPE {
 export enum MEDIA_TYPE {
   NONE = 'none',
   PHOTO = 'photo',
+  GIF = 'gifs',
   VIDEO = 'video',
   FILE = 'file',
   AUDIO = 'audio',
-  GIF = 'gifs'
 }
 
 export interface Reaction {
