@@ -185,6 +185,8 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
     const colorBase = '#0099FF';
 
     this.canvasContext.clearRect(0, 0, this.canvasEl.nativeElement.width, this.canvasEl.nativeElement.height);
+
+    // Filter by visible area for improved performance
     this.dateDimension.filterRange([this.scaleX.domain()[0], this.scaleX.domain()[1]]);
     this.timeDimension.filterRange([this.scaleY.domain()[0], this.scaleX.domain()[1]]);
 
@@ -209,6 +211,10 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
       }
       this.drawMessage(d, color);
     });
+
+    // Remove filters so graphs still show all data
+    // this.dateDimension.filterAll();
+    // this.timeDimension.filterAll();
   }
 
   private drawMessage(d: Message, color: string): void {

@@ -47,8 +47,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
         this.filter = messagesFilter;
         this.scale = config.scale;
 
-        const bars = this.config?.numberOfBars;
-        this.data = (!bars) ? config.dimension.group().all() : config.dimension.group().top(bars);
+        this.data = this.createDataGroups();
 
         const maxVal = d3.max(this.data, (d: any) => d.value);
         this.scale.domain([0, (maxVal ? maxVal : 1)]);
@@ -69,8 +68,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
     const chartClass = `.${this.config.id}-chart`;
     // console.log(`Draw ${chartClass}`);
 
-    const bars = this.config?.numberOfBars;
-    this.data = (!bars) ? this.config.dimension.group().all() : this.config.dimension.group().top(bars);
+    this.data = this.createDataGroups();
 
     // Connect to data source
     const svg = d3.select(chartClass).data([this.data]);
@@ -108,7 +106,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
       .attr('class', 'legend_hist_num')
       .attr('dy', '0.35em')
       .attr('y', `${this.barHeight / 2}px`)
-      .attr('x', (d: any) => this.scale(d.value) + this.barSpacing)
+      .attr('x', (d: any) => this.scale(d.value) + 4)
       .attr('text-anchor', 'left')
       .attr('transform', `translate(${this.leftMargin}, 0)`)
       .on('click', this.onClick(this.config.clicked))
@@ -125,11 +123,22 @@ export class BarChartComponent implements OnInit, OnDestroy {
       .on('mouseover', this.onMouseOver)
       .on('mouseout', this.onMouseOut);
 
+    const height = (this.data.length * this.barHeight) + ((this.data.length - 1) * this.barSpacing);
     // @ts-ignore Adjust svg size
     // TODO: Set correct dimensions *before* drawing chart instead of after
     const bbox = svg?.nodes()[0]?.getBBox();
     svg.attr('width', bbox.x + (bbox.width + 8)  + 'px')
-      .attr('height', bbox.y + bbox.height + 'px');
+      .attr('height', `${height}px`);
+  }
+
+  private createDataGroups(): any {
+    const barLimit = this.config?.numberOfBars;
+    const data = (!barLimit) ? this.config.dimension.group().all() : this.config.dimension.group().top(barLimit);
+    const sorter = this.config.ordering;
+    if (sorter) {
+      data.sort(sorter);
+    }
+    return data;
   }
 
   private onClick(clickSet: Set<any>): (d: any) => void {

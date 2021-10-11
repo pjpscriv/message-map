@@ -40,7 +40,8 @@ export class FiltersComponent implements OnDestroy {
       getData: (m: Message) => m.media,
       getLabel: (v: MEDIA_TYPE) => this.mediaTypeToString(v),
       scale: d3.scaleLinear().range([0, this.thingWidth]),
-      clicked: new Set()
+      clicked: new Set(),
+      numberOfBars: 6
     },
     {
       id: 'message-length',
@@ -56,7 +57,16 @@ export class FiltersComponent implements OnDestroy {
       getData: (m: Message) => m.date.getDay(),
       getLabel: (v: number) => this.daysShort[v],
       scale: d3.scaleLinear().range([0, this.thingWidth]),
-      clicked: new Set()
+      clicked: new Set(),
+      ordering: (a: any, b: any) => {
+        if (a.key === 0) { // Sunday is the *last* day of the week dammit
+          return 1;
+        } else if (b.key === 0) {
+          return -1;
+        } else {
+          return a.key - b.key;
+        }
+      }
     }
   ];
   private destroyed$ = new Subject();
@@ -69,16 +79,14 @@ export class FiltersComponent implements OnDestroy {
       this.filter = filter;
       this.totalMessages = filter.size();
       this.messageCount = filter.allFiltered().length;
-      this.createDimensions(filter);
+      this.barCharts.forEach(config => {
+        config.dimension = filter.dimension(config.getData);
+      });
     });
 
     this.filterService.getFilterRedraw().subscribe(() => {
       this.messageCount = this.filter.allFiltered().length;
     });
-  }
-
-  private createDimensions(filter: Crossfilter<Message>): void {
-    this.barCharts.forEach(config => config.dimension = filter.dimension(config.getData));
   }
 
   public clearFilters(): void {
