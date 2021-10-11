@@ -48,7 +48,7 @@ export class ThreadListComponent implements OnDestroy {
     },
     {
       name: 'LAST_MESSAGE_NEWEST_FIRST',
-      text: 'Last Message',
+      text: 'Most Recent Message',
       method: (a, b) => a.last_message < b.last_message ? 1 : -1
     },
     {
@@ -67,6 +67,7 @@ export class ThreadListComponent implements OnDestroy {
   private filter = crossfilter([] as Message[]);
   private threadDimension = this.filter.dimension(m => m.thread_id);
 
+  private today = new Date()
   private destroyed$ = new Subject();
 
   constructor(
@@ -149,12 +150,28 @@ export class ThreadListComponent implements OnDestroy {
   }
 
   public getSubtitle(thread: Thread): string {
-    // TODO: Make this cooler: "6 Aug", "4 Jan '19", etc
     if (this.selectedSort.name === 'FIRST_MESSAGE_NEWEST_FIRST') {
-      return `First: ${ this.datePipe.transform(thread.first_message, 'd MMM y, h:mm aaaaa\'m\'') }`;
+      return `First: ${ this.prettyDateTime(thread.first_message) }`;
     } else {
-      return `Last: ${ this.datePipe.transform(thread.last_message, 'd MMM y, h:mm aaaaa\'m\'') }`;
+      return this.prettyDateTime(thread.last_message);
     }
+  }
+
+  // TODO: Clean this up: "6 Aug", "4 Jan '19", etc
+  private prettyDateTime(date: Date): string {
+    let dateFormat = '';
+    if (date.getFullYear() === this.today.getFullYear()) {
+      if (date.getMonth() === this.today.getMonth()) {
+        if (date.getDate() === this.today.getDate()) {
+          dateFormat = 'h:mm aaaaa\'m\''
+        }
+      } else {
+        dateFormat = 'd MMM \'\'\'yy'
+      }
+    } else {
+      dateFormat = 'd MMM \'\'\'yy';
+    }
+    return this.datePipe.transform(date, dateFormat) as string;
   }
 
   public getColors(thread: Thread): any {
