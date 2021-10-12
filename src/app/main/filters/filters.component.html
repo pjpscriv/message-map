@@ -1,9 +1,9 @@
 <div class="filters-container">
-  <h1>Filters</h1>
-  <button mat-icon-button class="spaced">
+  <h1>{{ messageCount | number }} Messages </h1>
+  <button mat-icon-button class="spaced" (click)="clearFilters()">
     <mat-icon>refresh</mat-icon>
   </button>
-  <mat-card *ngFor="let chart of barcharts" class="spaced">
-    {{ chart.name }}
+  <mat-card *ngFor="let chart of barCharts" class="spaced">
+    <app-bar-chart [config]="chart"></app-bar-chart>
   </mat-card>
 </div>

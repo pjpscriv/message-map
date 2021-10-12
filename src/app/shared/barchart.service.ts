@@ -68,7 +68,8 @@ export class BarchartService {
       // Otherwise, create the skeletal chart.
       let svgEnter = svg.enter().append("svg");
 
-      // Create a group for each bar. We will then add the bar and the labels to these groups
+      // Create a group for each bar.
+      // We will then add the bar and the labels to these groups
       let bar_elements = svgEnter.selectAll(".bar-element")
           .data(bc.nested_data).enter()
           .append("g")

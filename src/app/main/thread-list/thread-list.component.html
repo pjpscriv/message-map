@@ -2,7 +2,7 @@
 
   <div class="holder">
     <mat-list-item>
-      <h1>{{threadCount}} Chats</h1>
+      <h1>{{threadCount | number}} Chats</h1>
       <button mat-icon-button (click)="toggleColors()" class="color-button">
         <mat-icon>palette</mat-icon>
       </button>
@@ -38,12 +38,13 @@
   <!-- Chat List -->
   <mat-selection-list #threads (selectionChange)="onSelectionChange($event)">
     <mat-list-option *ngFor="let thread of threads$ | async; trackBy: trackByThreadId"
-         [appOptionColor]="getColors(thread)"
-         [refreshColor]="refreshList$ | async"
-         [colorId]="thread.id"
-         [color]="'primary'"
-         [selected]="true"
-         id="{{thread.id}}">
+      [appOptionColor]="getColors(thread)"
+      [refreshColor]="refreshList$ | async"
+      [colorId]="thread.id"
+      [color]="'primary'"
+      [selected]="true"
+      id="{{thread.id}}"
+      [attr.title]="participantsList(thread)">
       <mat-icon
         matListAvatar
         [matBadge]="thread.nb_participants > 3 ? thread.nb_participants : null"

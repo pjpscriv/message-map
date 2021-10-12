@@ -116,3 +116,10 @@ $ngfbmessage-theme-dark: mat-dark-theme((
   @include angular-material-theme($ngfbmessage-theme-dark);
   @include holder-theme($ngfbmessage-theme-dark);
 }
+
+:root {
+  --color-primary: #{mat-color($ngfbmessage-primary)};
+  --color-accent: #{mat-color($ngfbmessage-accent)};
+  --color-warn: #{mat-color($ngfbmessage-warn)};
+  //--color-success: #{mat-color($app-success)};
+}
