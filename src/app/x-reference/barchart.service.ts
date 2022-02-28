@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { GoogleAnalyticsService } from './google-analytics.service';
+import { GoogleAnalyticsService } from '../shared/google-analytics.service';
 import * as d3 from 'd3';
 
 @Injectable({
