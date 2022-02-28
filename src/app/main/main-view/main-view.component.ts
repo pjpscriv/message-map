@@ -12,11 +12,13 @@ import {FilterService} from '../../shared/filter.service';
 import crossfilter from 'crossfilter2';
 import {dayLimitedAxis, timeTickFormat} from './d3-helper.functions';
 import {COLOR_ENUM, ColorService} from '../../shared/color.service';
+import {DatePipe} from '@angular/common';
 
 @Component({
   selector: 'app-main-view',
   templateUrl: './main-view.component.html',
-  styleUrls: ['./main-view.component.css']
+  styleUrls: ['./main-view.component.css'],
+  providers: [ DatePipe ]
 })
 export class MainViewComponent implements AfterViewInit, OnDestroy {
   @ViewChild('mainViewContainer') containerEl: any;
@@ -53,7 +55,8 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
   constructor(
     private store: Store<AppState>,
     private filterService: FilterService,
-    private colorService: ColorService
+    private colorService: ColorService,
+    private datePipe: DatePipe
   ) {}
 
 
@@ -264,20 +267,30 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
 
       // Text
       this.canvasContext.fillStyle = 'black';
-
       for (let i = 0; i < lines.lines.length; i++) {
         const downShift = ((i + 0.85) * lineHeight) + PAD;
         this.canvasContext.fillText(lines.lines[i], left + PAD, top + downShift);
       }
 
-      // Draw media type
-      // TODO: Draw Timestamp here?
+      // Sender
+      this.canvasContext.fillStyle = 'lightgrey';
+      this.canvasContext.font = `${10}px Roboto`;
+      this.canvasContext.fillText(d.sender_name, left + 5, top + height + 14);
+
+      // Time
+      this.canvasContext.font = `${10}px Roboto`;
+      this.canvasContext.fillStyle = 'lightgrey';
+      const timestamp = this.getTimestamp(d);
+      const lineWidth = this.canvasContext.measureText(timestamp).width;
+      this.canvasContext.fillText(timestamp, (left+width) - lineWidth, top + height + 14);
+
+      // Media type
       if (d.media !== MEDIA_TYPE.NONE) {
         const timeStampShift = 14;
         this.canvasContext.font = `${10}px Roboto`;
         this.canvasContext.fillStyle = 'lightgrey';
         const thing = `Media Type: ${d.media}`;
-        this.canvasContext.fillText(thing, left + 5, top + height + timeStampShift);
+        this.canvasContext.fillText(thing, left + 5, top - 14);
       }
 
       // Draw Photos
@@ -291,6 +304,13 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
         });
       }
     }
+  }
+
+  private getTimestamp(m: Message): string {
+    const date = new Date(m.date.getFullYear(), m.date.getMonth(), m.date.getDate(),
+      m.timeSeconds.getHours(), m.timeSeconds.getMinutes(), m.timeSeconds.getSeconds());
+    const dateFormat = 'h:mm aaaaa\'m\'';
+    return this.datePipe.transform(date, dateFormat) as string;
   }
 
   private onZoom({transform}: any): void {
@@ -359,3 +379,4 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
     this.destroyed$.next();
   }
 }
+
