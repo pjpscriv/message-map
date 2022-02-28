@@ -76,7 +76,7 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
     });
 
     // Messages
-    this.filterService.getMessageFilter().pipe(
+    this.filterService.getMessageDataFilter().pipe(
       takeUntil(this.destroyed$),
       filter(messages => !!messages && messages?.size() > 0)
     ).subscribe((messagesFilter: Crossfilter<Message>) => {
@@ -211,10 +211,6 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
       }
       this.drawMessage(d, color);
     });
-
-    // Remove filters so graphs still show all data
-    // this.dateDimension.filterAll();
-    // this.timeDimension.filterAll();
   }
 
   private drawMessage(d: Message, color: string): void {

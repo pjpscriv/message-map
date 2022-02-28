@@ -4,14 +4,16 @@ import { Message } from '../types/message.interface';
 import { ThreadMap } from '../types/thread.interface';
 
 export interface AppState {
-    messages: Crossfilter<Message>;
+    messageData: Crossfilter<Message>;
+    chartData: Crossfilter<Message>;
     loadProgress: number;
     threads: ThreadMap;
     darkMode: boolean;
 }
 
 export const initialState: AppState = {
-    messages: crossfilter([]),
+    messageData: crossfilter([]),
+    chartData: crossfilter([]),
     loadProgress: 0,
     threads: {},
     darkMode: false

@@ -35,7 +35,7 @@ import { ExplanationModalComponent } from './modals/explanation-modal/explanatio
 import { ExploreModalComponent } from './modals/explore-modal/explore-modal.component';
 import { ProcessingModalComponent } from './modals/processing-modal/processing-modal.component';
 import { NavBarComponent } from './nav-bar/nav-bar.component';
-import { darkModeReducer, loadProgressReducer, messagesReducer, threadsReducer} from './store/app.reducer';
+import {chartDataReducer, darkModeReducer, loadProgressReducer, messageDataReducer, threadsReducer} from './store/app.reducer';
 import { MatListColorDirective } from './main/thread-list/mat-list-color.directive';
 
 
@@ -66,7 +66,8 @@ import { MatListColorDirective } from './main/thread-list/mat-list-color.directi
     MatDialogModule,
     MatBadgeModule,
     StoreModule.forRoot({
-      messages: messagesReducer,
+      messageData: messageDataReducer,
+      chartData: chartDataReducer,
       loadProgress: loadProgressReducer,
       threads: threadsReducer,
       darkMode: darkModeReducer

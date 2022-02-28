@@ -2,11 +2,8 @@ import {Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {BarChartConfig} from './bar-chart-config.type';
 import {FilterService} from '../../../shared/filter.service';
 import * as d3 from 'd3';
-import {combineLatest, Observable, Subject} from 'rxjs';
-import {filter, takeUntil} from 'rxjs/operators';
-import {Crossfilter} from '../../../types/crossfilter.aliases';
-import {Message} from '../../../types/message.interface';
-import crossfilter from 'crossfilter2';
+import {Subject} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
 import {ColorService} from '../../../shared/color.service';
 
 @Component({
@@ -18,16 +15,14 @@ export class BarChartComponent implements OnInit, OnDestroy {
   @ViewChild('chartBody') chartEl: any;
   @Input() config: BarChartConfig = {} as BarChartConfig;
 
-  private filter = crossfilter([] as Message[]);
   private data: any;
   // isColoredBarChart;
   private scale: any;
 
+  // Life Cycle
   private destroyed$ = new Subject();
-  private filter$: Observable<Crossfilter<Message>>;
-  private config$: Subject<BarChartConfig> = new Subject();
 
-  // Constants
+  // UI Constants
   private barHeight = 20;
   private barSpacing = 4;
   private leftMargin = 40;
@@ -37,31 +32,15 @@ export class BarChartComponent implements OnInit, OnDestroy {
     private filterService: FilterService,
     private colorService: ColorService
   ) {
-    this.filter$ = this.filterService.getMessageFilter().pipe(
-      takeUntil(this.destroyed$),
-      filter(messages => !!messages && messages?.size() !== 0));
-
-    combineLatest([this.filter$, this.config$]).pipe(
-      filter(([_, config]) => config !== null))
-      .subscribe(([messagesFilter, config]) => {
-        this.filter = messagesFilter;
-        this.scale = config.scale;
-
-        this.data = this.createDataGroups();
-
-        const maxVal = d3.max(this.data, (d: any) => d.value);
-        this.scale.domain([0, (maxVal ? maxVal : 1)]);
-
-        this.drawChart();
-      });
-
     this.filterService.getFilterRedraw().subscribe(() => {
       this.drawChart();
     });
   }
 
   public ngOnInit(): void {
-    this.config$.next(this.config);
+    this.filterService.getMessageAndChartFilters().pipe(
+      takeUntil(this.destroyed$))
+      .subscribe(_ => { this.drawChart(); });
   }
 
   private drawChart(): void {
@@ -69,8 +48,9 @@ export class BarChartComponent implements OnInit, OnDestroy {
     // console.log(`Draw ${chartClass}`);
 
     this.data = this.createDataGroups();
+    this.scale = this.config.scale;
 
-    // Connect to data source
+    // Connect UI to data source
     const svg = d3.select(chartClass).data([this.data]);
     const maxVal = d3.max(this.data, (d: any) => d.value);
     this.scale.domain([0, (maxVal ? maxVal : 1)]);
@@ -78,6 +58,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
     // Clear chart
     d3.selectAll(`${chartClass} .bar-element`).remove();
 
+    // Create parent elements
     const barEls = svg.selectAll()
       .remove()
       .data(this.data).enter()
@@ -123,6 +104,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
       .on('mouseover', this.onMouseOver)
       .on('mouseout', this.onMouseOut);
 
+    // Hack to fix height bug
     const height = (this.data.length * this.barHeight) + ((this.data.length - 1) * this.barSpacing);
     // @ts-ignore Adjust svg size
     // TODO: Set correct dimensions *before* drawing chart instead of after
@@ -132,12 +114,10 @@ export class BarChartComponent implements OnInit, OnDestroy {
   }
 
   private createDataGroups(): any {
-    const barLimit = this.config?.numberOfBars;
-    const data = (!barLimit) ? this.config.dimension.group().all() : this.config.dimension.group().top(barLimit);
     const sorter = this.config.ordering;
-    if (sorter) {
-      data.sort(sorter);
-    }
+    const barLimit = this.config?.numberOfBars;
+    const data = (!barLimit) ? this.config.chartsDimension.group().all() : this.config.chartsDimension.group().top(barLimit);
+    if (sorter) { data.sort(sorter); }
     return data;
   }
 
@@ -145,20 +125,20 @@ export class BarChartComponent implements OnInit, OnDestroy {
     return (d: any) => {
       const key = d.target.__data__.key;
       clickSet.has(key) ? clickSet.delete(key) : clickSet.add(key);
-      (clickSet.size === 0)
-        ? this.config.dimension.filterAll()
-        : this.config.dimension.filter((a: any) => clickSet.has(a));
+      if (clickSet.size === 0) {
+        this.config.messagesDimension.filterAll();
+        this.config.chartsDimension.filterAll();
+      } else {
+        this.config.messagesDimension.filter((a: any) => clickSet.has(a));
+        this.config.chartsDimension.filter((a: any) => clickSet.has(a));
+      }
       this.filterService.redrawFilter();
     };
   }
 
-  private onMouseOver(): void {
+  private onMouseOver(): void {}
 
-  }
-
-  private onMouseOut(): void {
-
-  }
+  private onMouseOut(): void {}
 
   public toggleColors(): void {
     console.log(`${this.config?.name} colors clicked`);
@@ -170,11 +150,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
   }
 
   private getUnClicked(d: any): boolean {
-    if (this.config.clicked.size === 0) {
-      return false;
-    } else {
-      return !this.config.clicked.has(d.key);
-    }
+    return !(this.config.clicked.size === 0) && !this.config.clicked.has(d.key);
   }
 
   public ngOnDestroy(): void {
