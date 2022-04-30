@@ -1,4 +1,4 @@
-import { ParsedMessage } from './message.interface';
+import {ParsedMessage} from './message.interface';
 
 export interface ParsedThread {
     // Core
@@ -26,3 +26,8 @@ export interface Thread {
 export type ThreadMap = {
     [threadId: string]: Thread;
 };
+
+export interface KeyThreadDates {
+  firstMessage: number;
+  lastMessage: number;
+}

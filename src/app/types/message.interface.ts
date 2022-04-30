@@ -7,9 +7,9 @@ export interface ParsedMessage {
   timestamp_ms?: number;
 
   content?: string;
-  photos?: Array<File>;
-  files?: Array<File>;
-  audio_files?: Array<File>;
+  photos?: Array<ParsedFile>;
+  files?: Array<ParsedFile>;
+  audio_files?: Array<ParsedFile>;
   videos?: Array<Video>;
   sticker?: { uri: string };
   gifs?: Array<{ uri: string }>;
@@ -24,7 +24,7 @@ export interface Message {
   is_user: boolean;
   // Message
   media: MEDIA_TYPE;
-  media_files: Array<File>;
+  media_files: Array<ParsedFile>;
   message: string;
   length: number;
   // Time Info
@@ -61,14 +61,16 @@ export interface Reaction {
 
 export interface Media {
   type: MEDIA_TYPE;
-  uris: Array<File>;
+  uris: Array<ParsedFile>;
 }
 
-interface File {
+interface ParsedFile {
   uri: string;
   creation_timestamp: number;
 }
 
-interface Video extends File {
+interface Video extends ParsedFile {
   thumbnail: { uri: string };
 }
+
+export type WebkitFile = File & { webkitRelativePath: string };

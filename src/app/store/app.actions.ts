@@ -1,15 +1,16 @@
 import {createAction, props} from '@ngrx/store';
 import {Thread } from '../types/thread.interface';
-import {Message} from '../types/message.interface';
+import {Message, WebkitFile} from '../types/message.interface';
 import {Crossfilter} from '../types/crossfilter.aliases';
 
 export enum AppActionTypes {
-  UPDATE_MESSAGES = '[Messages] Update Messages',
+  UPDATE_MESSAGES       = '[Messages] Update Messages',
   UPDATE_MESSAGE_FILTER = '[Messages] Update Message Filter',
-  UPDATE_LOAD_PROGRESS = '[Load Progress] Update Load Progress',
-  UPDATE_THREADS = '[Threads] Update Threads',
-  UPDATE_DARK_MODE = '[Dark Mode] Update Dark Mode',
-  ADD_THREAD = '[Threads] Add Thread'
+  UPDATE_FILES          = '[Files] Update Files',
+  UPDATE_LOAD_PROGRESS  = '[Load Progress] Update Load Progress',
+  ADD_THREAD            = '[Threads] Add Thread',
+  UPDATE_THREADS        = '[Threads] Update Threads',
+  UPDATE_DARK_MODE      = '[Dark Mode] Update Dark Mode'
 }
 
 export const UpdateMessagesAction = createAction(
@@ -22,9 +23,19 @@ export const UpdateMessageFilterAction = createAction(
   props<{ messageFilter: Crossfilter<Message> }>()
 );
 
+export const UpdateFilesAction = createAction(
+  AppActionTypes.UPDATE_FILES,
+  props<{ files: Map<string, WebkitFile> }>()
+);
+
 export const UpdateLoadProgressAction = createAction(
   AppActionTypes.UPDATE_LOAD_PROGRESS,
   props<{ loadProgress: number }>()
+);
+
+export const AddThreadAction = createAction(
+  AppActionTypes.ADD_THREAD,
+  props<{ thread: Thread }>()
 );
 
 export const UpdateThreadsAction = createAction(
@@ -35,9 +46,4 @@ export const UpdateThreadsAction = createAction(
 export const UpdateDarkModeAction = createAction(
   AppActionTypes.UPDATE_DARK_MODE,
   props<{ darkMode: boolean }>()
-);
-
-export const AddThreadAction = createAction(
-  AppActionTypes.ADD_THREAD,
-  props<{ thread: Thread }>()
 );

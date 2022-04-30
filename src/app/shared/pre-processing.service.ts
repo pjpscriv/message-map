@@ -1,27 +1,25 @@
 import {Injectable} from '@angular/core';
-import {ParsedThread, Thread, ThreadMap} from '../types/thread.interface';
+import {KeyThreadDates, ParsedThread, Thread} from '../types/thread.interface';
 import {GoogleAnalyticsService} from './google-analytics.service';
 import {MessageDataService} from './message-data.service';
 import * as d3 from 'd3';
 import * as assert from 'assert';
-import {Media, MEDIA_TYPE, Message, ParsedMessage, Reaction} from '../types/message.interface';
-
-type WebkitFile = File & { webkitRelativePath: string };
-
-interface KeyThreadDates {
-  firstMessage: number;
-  lastMessage: number;
-}
+import {Media, MEDIA_TYPE, Message, ParsedMessage, Reaction, WebkitFile} from '../types/message.interface';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PreProcessingService {
   private messagesRegEx = new RegExp('.*message.*.json'); // new RegExp('messages/.*message.*\.json');
-  private imagesRegEx = new RegExp('.*.png');
+  private imagesRegEx = new RegExp('.*.(jpg|png|webp)');
+  private gifRegEx = new RegExp('.*.(gif)');
+  private videoRegEx = new RegExp('.*.(mp4)');
+  private audioRegEx = new RegExp('.*.(aac|mp3|wav)');
   private threads: Array<Thread> = [];
   private filesToRead = 0;
   private filesRead = 0;
+
+  private filetypes: { [thing: string]: number } = {};
 
   constructor(
     private googleAnalyticsService: GoogleAnalyticsService,
@@ -57,11 +55,17 @@ export class PreProcessingService {
             console.log('All messages loaded!');
             this.messageService.addThreads(this.threads);
             this.messageService.messagesLoaded();
+            console.log(this.filetypes);
           }
         };
         reader.readAsText(file);
+
       } else {
-        // TODO: Load Images into memory here
+        this.messageService.addFile(file);
+        const extn: string = file.name.split('.').pop() ?? 'undefined';
+        this.filetypes[extn] = this.filetypes[extn] ? this.filetypes[extn] + 1 : 1;
+        console.count('Non-messages file');
+        console.log(file);
       }
     }
   }
@@ -87,7 +91,7 @@ export class PreProcessingService {
 
 
   private parseThread(parsedThread: ParsedThread): Thread {
-    const keyDates: KeyThreadDates = this.getKeyThreadDates(parsedThread.messages as Array<ParsedMessage>);
+    const keyDates = this.getKeyThreadDates(parsedThread.messages as Array<ParsedMessage>);
     return {
       is_still_participant: parsedThread.is_still_participant ?? false,
       title: parsedThread.title ? decodeURIComponent(escape(parsedThread.title)) : '',

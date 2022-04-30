@@ -6,13 +6,14 @@ import {ZoomTransform} from 'd3';
 import {BehaviorSubject, Subject} from 'rxjs';
 import {debounceTime, filter, takeUntil, tap} from 'rxjs/operators';
 import {AppState} from 'src/app/store/app.state';
-import {MEDIA_TYPE, Message} from '../../types/message.interface';
+import {MEDIA_TYPE, Message, WebkitFile} from '../../types/message.interface';
 import {Crossfilter} from 'src/app/types/crossfilter.aliases';
 import {FilterService} from '../../shared/filter.service';
 import crossfilter from 'crossfilter2';
 import {dayLimitedAxis, timeTickFormat} from './d3-helper.functions';
 import {COLOR_ENUM, ColorService} from '../../shared/color.service';
 import {DatePipe} from '@angular/common';
+import {FilesService} from '../../shared/files.service';
 
 @Component({
   selector: 'app-main-view',
@@ -29,10 +30,11 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
   private oldCanvasSize: any;
   private destroyed$ = new Subject();
 
-  // Filters
+  // Filters + Data
   private filter = crossfilter([] as Message[]);
   private dateDimension = this.filter.dimension((m: Message) => m.date);
   private timeDimension = this.filter.dimension((m: Message) => m.timeSeconds);
+  private fileMap = new Map<string, WebkitFile>();
 
   // Dates
   private minDate = new Date(2010, 1, 1);
@@ -55,6 +57,7 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
   constructor(
     private store: Store<AppState>,
     private filterService: FilterService,
+    private filesService: FilesService,
     private colorService: ColorService,
     private datePipe: DatePipe
   ) {}
@@ -87,6 +90,13 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
       this.setData(messagesFilter);
       this.drawAxes();
       this.drawScatterplot();
+    });
+
+    // Files
+    this.filesService.getFileMap().pipe(
+      takeUntil(this.destroyed$)
+    ).subscribe((fileMap: Map<string, WebkitFile>) => {
+      this.fileMap = fileMap;
     });
 
     // Redraw
@@ -290,17 +300,28 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
         this.canvasContext.font = `${10}px Roboto`;
         this.canvasContext.fillStyle = 'lightgrey';
         const thing = `Media Type: ${d.media}`;
-        this.canvasContext.fillText(thing, left + 5, top - 14);
+        // this.canvasContext.fillText(thing, left + 5, top - 14);
       }
 
       // Draw Photos
       const imageSize = Math.min(maxWidth, 50);
       if (d.media === MEDIA_TYPE.PHOTO) {
         d.media_files.forEach(photo => {
-          // console.log(`Photo: ${photo.uri}`);
-          const image = new Image();
-          image.onload = () => this.canvasContext.drawImage(image, left, top + height, imageSize, imageSize);
-          image.src = `https://via.placeholder.com/150/${color.slice(1)}`;
+          const name = photo.uri.split('/').pop() ?? '';
+          console.log(`Photo: ${photo.uri}`);
+          const imageFile = this.fileMap.get(name) as Blob;
+
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            this.canvasContext.drawImage(imageFile, left, top + height, imageSize, imageSize);
+          };
+
+          reader.readAsDataURL(imageFile);
+
+
+          // const image = new Image();
+          // image.onload = () => ;
+          // image.src = `https://via.placeholder.com/150/${color.slice(1)}`;
         });
       }
     }
