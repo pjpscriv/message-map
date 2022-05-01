@@ -18,6 +18,8 @@ export class PreProcessingService {
   private threads: Array<Thread> = [];
   private filesToRead = 0;
   private filesRead = 0;
+  private totalFileSize = 0;
+  private totalFileCount = 0;
 
   private filetypes: { [thing: string]: number } = {};
 
@@ -56,6 +58,8 @@ export class PreProcessingService {
             this.messageService.addThreads(this.threads);
             this.messageService.messagesLoaded();
             console.log(this.filetypes);
+            console.log(`Total files size: ${this.totalFileSize}`);
+            console.log(`Total files: ${this.totalFileCount}`);
           }
         };
         reader.readAsText(file);
@@ -64,8 +68,10 @@ export class PreProcessingService {
         this.messageService.addFile(file);
         const extn: string = file.name.split('.').pop() ?? 'undefined';
         this.filetypes[extn] = this.filetypes[extn] ? this.filetypes[extn] + 1 : 1;
-        console.count('Non-messages file');
-        console.log(file);
+        this.totalFileCount += 1;
+        this.totalFileSize += file.size;
+        // console.count('Non-messages file');
+        // console.log(file);
       }
     }
   }
