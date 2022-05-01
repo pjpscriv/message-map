@@ -59,9 +59,13 @@ export class MessageDataService {
     this.store.dispatch(UpdateMessagesAction({messages: this.messageArray }));
 
     let x = 0;
-    let tempMap: Map<string, WebkitFile> = new Map<string, WebkitFile>();
+    const batchSize = 200;
+    const tempMap: Map<string, WebkitFile> = new Map<string, WebkitFile>();
     for (const filename of Object.keys(this.fileMap)) {
-      tempMap[filename] = this.fileMap[filename]
+      x++;
+      if (x < batchSize) {
+        tempMap.set(filename, this.fileMap.get(filename) as WebkitFile);
+      }
     }
     this.store.dispatch(UpdateFilesAction( { files: this.fileMap }));
 
