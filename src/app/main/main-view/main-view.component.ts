@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, OnDestroy, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, ViewChild} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {ResizedEvent} from 'angular-resize-event';
 import * as d3 from 'd3';
@@ -23,7 +23,7 @@ import {DatePipe} from '@angular/common';
 export class MainViewComponent implements AfterViewInit, OnDestroy {
   @ViewChild('mainViewContainer') containerEl: any;
   @ViewChild('scatterplot') canvasEl: any;
-  private initialSize = new ResizedEvent(new ElementRef(null), 0, 0, 0, 0);
+  private initialSize = new ResizedEvent(new DOMRectReadOnly(), undefined);
   public canvasWrapperSize$ = new BehaviorSubject<ResizedEvent>(this.initialSize);
   private canvasContext: any;
   private oldCanvasSize: any;
@@ -107,8 +107,8 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
 
   private setCanvasSize(event: ResizedEvent): void {
     // Set new canvas size
-    this.canvasEl.nativeElement.height = event.newHeight;
-    this.canvasEl.nativeElement.width = event.newWidth;
+    this.canvasEl.nativeElement.height = event.newRect.height;
+    this.canvasEl.nativeElement.width = event.newRect.width;
 
     const clientWidth = this.canvasEl.nativeElement.clientWidth;
     const clientHeight = this.canvasEl.nativeElement.clientHeight;
@@ -139,11 +139,11 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
     const widthRatio = x1 / (k * this.oldCanvasSize.width);
     const heightRatio = y1 / (k * this.oldCanvasSize.height);
 
-    const x2 = widthRatio * event.newWidth * this.transform.k;
-    const y2 = heightRatio * event.newHeight * this.transform.k;
+    const x2 = widthRatio * event.newRect.width * this.transform.k;
+    const y2 = heightRatio * event.newRect.height * this.transform.k;
 
-    this.oldCanvasSize.width = event.newWidth;
-    this.oldCanvasSize.height = event.newHeight;
+    this.oldCanvasSize.width = event.newRect.width;
+    this.oldCanvasSize.height = event.newRect.height;
 
     // Shift View after Resize
     d3.select(this.canvasEl.nativeElement).transition().duration(0)

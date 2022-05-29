@@ -3,7 +3,7 @@ import {ParsedThread, Thread, ThreadMap} from '../types/thread.interface';
 import {GoogleAnalyticsService} from './google-analytics.service';
 import {MessageDataService} from './message-data.service';
 import * as d3 from 'd3';
-import * as assert from 'assert';
+// import * as assert from 'assert';
 import {Media, MEDIA_TYPE, Message, ParsedMessage, Reaction} from '../types/message.interface';
 
 type WebkitFile = File & { webkitRelativePath: string };
@@ -139,7 +139,8 @@ export class PreProcessingService {
     const date = new Date(this.getTimestamp(message) * 1000);
     const dateString = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
     const parsedDate = d3.timeParse('%Y-%m-%d')(dateString);
-    assert(parsedDate, `Message from ${message.sender_name} date parse failed: ${parsedDate}`);
+    // TODO: figure out how to get assert to play nice with Angular 12
+    // assert(parsedDate, `Message from ${message.sender_name} date parse failed: ${parsedDate}`);
     return parsedDate ? parsedDate : new Date(2000, 0, 1);
   }
 
