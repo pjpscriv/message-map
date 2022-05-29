@@ -21,6 +21,10 @@
       "dom"
     ],
     "allowSyntheticDefaultImports": true
+    // "paths": {
+    //   "assert": [ "./node_modules/assert/index" ],
+    //   "d3fc": [ "./node_modules/d3fc/index" ]
+    // }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
