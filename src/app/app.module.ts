@@ -23,7 +23,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
-import { AngularResizedEventModule } from 'angular-resize-event';
+import { AngularResizeEventModule } from 'angular-resize-event';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -82,7 +82,7 @@ import { MatListColorDirective } from './main/thread-list/mat-list-color.directi
     }),
     EffectsModule.forRoot([]),
     StoreDevtoolsModule.instrument({}),
-    AngularResizedEventModule,
+    AngularResizeEventModule,
     MatFormFieldModule,
     MatSelectModule,
     FormsModule,
