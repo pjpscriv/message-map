@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { select, Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { ObjectUnsubscribedError, Observable } from 'rxjs';
 import {Message, WebkitFile} from '../types/message.interface';
 import { Thread } from '../types/thread.interface';
 import {UpdateFilesAction, UpdateLoadProgressAction, UpdateMessagesAction, UpdateThreadsAction} from '../store/app.actions';
@@ -24,7 +24,10 @@ export class MessageDataService {
   }
 
   public addFile(file: WebkitFile): void {
-    this.fileMap.set(file.name, file);
+    if (this.fileMap.size < 11) {
+      this.fileMap.set(file.name, file);
+      console.log(`File added: ${file.name}`)
+    }
   }
 
   public addThreads(threads: Array<Thread>): void {
@@ -54,6 +57,16 @@ export class MessageDataService {
 
     this.store.dispatch(UpdateLoadProgressAction({ loadProgress: 100 }));
     this.store.dispatch(UpdateMessagesAction({messages: this.messageArray }));
+
+    let x = 0;
+    const batchSize = 200;
+    const tempMap: Map<string, WebkitFile> = new Map<string, WebkitFile>();
+    for (const filename of Object.keys(this.fileMap)) {
+      x++;
+      if (x < batchSize) {
+        tempMap.set(filename, this.fileMap.get(filename) as WebkitFile);
+      }
+    }
     this.store.dispatch(UpdateFilesAction( { files: this.fileMap }));
 
     this.messageArray = [];
