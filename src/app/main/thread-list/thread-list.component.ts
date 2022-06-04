@@ -48,7 +48,7 @@ export class ThreadListComponent implements OnDestroy {
     },
     {
       name: 'LAST_MESSAGE_NEWEST_FIRST',
-      text: 'Last Message',
+      text: 'Most Recent Message',
       method: (a, b) => a.last_message < b.last_message ? 1 : -1
     },
     {
@@ -64,9 +64,12 @@ export class ThreadListComponent implements OnDestroy {
 
   private allThreadIds: Set<string> = new Set();
 
-  private filter = crossfilter([] as Message[]);
-  private threadDimension = this.filter.dimension(m => m.thread_id);
+  private messagesFilter = crossfilter([] as Message[]);
+  private chartFilter = crossfilter([] as Message[]);
+  private messagesThreadDimension = this.messagesFilter.dimension(m => m.thread_id);
+  private chartThreadDimension = this.chartFilter.dimension(m => m.thread_id);
 
+  private today = new Date();
   private destroyed$ = new Subject();
 
   constructor(
@@ -85,17 +88,14 @@ export class ThreadListComponent implements OnDestroy {
       })
     );
 
-    this.filterService.getMessageFilter().pipe(
-      takeUntil(this.destroyed$),
-      filter(messages => !!messages && messages?.size() !== 0))
-      .subscribe((messagesFilter: Crossfilter<Message>) => {
-        this.filter = messagesFilter;
-        this.threadDimension = messagesFilter.dimension((message: Message) => message.thread_id);
+    this.filterService.getMessageAndChartFilters().pipe(
+      takeUntil(this.destroyed$))
+      .subscribe((filtersPair: [Crossfilter<Message>, Crossfilter<Message>]) => {
+        this.messagesFilter = filtersPair[0];
+        this.messagesThreadDimension = this.messagesFilter.dimension((message: Message) => message.thread_id);
+        this.chartFilter = filtersPair[1];
+        this.chartThreadDimension = this.chartFilter.dimension((message: Message) => message.thread_id);
       });
-
-    // this.filterService.getFilterRedraw().subscribe(() => {
-    //   const x = null;
-    // });
   }
 
   // Sorting Functions //
@@ -115,7 +115,8 @@ export class ThreadListComponent implements OnDestroy {
     const selectedIds = new Set(event.source.selectedOptions.selected.map(option => option._getHostElement().id));
     this.refreshList$.next(selectedIds);
     // console.log(`Selected ${selectedIds.size} threads`);
-    this.threadDimension.filter(id => selectedIds.has(id as string));
+    this.messagesThreadDimension.filter(id => selectedIds.has(id as string));
+    this.chartThreadDimension.filter(id => selectedIds.has(id as string));
     this.filterService.redrawFilter();
   }
 
@@ -123,11 +124,13 @@ export class ThreadListComponent implements OnDestroy {
     this.allThreadsSelected = allSelected;
     if (allSelected) {
       this.threads.selectAll();
-      this.threadDimension.filterAll();
+      this.messagesThreadDimension.filterAll();
+      this.chartThreadDimension.filterAll();
       this.refreshList$.next(this.allThreadIds);
     } else {
       this.threads.deselectAll();
-      this.threadDimension.filter('');
+      this.messagesThreadDimension.filter('');
+      this.chartThreadDimension.filter('');
       this.refreshList$.next(new Set());
     }
     this.filterService.redrawFilter();
@@ -149,12 +152,28 @@ export class ThreadListComponent implements OnDestroy {
   }
 
   public getSubtitle(thread: Thread): string {
-    // TODO: Make this cooler: "6 Aug", "4 Jan '19", etc
     if (this.selectedSort.name === 'FIRST_MESSAGE_NEWEST_FIRST') {
-      return `First: ${ this.datePipe.transform(thread.first_message, 'd MMM y, h:mm aaaaa\'m\'') }`;
+      return `First: ${ this.prettyDateTime(thread.first_message) }`;
     } else {
-      return `Last: ${ this.datePipe.transform(thread.last_message, 'd MMM y, h:mm aaaaa\'m\'') }`;
+      return this.prettyDateTime(thread.last_message);
     }
+  }
+
+  // TODO: Clean this up: "6 Aug", "4 Jan '19", etc
+  private prettyDateTime(date: Date): string {
+    let dateFormat = '';
+    if (date.getFullYear() === this.today.getFullYear()) {
+      if (date.getMonth() === this.today.getMonth()) {
+        if (date.getDate() === this.today.getDate()) {
+          dateFormat = 'h:mm aaaaa\'m\'';
+        }
+      } else {
+        dateFormat = 'd MMM \'\'\'yy';
+      }
+    } else {
+      dateFormat = 'd MMM \'\'\'yy';
+    }
+    return this.datePipe.transform(date, dateFormat) as string;
   }
 
   public getColors(thread: Thread): any {

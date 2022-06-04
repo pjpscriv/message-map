@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, OnDestroy, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, ViewChild} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {ResizedEvent} from 'angular-resize-event';
 import * as d3 from 'd3';
@@ -12,16 +12,18 @@ import {FilterService} from '../../shared/filter.service';
 import crossfilter from 'crossfilter2';
 import {dayLimitedAxis, timeTickFormat} from './d3-helper.functions';
 import {COLOR_ENUM, ColorService} from '../../shared/color.service';
+import {DatePipe} from '@angular/common';
 
 @Component({
   selector: 'app-main-view',
   templateUrl: './main-view.component.html',
-  styleUrls: ['./main-view.component.css']
+  styleUrls: ['./main-view.component.css'],
+  providers: [ DatePipe ]
 })
 export class MainViewComponent implements AfterViewInit, OnDestroy {
   @ViewChild('mainViewContainer') containerEl: any;
   @ViewChild('scatterplot') canvasEl: any;
-  private initialSize = new ResizedEvent(new ElementRef(null), 0, 0, 0, 0);
+  private initialSize = new ResizedEvent(new DOMRectReadOnly(), undefined);
   public canvasWrapperSize$ = new BehaviorSubject<ResizedEvent>(this.initialSize);
   private canvasContext: any;
   private oldCanvasSize: any;
@@ -53,7 +55,8 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
   constructor(
     private store: Store<AppState>,
     private filterService: FilterService,
-    private colorService: ColorService
+    private colorService: ColorService,
+    private datePipe: DatePipe
   ) {}
 
 
@@ -76,7 +79,7 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
     });
 
     // Messages
-    this.filterService.getMessageFilter().pipe(
+    this.filterService.getMessageDataFilter().pipe(
       takeUntil(this.destroyed$),
       filter(messages => !!messages && messages?.size() > 0)
     ).subscribe((messagesFilter: Crossfilter<Message>) => {
@@ -104,8 +107,8 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
 
   private setCanvasSize(event: ResizedEvent): void {
     // Set new canvas size
-    this.canvasEl.nativeElement.height = event.newHeight;
-    this.canvasEl.nativeElement.width = event.newWidth;
+    this.canvasEl.nativeElement.height = event.newRect.height;
+    this.canvasEl.nativeElement.width = event.newRect.width;
 
     const clientWidth = this.canvasEl.nativeElement.clientWidth;
     const clientHeight = this.canvasEl.nativeElement.clientHeight;
@@ -136,11 +139,11 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
     const widthRatio = x1 / (k * this.oldCanvasSize.width);
     const heightRatio = y1 / (k * this.oldCanvasSize.height);
 
-    const x2 = widthRatio * event.newWidth * this.transform.k;
-    const y2 = heightRatio * event.newHeight * this.transform.k;
+    const x2 = widthRatio * event.newRect.width * this.transform.k;
+    const y2 = heightRatio * event.newRect.height * this.transform.k;
 
-    this.oldCanvasSize.width = event.newWidth;
-    this.oldCanvasSize.height = event.newHeight;
+    this.oldCanvasSize.width = event.newRect.width;
+    this.oldCanvasSize.height = event.newRect.height;
 
     // Shift View after Resize
     d3.select(this.canvasEl.nativeElement).transition().duration(0)
@@ -211,10 +214,6 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
       }
       this.drawMessage(d, color);
     });
-
-    // Remove filters so graphs still show all data
-    // this.dateDimension.filterAll();
-    // this.timeDimension.filterAll();
   }
 
   private drawMessage(d: Message, color: string): void {
@@ -268,20 +267,30 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
 
       // Text
       this.canvasContext.fillStyle = 'black';
-
       for (let i = 0; i < lines.lines.length; i++) {
         const downShift = ((i + 0.85) * lineHeight) + PAD;
         this.canvasContext.fillText(lines.lines[i], left + PAD, top + downShift);
       }
 
-      // Draw media type
-      // TODO: Draw Timestamp here?
+      // Sender
+      this.canvasContext.fillStyle = 'lightgrey';
+      this.canvasContext.font = `${10}px Roboto`;
+      this.canvasContext.fillText(d.sender_name, left + 5, top + height + 14);
+
+      // Time
+      this.canvasContext.font = `${10}px Roboto`;
+      this.canvasContext.fillStyle = 'lightgrey';
+      const timestamp = this.getTimestamp(d);
+      const lineWidth = this.canvasContext.measureText(timestamp).width;
+      this.canvasContext.fillText(timestamp, (left+width) - lineWidth, top + height + 14);
+
+      // Media type
       if (d.media !== MEDIA_TYPE.NONE) {
         const timeStampShift = 14;
         this.canvasContext.font = `${10}px Roboto`;
         this.canvasContext.fillStyle = 'lightgrey';
         const thing = `Media Type: ${d.media}`;
-        this.canvasContext.fillText(thing, left + 5, top + height + timeStampShift);
+        this.canvasContext.fillText(thing, left + 5, top - 14);
       }
 
       // Draw Photos
@@ -295,6 +304,13 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
         });
       }
     }
+  }
+
+  private getTimestamp(m: Message): string {
+    const date = new Date(m.date.getFullYear(), m.date.getMonth(), m.date.getDate(),
+      m.timeSeconds.getHours(), m.timeSeconds.getMinutes(), m.timeSeconds.getSeconds());
+    const dateFormat = 'h:mm aaaaa\'m\'';
+    return this.datePipe.transform(date, dateFormat) as string;
   }
 
   private onZoom({transform}: any): void {
@@ -363,3 +379,4 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
     this.destroyed$.next();
   }
 }
+

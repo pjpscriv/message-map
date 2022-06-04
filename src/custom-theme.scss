@@ -1,12 +1,13 @@
 // Custom Theming for Angular Material
+@use '@angular/material' as mat;
 // For more information: https://material.angular.io/guide/theming
-@import '~@angular/material/theming';
+@import '@angular/material/theming';
 // Plus imports for other components in your app.
 @import "app/main/thread-list/thread-list.component";
 // Include the common styles for Angular Material. We include this here so that you only
 // have to load a single css file for Angular Material in your app.
 // Be sure that you only ever include this mixin once!
-@include mat-core();
+@include mat.core();
 
 // Generated from https://material.io/design/color/the-color-system.html#tools-for-picking-colors
 // using #0099FF as a starting point
@@ -83,13 +84,13 @@ $ng-fb-message-orange: (
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
-$ngfbmessage-primary: mat-palette($ng-fb-message-blue);
-$ngfbmessage-accent: mat-palette($ng-fb-message-orange);
-$ngfbmessage-warn: mat-palette($mat-red); // The warn palette is optional (defaults to red).
+$ngfbmessage-primary: mat.define-palette($ng-fb-message-blue);
+$ngfbmessage-accent: mat.define-palette($ng-fb-message-orange);
+$ngfbmessage-warn: mat.define-palette(mat.$red-palette); // The warn palette is optional (defaults to red).
 
 // Create the theme object. A theme consists of configurations for individual
 // theming systems such as "color" or "typography".
-$ngfbmessage-theme: mat-light-theme((
+$ngfbmessage-theme: mat.define-light-theme((
   color: (
     primary: $ngfbmessage-primary,
     accent: $ngfbmessage-accent,
@@ -98,7 +99,7 @@ $ngfbmessage-theme: mat-light-theme((
 ));
 
 // Dark Mode
-$ngfbmessage-theme-dark: mat-dark-theme((
+$ngfbmessage-theme-dark: mat.define-dark-theme((
   color: (
     primary: $ngfbmessage-primary,
     accent: $ngfbmessage-accent,
@@ -109,17 +110,17 @@ $ngfbmessage-theme-dark: mat-dark-theme((
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme
 // mixins for each component that you are using.
-@include angular-material-theme($ngfbmessage-theme);
+@include mat.all-component-themes($ngfbmessage-theme);
 @include holder-theme($ngfbmessage-theme);
 
 .dark-mode {
-  @include angular-material-theme($ngfbmessage-theme-dark);
+  @include mat.all-component-themes($ngfbmessage-theme-dark);
   @include holder-theme($ngfbmessage-theme-dark);
 }
 
 :root {
-  --color-primary: #{mat-color($ngfbmessage-primary)};
-  --color-accent: #{mat-color($ngfbmessage-accent)};
-  --color-warn: #{mat-color($ngfbmessage-warn)};
+  --color-primary: #{mat.get-color-from-palette($ngfbmessage-primary)};
+  --color-accent: #{mat.get-color-from-palette($ngfbmessage-accent)};
+  --color-warn: #{mat.get-color-from-palette($ngfbmessage-warn)};
   //--color-success: #{mat-color($app-success)};
 }

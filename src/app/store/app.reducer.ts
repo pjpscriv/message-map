@@ -12,18 +12,29 @@ import {
 import { initialState } from './app.state';
 
 
-export const messagesReducer = createReducer(
-  initialState.messages,
+export const messageDataReducer = createReducer(
+  initialState.messageData,
   on(UpdateMessagesAction,
-    (existingMessages, { messages }) => {
+    (existingMessageData, { messages }) => {
       return crossfilter(messages);
     }
   ),
   on(UpdateMessageFilterAction,
-    (existingMessages, { messageFilter }) => {
+    (existingMessageData, { messageFilter }) => {
       return messageFilter;
     })
 );
+
+
+export const chartDataReducer = createReducer(
+  initialState.chartData,
+  on(UpdateMessagesAction,
+    (existingChartData, { messages }) => {
+      return crossfilter(messages);
+    }
+  )
+);
+
 
 export const loadProgressReducer = createReducer(
   initialState.loadProgress,
@@ -33,6 +44,7 @@ export const loadProgressReducer = createReducer(
     }
   )
 );
+
 
 export const threadsReducer = createReducer(
   initialState.threads,
@@ -52,6 +64,7 @@ export const threadsReducer = createReducer(
     }
   )
 );
+
 
 export const darkModeReducer = createReducer(
   initialState.darkMode,

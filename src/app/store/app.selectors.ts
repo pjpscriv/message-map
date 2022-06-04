@@ -4,8 +4,13 @@ import { Message } from '../types/message.interface';
 import { ThreadMap } from '../types/thread.interface';
 import { AppState } from './app.state';
 
-export const selectMessages = createSelector(
-  (state: AppState) => state.messages,
+export const selectMessageData = createSelector(
+  (state: AppState) => state.messageData,
+  (messages: Crossfilter<Message>) => messages
+);
+
+export const selectChartData = createSelector(
+  (state: AppState) => state.chartData,
   (messages: Crossfilter<Message>) => messages
 );
 

@@ -9,13 +9,15 @@ import crossfilter, {Crossfilter} from 'crossfilter2';
 @Component({
   selector: 'app-filters',
   templateUrl: './filters.component.html',
-  styleUrls: ['./filters.component.css']
+  styleUrls: ['./filters.component.scss']
 })
 export class FiltersComponent implements OnDestroy {
+  // Constants
   private lengths = [0, 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000];
   private daysShort = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   private thingWidth = 220;
-  // TODO: Add sort ordering for different charts
+
+  // Bar Chart Settings
   public barCharts: Array<BarChartConfig> = [
     {
       id: 'sent-received',
@@ -58,41 +60,50 @@ export class FiltersComponent implements OnDestroy {
       getLabel: (v: number) => this.daysShort[v],
       scale: d3.scaleLinear().range([0, this.thingWidth]),
       clicked: new Set(),
+      // Sunday is the *last* day of the week dammit
       ordering: (a: any, b: any) => {
-        if (a.key === 0) { // Sunday is the *last* day of the week dammit
-          return 1;
-        } else if (b.key === 0) {
-          return -1;
-        } else {
-          return a.key - b.key;
-        }
+        if (a.key === 0) { return 1; }
+        else if (b.key === 0) { return -1; }
+        else { return a.key - b.key; }
       }
     }
   ];
+
+  // Data Inputs
+  private messagesFilter = crossfilter([] as Message[]);
+  private chartsFilter = crossfilter([] as Message[]);
+
+  // Life Cycle
   private destroyed$ = new Subject();
-  private filter = crossfilter([] as Message[]);
+
+  // UI Variables
   public messageCount = 0;
   public totalMessages = 0;
 
   constructor(private filterService: FilterService) {
-    this.filterService.getMessageFilter().subscribe(filter => {
-      this.filter = filter;
-      this.totalMessages = filter.size();
-      this.messageCount = filter.allFiltered().length;
+    this.filterService.getMessageAndChartFilters().subscribe(filtersPair => {
+      this.messagesFilter = filtersPair[0];
+      this.chartsFilter = filtersPair[1];
+
+      this.totalMessages = this.chartsFilter.size();
+      this.messageCount = this.chartsFilter.allFiltered().length;
+
       this.barCharts.forEach(config => {
-        config.dimension = filter.dimension(config.getData);
+        config.messagesDimension = this.messagesFilter.dimension(config.getData);
+        config.chartsDimension = this.chartsFilter.dimension(config.getData);
       });
     });
 
     this.filterService.getFilterRedraw().subscribe(() => {
-      this.messageCount = this.filter.allFiltered().length;
+      this.messageCount = this.chartsFilter.allFiltered().length;
     });
   }
 
   public clearFilters(): void {
     this.barCharts.forEach(config => {
       config.clicked.clear();
-      config.dimension.filterAll();
+      config.chartsDimension.filterAll();
+      config.messagesDimension.filterAll();
     });
     this.filterService.redrawFilter();
   }

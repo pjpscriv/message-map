@@ -18,6 +18,7 @@ export class ProcessingModalComponent {
     private store: Store<AppState>,
     private dialogRef: MatDialogRef<ProcessingModalComponent>
   ) {
+    this.dialogRef.disableClose = true;
     this.progress$.subscribe(loadProgress => {
       this.final = loadProgress === 99;
 
