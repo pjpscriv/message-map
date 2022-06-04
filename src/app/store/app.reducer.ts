@@ -3,6 +3,7 @@ import crossfilter from 'crossfilter2';
 import {Thread, ThreadMap} from '../types/thread.interface';
 import {
   AddThreadAction,
+  ToggleDarkModeAction,
   UpdateDarkModeAction,
   UpdateFilesAction,
   UpdateLoadProgressAction,
@@ -74,6 +75,9 @@ export const darkModeReducer = createReducer(
   initialState.darkMode,
   on(UpdateDarkModeAction,
     (oldDarkMode, { darkMode }) => darkMode
+  ),
+  on(ToggleDarkModeAction,
+    (oldDarkMode ) => !oldDarkMode
   )
 );
 

@@ -6,6 +6,7 @@ import {OverlayContainer} from '@angular/cdk/overlay';
 import {DemoDataService} from './shared/demo-data.service';
 import {MatDrawerMode, MatSidenav} from '@angular/material/sidenav';
 import {ThreadListComponent} from './main/thread-list/thread-list.component';
+import {UpdateDarkModeAction} from './store/app.actions';
 
 @Component({
   selector: 'app-root',
@@ -34,6 +35,10 @@ export class AppComponent implements AfterViewInit {
         this.overlay.getContainerElement().classList.remove(this.darkModeClass);
       }
     });
+
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      this.store.dispatch(UpdateDarkModeAction({ darkMode: true }));
+    }
   }
 
   public ngAfterViewInit(): void {
