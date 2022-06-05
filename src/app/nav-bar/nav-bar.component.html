@@ -8,6 +8,7 @@
   <span class="example-spacer"></span>
 
   <button mat-icon-button color="primary" (click)="toggleDarkMode()">
+    <!-- TODO: This could be done with CSS   -->
     <mat-icon *ngIf="!darkMode">light_mode</mat-icon>
     <mat-icon *ngIf="darkMode">dark_mode</mat-icon>
   </button>
