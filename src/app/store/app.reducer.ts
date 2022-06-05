@@ -3,26 +3,25 @@ import crossfilter from 'crossfilter2';
 import { Thread, ThreadMap } from '../types/thread.interface';
 import {
   AddThreadAction,
+  ToggleDarkModeAction,
   UpdateDarkModeAction,
+  UpdateFilesAction,
   UpdateLoadProgressAction,
   UpdateMessageFilterAction,
   UpdateMessagesAction,
   UpdateThreadsAction
 } from './app.actions';
-import { initialState } from './app.state';
+import { fileAdapter, initialState } from './app.state';
 
 
 export const messageDataReducer = createReducer(
   initialState.messageData,
   on(UpdateMessagesAction,
-    (existingMessageData, { messages }) => {
-      return crossfilter(messages);
-    }
+    (existingMessageData, { messages }) => crossfilter(messages)
   ),
   on(UpdateMessageFilterAction,
-    (existingMessageData, { messageFilter }) => {
-      return messageFilter;
-    })
+    (existingMessageData, { messageFilter }) => messageFilter
+  )
 );
 
 
@@ -36,12 +35,18 @@ export const chartDataReducer = createReducer(
 );
 
 
+export const fileDataReducer = createReducer(
+  initialState.fileData,
+  on(UpdateFilesAction,
+    (fileData, { files }) => fileAdapter.setMany(files, fileData)
+  )
+);
+
+
 export const loadProgressReducer = createReducer(
   initialState.loadProgress,
   on(UpdateLoadProgressAction,
-    (oldProgress, { loadProgress }) => {
-      return loadProgress;
-    }
+    (oldProgress, { loadProgress }) => loadProgress
   )
 );
 
@@ -69,9 +74,10 @@ export const threadsReducer = createReducer(
 export const darkModeReducer = createReducer(
   initialState.darkMode,
   on(UpdateDarkModeAction,
-    (oldDarkMode, { darkMode }) => {
-      return darkMode;
-    }
+    (oldDarkMode, { darkMode }) => darkMode
+  ),
+  on(ToggleDarkModeAction,
+    (oldDarkMode ) => !oldDarkMode
   )
 );
 

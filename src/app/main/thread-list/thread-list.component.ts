@@ -13,7 +13,7 @@ import {Message} from '../../types/message.interface';
 import crossfilter from 'crossfilter2';
 import {COLOR_ENUM, ColorService} from '../../shared/color.service';
 
-type SortType = {
+type ThreadSort = {
   name: string;
   text: string;
   method: (a: Thread, b: Thread) => number
@@ -29,8 +29,8 @@ export class ThreadListComponent implements OnDestroy {
   // @ts-ignore
   @ViewChild('threads') threads: MatSelectionList;
   public threads$: Observable<Array<Thread>>;
-  public sortType$: Subject<SortType> = new Subject<SortType>();
-  public sortTypes: Array<SortType> = [
+  public sortType$: Subject<ThreadSort> = new Subject<ThreadSort>();
+  public sortTypes: Array<ThreadSort> = [
     {
       name: 'MESSAGE_COUNT_DESC',
       text: 'Number of Messages',
@@ -99,14 +99,14 @@ export class ThreadListComponent implements OnDestroy {
   }
 
   // Sorting Functions //
-  public sortChange(newSort: SortType | null): void {
+  public sortChange(newSort: ThreadSort | null): void {
     if (newSort) {
       this.selectedSort = newSort;
       this.sortType$.next(newSort);
     }
   }
 
-  public compareSorts(a: SortType, b: SortType): boolean {
+  public compareSorts(a: ThreadSort, b: ThreadSort): boolean {
     return a.name === b.name;
   }
 

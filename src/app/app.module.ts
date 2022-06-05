@@ -36,7 +36,14 @@ import { ExplanationModalComponent } from './modals/explanation-modal/explanatio
 import { ExploreModalComponent } from './modals/explore-modal/explore-modal.component';
 import { ProcessingModalComponent } from './modals/processing-modal/processing-modal.component';
 import { NavBarComponent } from './nav-bar/nav-bar.component';
-import {chartDataReducer, darkModeReducer, loadProgressReducer, messageDataReducer, threadsReducer} from './store/app.reducer';
+import {
+  chartDataReducer,
+  darkModeReducer,
+  fileDataReducer,
+  loadProgressReducer,
+  messageDataReducer,
+  threadsReducer
+} from './store/app.reducer';
 import { MatListColorDirective } from './main/thread-list/mat-list-color.directive';
 
 @NgModule({
@@ -68,6 +75,7 @@ import { MatListColorDirective } from './main/thread-list/mat-list-color.directi
     StoreModule.forRoot({
       messageData: messageDataReducer,
       chartData: chartDataReducer,
+      fileData: fileDataReducer,
       loadProgress: loadProgressReducer,
       threads: threadsReducer,
       darkMode: darkModeReducer

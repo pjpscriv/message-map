@@ -5,7 +5,7 @@ import { ExploreModalComponent } from '../modals/explore-modal/explore-modal.com
 import {select, Store} from '@ngrx/store';
 import {AppState} from '../store/app.state';
 import {selectDarkMode} from '../store/app.selectors';
-import {UpdateDarkModeAction} from '../store/app.actions';
+import {ToggleDarkModeAction, UpdateDarkModeAction} from '../store/app.actions';
 
 @Component({
   selector: 'app-nav-bar',
@@ -25,9 +25,7 @@ export class NavBarComponent implements OnInit {
 
   public ngOnInit(): void {
     this.explanation();
-    this.store.pipe(select(selectDarkMode)).subscribe(darkMode =>
-      this.darkMode = darkMode
-    );
+    this.store.pipe(select(selectDarkMode)).subscribe(darkMode => this.darkMode = darkMode);
   }
 
   public explore(): void {
@@ -39,7 +37,7 @@ export class NavBarComponent implements OnInit {
   }
 
   public toggleDarkMode(): void {
-    this.store.dispatch(UpdateDarkModeAction({ darkMode: !this.darkMode }));
+    this.store.dispatch(ToggleDarkModeAction());
   }
 
   public reset(): void {
