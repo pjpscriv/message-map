@@ -1,12 +1,12 @@
-import {AfterViewInit, Component, HostBinding, ViewChild} from '@angular/core';
-import {select, Store} from '@ngrx/store';
-import {AppState} from './store/app.state';
-import {selectDarkMode} from './store/app.selectors';
-import {OverlayContainer} from '@angular/cdk/overlay';
-import {DemoDataService} from './shared/demo-data.service';
-import {MatDrawerMode, MatSidenav} from '@angular/material/sidenav';
-import {ThreadListComponent} from './main/thread-list/thread-list.component';
-import {UpdateDarkModeAction} from './store/app.actions';
+import { AfterViewInit, Component, HostBinding, ViewChild } from '@angular/core';
+import { select, Store } from '@ngrx/store';
+import { AppState } from './store/app.state';
+import { selectDarkMode } from './store/app.selectors';
+import { OverlayContainer } from '@angular/cdk/overlay';
+import { DemoDataService } from './shared/demo-data.service';
+import { MatDrawerMode, MatSidenav } from '@angular/material/sidenav';
+import { ThreadListComponent } from './main/thread-list/thread-list.component';
+import { UpdateDarkModeAction } from './store/app.actions';
 
 @Component({
   selector: 'app-root',
