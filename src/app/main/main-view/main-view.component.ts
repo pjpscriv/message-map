@@ -1,19 +1,21 @@
-import {AfterViewInit, Component, OnDestroy, ViewChild} from '@angular/core';
-import {Store} from '@ngrx/store';
-import {ResizedEvent} from 'angular-resize-event';
+import { AfterViewInit, Component, OnDestroy, ViewChild } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { ResizedEvent } from 'angular-resize-event';
 import * as d3 from 'd3';
-import {ZoomTransform} from 'd3';
-import {BehaviorSubject, Subject} from 'rxjs';
-import {debounceTime, filter, takeUntil, tap} from 'rxjs/operators';
-import {AppState} from 'src/app/store/app.state';
-import {MEDIA_TYPE, Message, WebkitFile} from '../../types/message.interface';
-import {Crossfilter} from 'src/app/types/crossfilter.aliases';
-import {FilterService} from '../../shared/filter.service';
+import { ZoomTransform } from 'd3';
+import { BehaviorSubject, Subject } from 'rxjs';
+import { debounceTime, filter, groupBy, mergeMap, takeUntil, tap } from 'rxjs/operators';
+import { AppState } from 'src/app/store/app.state';
+import { MEDIA_TYPE, Message, WebkitFile } from '../../types/message.interface';
+import { Crossfilter } from 'src/app/types/crossfilter.aliases';
+import { FilterService } from '../../shared/filter.service';
 import crossfilter from 'crossfilter2';
-import {dayLimitedAxis, timeTickFormat} from './d3-helper.functions';
-import {COLOR_ENUM, ColorService} from '../../shared/color.service';
-import {DatePipe} from '@angular/common';
-import {FilesService} from '../../shared/files.service';
+import { dayLimitedAxis, timeTickFormat } from './d3-helper.functions';
+import { COLOR_ENUM, ColorService } from '../../shared/color.service';
+import { DatePipe } from '@angular/common';
+import { FilesService } from '../../shared/files.service';
+import { EntityState } from '@ngrx/entity';
+import { Dictionary } from '@ngrx/entity/src/models';
 
 @Component({
   selector: 'app-main-view',
@@ -26,7 +28,7 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
   @ViewChild('scatterplot') canvasEl: any;
   private initialSize = new ResizedEvent(new DOMRectReadOnly(), undefined);
   public canvasWrapperSize$ = new BehaviorSubject<ResizedEvent>(this.initialSize);
-  private canvasContext: any;
+  private canvas: any;
   private oldCanvasSize: any;
   private destroyed$ = new Subject();
 
@@ -34,7 +36,8 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
   private filter = crossfilter([] as Message[]);
   private dateDimension = this.filter.dimension((m: Message) => m.date);
   private timeDimension = this.filter.dimension((m: Message) => m.timeSeconds);
-  private fileMap = new Map<string, WebkitFile>();
+  private fileMap: Dictionary<WebkitFile> = {};
+  private drawImage$ = new BehaviorSubject<[string, any]>(['', {}]);
 
   // Dates
   private minDate = new Date(2010, 1, 1);
@@ -64,7 +67,7 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
 
 
   public ngAfterViewInit(): void {
-    this.canvasContext = this.canvasEl.nativeElement.getContext('2d');
+    this.canvas = this.canvasEl.nativeElement.getContext('2d');
 
     this.oldCanvasSize = {
       width: this.canvasEl.nativeElement.clientWidth,
@@ -95,13 +98,24 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
     // Files
     this.filesService.getFileMap().pipe(
       takeUntil(this.destroyed$)
-    ).subscribe((fileMap: Map<string, WebkitFile>) => {
-      this.fileMap = fileMap;
+    ).subscribe((fileMap: EntityState<WebkitFile>) => {
+      this.fileMap = fileMap.entities;
     });
 
     // Redraw
-    this.filterService.getFilterRedraw().subscribe(() => {
+    this.filterService.getFilterRedraw().pipe(
+      takeUntil(this.destroyed$)
+    ).subscribe(() => {
       this.drawScatterplot();
+    });
+
+    // Draw Images
+    this.drawImage$.pipe(
+      takeUntil(this.destroyed$),
+      groupBy(([photoUri, _]) => photoUri),
+      mergeMap(group$ => group$.pipe(debounceTime(200)))
+    ).subscribe(([photoUri, dimensions]) => {
+      this.drawImage(photoUri, dimensions);
     });
   }
 
@@ -197,7 +211,7 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
   private drawScatterplot(): void {
     const colorBase = '#0099FF';
 
-    this.canvasContext.clearRect(0, 0, this.canvasEl.nativeElement.width, this.canvasEl.nativeElement.height);
+    this.canvas.clearRect(0, 0, this.canvasEl.nativeElement.width, this.canvasEl.nativeElement.height);
 
     // Filter by visible area for improved performance
     this.dateDimension.filterRange([this.scaleX.domain()[0], this.scaleX.domain()[1]]);
@@ -216,11 +230,11 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
       }
 
       if (d.is_user) {
-        this.canvasContext.fillStyle = 'lightgrey';
-        this.canvasContext.strokeStyle = 'lightgrey';
+        this.canvas.fillStyle = 'lightgrey';
+        this.canvas.strokeStyle = 'lightgrey';
       } else {
-        this.canvasContext.fillStyle = color;
-        this.canvasContext.strokeStyle = color;
+        this.canvas.fillStyle = color;
+        this.canvas.strokeStyle = color;
       }
       this.drawMessage(d, color);
     });
@@ -228,28 +242,28 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
 
   private drawMessage(d: Message, color: string): void {
     // Shape
-    this.canvasContext.beginPath();
+    this.canvas.beginPath();
 
     // TODO: Make transition between Dot and Not Dot way smoother
     // DOT
     if (this.transform.k < 250) {
       const radius = 2 * Math.log(this.transform.k + 1);
-      this.canvasContext.globalAlpha = 0.3;
-      this.canvasContext.arc(this.scaleX(d.date), this.scaleY(d.timeSeconds), radius, 0, 2 * Math.PI, true);
-      this.canvasContext.fill();
-      this.canvasContext.closePath();
+      this.canvas.globalAlpha = 0.3;
+      this.canvas.arc(this.scaleX(d.date), this.scaleY(d.timeSeconds), radius, 0, 2 * Math.PI, true);
+      this.canvas.fill();
+      this.canvas.closePath();
 
     // NOT DOT
     } else {
       // Variables
-      this.canvasContext.globalAlpha = 0.6;
+      this.canvas.globalAlpha = 0.6;
       // const fontSize = Math.log(this.transform.k ** 9) - 40;
       const fontSize = Math.min((0.005 * this.transform.k) + 9, 20) ;
-      this.canvasContext.font = `${fontSize}px Roboto`;
+      this.canvas.font = `${fontSize}px Roboto`;
       const lineHeight = fontSize + 0;
       const borderRadius = 20;
-      this.canvasContext.lineJoin = 'round';
-      this.canvasContext.lineWidth = borderRadius;
+      this.canvas.lineJoin = 'round';
+      this.canvas.lineWidth = borderRadius;
 
       const PAD = 6;
 
@@ -259,71 +273,90 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
       const top = this.scaleY(d.timeSeconds);
       const maxWidth = (rightLimit - leftLimit) - (PAD * 2);
 
-      // Text
+      // Text Dimensions
       const lines = this.wrapText(d.message, maxWidth);
-
       const width = lines.longest + (PAD * 2);
       const height = (lineHeight * lines.lines.length) + (PAD * 2);
       const left = d.is_user ? (rightLimit - width) : leftLimit;
 
-      // Border
-      this.canvasContext.strokeRect(
+      // Text Bubble
+      this.canvas.strokeRect(
         left + (borderRadius / 2), top + (borderRadius / 2),
         width - borderRadius, height - borderRadius);
-      // Fill
-      this.canvasContext.fillRect(
+      this.canvas.fillRect(
         left + borderRadius, top + borderRadius,
         Math.max(0, width - (borderRadius * 2)), Math.max(0, height - (borderRadius * 2)));
 
       // Text
-      this.canvasContext.fillStyle = 'black';
+      this.canvas.fillStyle = 'black';
       for (let i = 0; i < lines.lines.length; i++) {
         const downShift = ((i + 0.85) * lineHeight) + PAD;
-        this.canvasContext.fillText(lines.lines[i], left + PAD, top + downShift);
+        this.canvas.fillText(lines.lines[i], left + PAD, top + downShift);
       }
 
       // Sender
-      this.canvasContext.fillStyle = 'lightgrey';
-      this.canvasContext.font = `${10}px Roboto`;
-      this.canvasContext.fillText(d.sender_name, left + 5, top + height + 14);
+      this.canvas.fillStyle = 'lightgrey';
+      this.canvas.font = `${10}px Roboto`;
+      this.canvas.fillText(d.sender_name, left + 5, top + height + 14);
 
       // Time
-      this.canvasContext.font = `${10}px Roboto`;
-      this.canvasContext.fillStyle = 'lightgrey';
+      this.canvas.font = `${10}px Roboto`;
+      this.canvas.fillStyle = 'lightgrey';
       const timestamp = this.getTimestamp(d);
-      const lineWidth = this.canvasContext.measureText(timestamp).width;
-      this.canvasContext.fillText(timestamp, (left+width) - lineWidth, top + height + 14);
+      const lineWidth = this.canvas.measureText(timestamp).width;
+      this.canvas.fillText(timestamp, (left + width) - lineWidth, top + height + 14);
 
       // Media type
-      if (d.media !== MEDIA_TYPE.NONE) {
+      if (d.media !== MEDIA_TYPE.NONE && d.media !== MEDIA_TYPE.PHOTO) {
         const timeStampShift = 14;
-        this.canvasContext.font = `${10}px Roboto`;
-        this.canvasContext.fillStyle = 'lightgrey';
-        const thing = `Media Type: ${d.media}`;
-        // this.canvasContext.fillText(thing, left + 5, top - 14);
+        this.canvas.font = `${10}px Roboto`;
+        this.canvas.fillStyle = 'lightgrey';
+        const text = `Media Type: ${d.media}`;
+        this.canvas.fillText(text, left + 5, top - 6);
       }
 
       // Draw Photos
-      const imageSize = Math.min(maxWidth, 50);
+      const imageSize = Math.min(maxWidth, 200);
       if (d.media === MEDIA_TYPE.PHOTO) {
+        let photoNum = 1;
         d.media_files.forEach(photo => {
-          const name = photo.uri.split('/').pop() ?? '';
-          console.log(`Photo: ${photo.uri}`);
-          const imageFile = this.fileMap.get(name) as Blob;
-
-          const reader = new FileReader();
-          reader.onload = (event) => {
-            this.canvasContext.drawImage(imageFile, left, top + height, imageSize, imageSize);
+          const dimensions = {
+            left,
+            top: top + height,
+            width: imageSize,
+            height: imageSize
           };
-
-          reader.readAsDataURL(imageFile);
-
-
-          // const image = new Image();
-          // image.onload = () => ;
-          // image.src = `https://via.placeholder.com/150/${color.slice(1)}`;
+          this.drawImage$.next([photo.uri, dimensions]);
+          photoNum++;
         });
       }
+    }
+  }
+
+  private drawImage(photoUri: string, dimensions: any): void {
+    const name = photoUri.split('/').pop() ?? '';
+    const imageFile = this.fileMap[name] as Blob;
+    // console.log(`Drawing image ${name}: ${imageFile}`);
+    if (!!imageFile) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const imageData = event.target?.result as string;
+        const image = new Image();
+        image.onload = () => {
+          this.canvas.globalAlpha = 1.0;
+          const nHeight = image.naturalHeight;
+          const nWidth = image.naturalWidth;
+          const ratio = nHeight / nWidth;
+
+          const width = Math.max(dimensions.width);
+          const height = dimensions.width * ratio;
+
+          this.canvas.drawImage(image, dimensions.left, dimensions.top, width, height);
+          this.canvas.globalAlpha = 0.6;
+        };
+        image.src = imageData;
+      };
+      reader.readAsDataURL(imageFile);
     }
   }
 
@@ -336,7 +369,7 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
 
   private onZoom({transform}: any): void {
     this.transform = transform;
-    console.log('Zoom:', transform.k);
+    // console.log('Zoom:', transform.k);
     this.drawAxes();
     this.drawScatterplot();
   }
@@ -360,7 +393,7 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
 
     while (n < words.length) {
       const testLine = line === '' ? word : `${line} ${word}`;
-      const lineWidth = this.canvasContext.measureText(testLine).width;
+      const lineWidth = this.canvas.measureText(testLine).width;
 
       // There is space for the new word
       if (lineWidth < maxWidth) {

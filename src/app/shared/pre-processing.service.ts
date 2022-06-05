@@ -1,10 +1,10 @@
-import {Injectable} from '@angular/core';
-import {KeyThreadDates, ParsedThread, Thread} from '../types/thread.interface';
-import {GoogleAnalyticsService} from './google-analytics.service';
-import {MessageDataService} from './message-data.service';
+import { Injectable } from '@angular/core';
+import { KeyThreadDates, ParsedThread, Thread } from '../types/thread.interface';
+import { GoogleAnalyticsService } from './google-analytics.service';
+import { MessageDataService } from './message-data.service';
 import * as d3 from 'd3';
 // import * as assert from 'assert';
-import {Media, MEDIA_TYPE, Message, ParsedMessage, Reaction, WebkitFile} from '../types/message.interface';
+import { Media, MEDIA_TYPE, Message, ParsedMessage, Reaction, WebkitFile } from '../types/message.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +20,8 @@ export class PreProcessingService {
   private filesRead = 0;
   private totalFileSize = 0;
   private totalFileCount = 0;
+  private loadedFileSize = 0;
+  private loadedFileCount = 0;
 
   private filetypes: { [thing: string]: number } = {};
 
@@ -58,20 +60,25 @@ export class PreProcessingService {
             this.messageService.addThreads(this.threads);
             this.messageService.messagesLoaded();
             console.log(this.filetypes);
-            console.log(`Total files size: ${this.totalFileSize}`);
             console.log(`Total files: ${this.totalFileCount}`);
+            console.log(`Total files size: ${this.totalFileSize}`);
+            console.log(`Total files loaded: ${this.loadedFileCount}`);
+            console.log(`Total loaded files size: ${this.loadedFileSize}`);
           }
         };
         reader.readAsText(file);
 
       } else {
-        this.messageService.addFile(file);
+        if (this.isImageFile(file)) {
+          this.messageService.addFile(file);
+          this.loadedFileCount += 1;
+          this.loadedFileSize += file.size;
+        }
+
         const extn: string = file.name.split('.').pop() ?? 'undefined';
         this.filetypes[extn] = this.filetypes[extn] ? this.filetypes[extn] + 1 : 1;
         this.totalFileCount += 1;
         this.totalFileSize += file.size;
-        // console.count('Non-messages file');
-        // console.log(file);
       }
     }
   }
@@ -213,5 +220,13 @@ export class PreProcessingService {
 
   private isMessagesFile(file: WebkitFile): boolean {
     return this.messagesRegEx.test(file.webkitRelativePath);
+  }
+
+  private isImageFile(file: WebkitFile): boolean {
+     return this.imagesRegEx.test(file.webkitRelativePath);
+  }
+
+  private isGifFile(file: WebkitFile): boolean {
+    return this.gifRegEx.test(file.webkitRelativePath);
   }
 }

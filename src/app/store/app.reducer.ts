@@ -1,6 +1,6 @@
-import {createReducer, on} from '@ngrx/store';
+import { createReducer, on } from '@ngrx/store';
 import crossfilter from 'crossfilter2';
-import {Thread, ThreadMap} from '../types/thread.interface';
+import { Thread, ThreadMap } from '../types/thread.interface';
 import {
   AddThreadAction,
   ToggleDarkModeAction,
@@ -11,7 +11,7 @@ import {
   UpdateMessagesAction,
   UpdateThreadsAction
 } from './app.actions';
-import {initialState} from './app.state';
+import { fileAdapter, initialState } from './app.state';
 
 
 export const messageDataReducer = createReducer(
@@ -38,7 +38,7 @@ export const chartDataReducer = createReducer(
 export const fileDataReducer = createReducer(
   initialState.fileData,
   on(UpdateFilesAction,
-    (existingFileData, { files }) => files
+    (fileData, { files }) => fileAdapter.setMany(files, fileData)
   )
 );
 

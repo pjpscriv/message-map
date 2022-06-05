@@ -1,7 +1,7 @@
-import {createAction, props} from '@ngrx/store';
-import {Thread } from '../types/thread.interface';
-import {Message, WebkitFile} from '../types/message.interface';
-import {Crossfilter} from '../types/crossfilter.aliases';
+import { createAction, props } from '@ngrx/store';
+import { Thread } from '../types/thread.interface';
+import { Message, WebkitFile } from '../types/message.interface';
+import { Crossfilter } from '../types/crossfilter.aliases';
 
 export enum AppActionTypes {
   UPDATE_MESSAGES       = '[Messages] Update Messages',
@@ -26,7 +26,7 @@ export const UpdateMessageFilterAction = createAction(
 
 export const UpdateFilesAction = createAction(
   AppActionTypes.UPDATE_FILES,
-  props<{ files: Map<string, WebkitFile> }>()
+  props<{ files: Array<WebkitFile> }>()
 );
 
 export const UpdateLoadProgressAction = createAction(
