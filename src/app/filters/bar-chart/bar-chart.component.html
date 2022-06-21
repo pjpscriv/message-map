@@ -3,7 +3,7 @@
     <button disabled mat-icon-button (click)="toggleColors()" class="color-button">
       <mat-icon>palette</mat-icon>
     </button>
-    <span>{{ config?.name }}</span>
+    <h4 class="chart-title">{{ config?.name }}</h4>
   </div>
   <div class="body">
     <svg #chartBody class="{{config.id}}-chart"></svg>

@@ -8,12 +8,12 @@ import { debounceTime, filter, groupBy, mergeMap, takeUntil, tap } from 'rxjs/op
 import { AppState } from 'src/app/store/app.state';
 import { MEDIA_TYPE, Message, WebkitFile } from '../../types/message.interface';
 import { Crossfilter } from 'src/app/types/crossfilter.aliases';
-import { FilterService } from '../../shared/filter.service';
+import { FilterService } from '../../services/filter.service';
 import crossfilter from 'crossfilter2';
 import { dayLimitedAxis, timeTickFormat } from './d3-helper.functions';
-import { COLOR_ENUM, ColorService } from '../../shared/color.service';
+import { COLOR_ENUM, ColorService } from '../../services/color.service';
 import { DatePipe } from '@angular/common';
-import { FilesService } from '../../shared/files.service';
+import { FilesService } from '../../services/files.service';
 import { EntityState } from '@ngrx/entity';
 import { Dictionary } from '@ngrx/entity/src/models';
 

@@ -1,7 +1,7 @@
 <div class="filters-container">
   <mat-list-item>
     <h1>{{ messageCount | number }} Messages </h1>
-    <button mat-icon-button class="spaced" (click)="clearFilters()">
+    <button mat-icon-button class="spaced" (click)="clearFilters()" matTooltip="Refresh all filters" [matTooltipPosition]="'left'">
       <mat-icon>refresh</mat-icon>
     </button>
   </mat-list-item>

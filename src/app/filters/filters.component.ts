@@ -1,9 +1,9 @@
 import {Component, OnDestroy} from '@angular/core';
-import {MEDIA_TYPE, Message} from '../../types/message.interface';
+import {MEDIA_TYPE, Message} from '../types/message.interface';
 import {BarChartConfig} from './bar-chart/bar-chart-config.type';
 import {Subject} from 'rxjs';
 import * as d3 from 'd3';
-import {FilterService} from '../../shared/filter.service';
+import {FilterService} from '../services/filter.service';
 import crossfilter, {Crossfilter} from 'crossfilter2';
 
 @Component({
@@ -25,7 +25,8 @@ export class FiltersComponent implements OnDestroy {
       getData: (m: Message) => m.is_user,
       getLabel: (v: boolean) => v ? 'Sent' : 'Recv',
       scale: d3.scaleLinear().range([0, this.thingWidth]),
-      clicked: new Set()
+      clicked: new Set(),
+      showEmpties: true
     },
     {
       id: 'top-senders',
@@ -34,7 +35,8 @@ export class FiltersComponent implements OnDestroy {
       getLabel: (v: string) => v,
       scale: d3.scaleLinear().range([0, this.thingWidth]),
       numberOfBars: 10,
-      clicked: new Set()
+      clicked: new Set(),
+      showEmpties: false
     },
     {
       id: 'message-type',
@@ -43,6 +45,7 @@ export class FiltersComponent implements OnDestroy {
       getLabel: (v: MEDIA_TYPE) => this.mediaTypeToString(v),
       scale: d3.scaleLinear().range([0, this.thingWidth]),
       clicked: new Set(),
+      showEmpties: false,
       numberOfBars: 6
     },
     {
@@ -51,7 +54,8 @@ export class FiltersComponent implements OnDestroy {
       getData: (m: Message) => this.findLengthTick(m),
       getLabel: (v: number) => String(v),
       scale: d3.scaleLinear().range([0, this.thingWidth]),
-      clicked: new Set()
+      clicked: new Set(),
+      showEmpties: false
     },
     {
       id: 'week-day',
@@ -60,6 +64,7 @@ export class FiltersComponent implements OnDestroy {
       getLabel: (v: number) => this.daysShort[v],
       scale: d3.scaleLinear().range([0, this.thingWidth]),
       clicked: new Set(),
+      showEmpties: true,
       // Sunday is the *last* day of the week dammit
       ordering: (a: any, b: any) => {
         if (a.key === 0) { return 1; }

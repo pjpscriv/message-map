@@ -1,5 +1,6 @@
+/* tslint:disable:jsdoc-format */
 import { Injectable } from '@angular/core';
-import { GoogleAnalyticsService } from '../shared/google-analytics.service';
+import { GoogleAnalyticsService } from '../google-analytics.service';
 import * as d3 from 'd3';
 
 @Injectable({
@@ -9,8 +10,8 @@ export class BarchartService {
 
   constructor(private gs: GoogleAnalyticsService) {}
 
-  /** *
-
+  // tslint:disable-next-line:jsdoc-format
+  /**
   barChart(config_global: any) {
     let h_bar = 12,
         onMouseover = function(){}

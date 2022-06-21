@@ -1,4 +1,4 @@
-import {Message} from '../../../types/message.interface';
+import {Message} from '../../types/message.interface';
 import {ScaleLinear} from 'd3';
 
 export type BarChartConfig = {
@@ -10,6 +10,7 @@ export type BarChartConfig = {
   getLabel: (v: any) => string
   scale: ScaleLinear<any, any>
   clicked: Set<any>
+  showEmpties: boolean
   numberOfBars?: number
   ordering?: any
 };

@@ -1,41 +1,56 @@
 <mat-toolbar>
   <button mat-icon-button color="primary">
-    <mat-icon (click)="menu()">menu</mat-icon>
+    <mat-icon (click)="chats()">menu</mat-icon>
   </button>
 
-  <span class="title">FBMessage Explorer</span>
+
+  <!-- TODO: Style to look cool -->
+  <!--  <mat-icon (click)="chats()">forum</mat-icon>-->
+  <span class="title">Message Map</span>
 
   <span class="example-spacer"></span>
 
-  <button mat-icon-button color="primary" (click)="toggleDarkMode()">
-    <!-- TODO: This could be done with CSS   -->
-    <mat-icon *ngIf="!darkMode">light_mode</mat-icon>
-    <mat-icon *ngIf="darkMode">dark_mode</mat-icon>
-  </button>
-
-  <!-- SM Buttons -->
-  <button mat-icon-button color="primary" class="icon-button" (click)="explanation()">
-    <mat-icon >help</mat-icon>
-  </button>
-  <button mat-icon-button color="primary" class="icon-button" (click)="explore()">
-    <mat-icon>upload</mat-icon>
-  </button>
   <button mat-icon-button color="primary" class="icon-button" (click)="filters()">
     <mat-icon>filter_list</mat-icon>
-  </button>
-
-  <!-- MD+ Buttons -->
-  <button mat-raised-button color="primary" class="wide-button" (click)="explanation()">
-    <mat-icon>help</mat-icon>
-    What is this?
-  </button>
-  <button mat-raised-button color="primary" class="wide-button" (click)="explore()">
-    <mat-icon>upload</mat-icon>
-    Explore my data
   </button>
   <button mat-button color="primary" class="wide-button" (click)="filters()">
     <mat-icon>filter_list</mat-icon>
     Filters
   </button>
+
+  <button mat-icon-button color="primary" [matMenuTriggerFor]="menu" aria-label="Open menu">
+    <mat-icon>more_vert</mat-icon>
+  </button>
+
+  <!-- Menu -->
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item (click)="explanation()">
+      <mat-icon color="primary">help</mat-icon>
+      What is this?
+    </button>
+    <button mat-menu-item (click)="download()">
+      <mat-icon color="primary">download</mat-icon>
+      Get my data
+    </button>
+    <button mat-menu-item (click)="explore()">
+      <mat-icon color="primary">upload</mat-icon>
+      Explore my data
+    </button>
+    <button mat-menu-item color="primary" (click)="toggleDarkMode()">
+      <!-- TODO: This could be done with CSS -->
+      <ng-container *ngIf="!darkMode">
+        <mat-icon color="primary">light_mode</mat-icon>
+        To dark mode
+      </ng-container>
+      <ng-container *ngIf="darkMode">
+        <mat-icon color="primary">dark_mode</mat-icon>
+        To light mode
+      </ng-container>
+    </button>
+    <button mat-menu-item (click)="credits()" disabled>
+      <mat-icon color="primary">group</mat-icon>
+      Credits
+    </button>
+  </mat-menu>
 
 </mat-toolbar>

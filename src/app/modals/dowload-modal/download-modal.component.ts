@@ -7,17 +7,17 @@ import {AppState} from '../../store/app.state';
 import {UpdateLoadProgressAction} from '../../store/app.actions';
 
 @Component({
-  selector: 'app-explore-modal',
-  templateUrl: './explore-modal.component.html',
-  styleUrls: ['./explore-modal.component.css']
+  selector: 'app-download-modal',
+  templateUrl: './download-modal.component.html',
+  styleUrls: ['download-modal.component.css']
 })
-export class ExploreModalComponent {
+export class DownloadModalComponent {
 
   constructor(
     private store: Store<AppState>,
     private preProcessingService: PreProcessingService,
     public dialog: MatDialog,
-    public dialogRef: MatDialogRef<ExploreModalComponent>
+    public dialogRef: MatDialogRef<DownloadModalComponent>
   ) {}
 
   public readFiles(event: any): void {

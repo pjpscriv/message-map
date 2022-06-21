@@ -1,10 +1,11 @@
-import {Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {BarChartConfig} from './bar-chart-config.type';
-import {FilterService} from '../../../shared/filter.service';
+import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { BarChartConfig } from './bar-chart-config.type';
+import { FilterService } from '../../services/filter.service';
 import * as d3 from 'd3';
-import {Subject} from 'rxjs';
-import {takeUntil} from 'rxjs/operators';
-import {ColorService} from '../../../shared/color.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { ColorService } from '../../services/color.service';
+import { KeyValue } from '@angular/common';
 
 @Component({
   selector: 'app-bar-chart',
@@ -14,6 +15,7 @@ import {ColorService} from '../../../shared/color.service';
 export class BarChartComponent implements OnInit, OnDestroy {
   @ViewChild('chartBody') chartEl: any;
   @Input() config: BarChartConfig = {} as BarChartConfig;
+
 
   private data: any;
   // isColoredBarChart;
@@ -27,6 +29,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
   private barSpacing = 4;
   private leftMargin = 40;
   private barRadius = 10;
+  private chartWidth = 320;
 
   constructor(
     private filterService: FilterService,
@@ -57,6 +60,11 @@ export class BarChartComponent implements OnInit, OnDestroy {
 
     // Clear chart
     d3.selectAll(`${chartClass} .bar-element`).remove();
+
+    // Set SVG size
+    const height = (this.data.length * this.barHeight) + ((this.data.length - 1) * this.barSpacing);
+    svg.attr('width', `${this.chartWidth}px`)
+      .attr('height', `${height}px`);
 
     // Create parent elements
     const barEls = svg.selectAll()
@@ -103,21 +111,32 @@ export class BarChartComponent implements OnInit, OnDestroy {
       .on('click', this.onClick(this.config.clicked))
       .on('mouseover', this.onMouseOver)
       .on('mouseout', this.onMouseOut);
-
-    // Hack to fix height bug
-    const height = (this.data.length * this.barHeight) + ((this.data.length - 1) * this.barSpacing);
-    // @ts-ignore Adjust svg size
-    // TODO: Set correct dimensions *before* drawing chart instead of after
-    const bbox = svg?.nodes()[0]?.getBBox();
-    svg.attr('width', bbox.x + (bbox.width + 8)  + 'px')
-      .attr('height', `${height}px`);
   }
 
   private createDataGroups(): any {
+    let data = [];
     const sorter = this.config.ordering;
     const barLimit = this.config?.numberOfBars;
-    const data = (!barLimit) ? this.config.chartsDimension.group().all() : this.config.chartsDimension.group().top(barLimit);
-    if (sorter) { data.sort(sorter); }
+    const showEmpties = this.config?.showEmpties;
+
+
+    // Set Bar Limit
+    if (!!barLimit) {
+      data = this.config.chartsDimension.group().top(barLimit);
+    } else {
+      data = this.config.chartsDimension.group().all();
+    }
+
+    // Sort
+    if (sorter) {
+      data.sort(sorter);
+    }
+
+    // Filter
+    if (!showEmpties) {
+      data = data.filter((x: KeyValue<any, any>) => x.value > 0);
+    }
+
     return data;
   }
 

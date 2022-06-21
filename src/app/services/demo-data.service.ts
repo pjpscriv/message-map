@@ -1,9 +1,9 @@
-import {Injectable} from '@angular/core';
-import {ThreadMap} from '../types/thread.interface';
-import {MEDIA_TYPE, Message} from '../types/message.interface';
-import {MessageDataService} from './message-data.service';
-import {DemoData, DemoMessage} from '../types/demo-data.interface';
-import {HttpClient} from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { ThreadMap } from '../types/thread.interface';
+import { MEDIA_TYPE, Message } from '../types/message.interface';
+import { MessageDataService } from './message-data.service';
+import { DemoData, DemoMessage } from '../types/demo-data.interface';
+import { HttpClient } from '@angular/common/http';
 
 // Offset the demo data 12 hours bc it's TRASH
 const DATA_TIMEZONE_OFFSET = 12 * 60 * 60 * 1000;

@@ -18,6 +18,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
@@ -27,10 +29,10 @@ import { AngularResizeEventModule } from 'angular-resize-event';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { BarChartComponent } from './main/filters/bar-chart/bar-chart.component';
-import { FiltersComponent } from './main/filters/filters.component';
+import { BarChartComponent } from './filters/bar-chart/bar-chart.component';
+import { FiltersComponent } from './filters/filters.component';
 import { MainViewComponent } from './main/main-view/main-view.component';
-import { ThreadListComponent } from './main/thread-list/thread-list.component';
+import { ThreadListComponent } from './chats/thread-list.component';
 import { ExplanationModalComponent } from './modals/explanation-modal/explanation-modal.component';
 import { ExploreModalComponent } from './modals/explore-modal/explore-modal.component';
 import { ProcessingModalComponent } from './modals/processing-modal/processing-modal.component';
@@ -43,7 +45,8 @@ import {
   messageDataReducer,
   threadsReducer
 } from './store/app.reducer';
-import { MatListColorDirective } from './main/thread-list/mat-list-color.directive';
+import { MatListColorDirective } from './chats/mat-list-color.directive';
+import { DownloadModalComponent } from './modals/dowload-modal/download-modal.component';
 
 
 @NgModule({
@@ -52,6 +55,7 @@ import { MatListColorDirective } from './main/thread-list/mat-list-color.directi
     ExplanationModalComponent,
     ProcessingModalComponent,
     ExploreModalComponent,
+    DownloadModalComponent,
     NavBarComponent,
     FiltersComponent,
     MainViewComponent,
@@ -88,7 +92,9 @@ import { MatListColorDirective } from './main/thread-list/mat-list-color.directi
     FormsModule,
     MatChipsModule,
     MatCheckboxModule,
-    MatCardModule
+    MatCardModule,
+    MatMenuModule,
+    MatTooltipModule
   ],
   providers: [MatListColorDirective],
   bootstrap: [AppComponent]

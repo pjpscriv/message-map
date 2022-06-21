@@ -7,11 +7,11 @@ import {selectThreads} from 'src/app/store/app.selectors';
 import {AppState} from 'src/app/store/app.state';
 import {DatePipe} from '@angular/common';
 import {MatSelectionList, MatSelectionListChange} from '@angular/material/list';
-import {FilterService} from '../../shared/filter.service';
-import {Crossfilter} from '../../types/crossfilter.aliases';
-import {Message} from '../../types/message.interface';
+import {FilterService} from '../services/filter.service';
+import {Crossfilter} from '../types/crossfilter.aliases';
+import {Message} from '../types/message.interface';
 import crossfilter from 'crossfilter2';
-import {COLOR_ENUM, ColorService} from '../../shared/color.service';
+import {COLOR_ENUM, ColorService} from '../services/color.service';
 
 type ThreadSort = {
   name: string;
@@ -195,7 +195,7 @@ export class ThreadListComponent implements OnDestroy {
   }
 
   public participantsList(thread: Thread): string {
-    return thread.participants.reduce((s, p) => `${s}\n${p.name}`, '');
+    return thread.participants.length > 0 ? thread.participants.map(p => p.name).reduce((s, p) => `${s}\n${p}`) : '';
   }
 
   public trackByThreadId(index: number, item: Thread): string {

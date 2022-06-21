@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ThreadListComponent } from './thread-list.component';
+import { DownloadModalComponent } from './download-modal.component';
 
-describe('ThreadListComponent', () => {
-  let component: ThreadListComponent;
-  let fixture: ComponentFixture<ThreadListComponent>;
+describe('ExploreModalComponent', () => {
+  let component: DownloadModalComponent;
+  let fixture: ComponentFixture<DownloadModalComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ThreadListComponent ]
+      declarations: [ DownloadModalComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ThreadListComponent);
+    fixture = TestBed.createComponent(DownloadModalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
