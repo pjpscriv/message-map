@@ -47,6 +47,7 @@ import {
 } from './store/app.reducer';
 import { MatListColorDirective } from './chats/mat-list-color.directive';
 import { DownloadModalComponent } from './modals/dowload-modal/download-modal.component';
+import { environment } from '../environments/environment';
 
 
 @NgModule({
@@ -85,7 +86,7 @@ import { DownloadModalComponent } from './modals/dowload-modal/download-modal.co
       darkMode: darkModeReducer
     }),
     EffectsModule.forRoot([]),
-    StoreDevtoolsModule.instrument({}),
+    StoreDevtoolsModule.instrument({maxAge: 25, logOnly: environment.production}),
     AngularResizeEventModule,
     MatFormFieldModule,
     MatSelectModule,

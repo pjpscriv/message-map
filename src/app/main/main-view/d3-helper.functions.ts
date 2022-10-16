@@ -1,22 +1,19 @@
 import * as d3 from 'd3';
 import {Axis, ScaleTime} from 'd3';
-// import * as fc from 'd3fc';
+import * as fc from 'd3fc';
 
 const SECONDS_PER_DAY = 86400;
 
 export function dayLimitedAxis(scale: ScaleTime<any, any>): Axis<any>  {
   const tickSeconds = (scale.ticks()[1]?.getTime() - scale.ticks()[0]?.getTime()) / 1000;
 
-  // TODO: figure out how to get d3fc to play nice with Angular 12
-  return d3.axisBottom(scale);
-
-  // if (tickSeconds < SECONDS_PER_DAY) {
-  //   return fc.axisBottom(scale)
-  //     .tickValues(createDayTicks(scale.domain()))
-  //     .tickCenterLabel(true);
-  // } else {
-  //   return fc.axisLabelRotate(fc.axisBottom(scale));
-  // }
+  if (tickSeconds < SECONDS_PER_DAY) {
+    return fc.axisBottom(scale)
+      .tickValues(createDayTicks(scale.domain()))
+      .tickCenterLabel(true);
+  } else {
+    return fc.axisLabelRotate(fc.axisBottom(scale));
+  }
 }
 
 function createDayTicks(domain: Array<any>): Array<Date> {
