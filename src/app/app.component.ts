@@ -7,6 +7,7 @@ import { DemoDataService } from './services/demo-data.service';
 import { MatDrawerMode, MatSidenav } from '@angular/material/sidenav';
 import { ThreadListComponent } from './chats/thread-list.component';
 import { UpdateDarkModeAction } from './store/app.actions';
+import { FilterService } from './services/filter.service';
 
 @Component({
   selector: 'app-root',
@@ -24,7 +25,8 @@ export class AppComponent implements AfterViewInit {
   constructor(
     private store: Store<AppState>,
     private overlay: OverlayContainer,
-    private loader: DemoDataService
+    private loader: DemoDataService,
+    private filterService: FilterService
   ) {
     this.store.pipe(select(selectDarkMode)).subscribe(darkMode => {
       if (darkMode) {
@@ -68,7 +70,12 @@ export class AppComponent implements AfterViewInit {
       if (this.oneSideNavOnly() && !this.filtersSidenav.opened && this.threadsSidenav?.opened) {
         this.threadsSidenav.toggle();
       }
-      this.filtersSidenav.toggle();
+      this.filtersSidenav.toggle()
+        .then(() => {
+          if (this.filtersSidenav?.opened) {
+            this.filterService.redrawFilter();
+          }
+        });
     }
   }
 

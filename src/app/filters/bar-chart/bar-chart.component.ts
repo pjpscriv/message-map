@@ -7,6 +7,9 @@ import { takeUntil } from 'rxjs/operators';
 import { ColorService } from '../../services/color.service';
 import { KeyValue } from '@angular/common';
 
+// UI Constants
+const LEFT_MARGIN = 50;
+
 @Component({
   selector: 'app-bar-chart',
   templateUrl: './bar-chart.component.html',
@@ -27,7 +30,6 @@ export class BarChartComponent implements OnInit, OnDestroy {
   // UI Constants
   private barHeight = 20;
   private barSpacing = 4;
-  private leftMargin = 40;
   private barRadius = 10;
   private chartWidth = 320;
 
@@ -72,32 +74,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
       .data(this.data).enter()
       .append('g')
       .attr('class', 'bar-element')
-      .attr('transform', (d, i) => `translate(0,${i * (this.barHeight + this.barSpacing)})`);
-
-    // Add bars
-    barEls.append('rect')
-      .attr('class', (d: any) => 'bar ' + this.getBarClass(d.key))
-      .attr('height', this.barHeight)
-      .attr('width', (d: any) => this.scale(d.value))
-      .attr('rx', this.barRadius)
-      .attr('ry', this.barRadius)
-      .attr('transform', `translate(${this.leftMargin}, 0)`)
-      .classed('unclicked', (d: any) => this.getUnClicked(d))
-      // TODO: Implement colors
-      // .style('fill', d => bc.isColoredBarchart ? colorScale(d.key) : '')
-      .on('click', this.onClick(this.config.clicked))
-      .on('mouseover', this.onMouseOver)
-      .on('mouseout', this.onMouseOut);
-
-    // Add counts
-    barEls.append('text')
-      .text((d: any) => d.value.toLocaleString())
-      .attr('class', 'legend_hist_num')
-      .attr('dy', '0.35em')
-      .attr('y', `${this.barHeight / 2}px`)
-      .attr('x', (d: any) => this.scale(d.value) + 4)
-      .attr('text-anchor', 'left')
-      .attr('transform', `translate(${this.leftMargin}, 0)`)
+      .attr('transform', (d, i) => `translate(0,${i * (this.barHeight + this.barSpacing)})`)
       .on('click', this.onClick(this.config.clicked))
       .on('mouseover', this.onMouseOver)
       .on('mouseout', this.onMouseOut);
@@ -107,10 +84,39 @@ export class BarChartComponent implements OnInit, OnDestroy {
       .text((d: any) => this.config.getLabel(d.key))
       .attr('class', 'legend_hist_text')
       .attr('dy', '0.35em')
+      .attr('y', `${this.barHeight / 2}px`);
+
+    // Truncate labels
+    d3.selectAll('.legend_hist_text')
+      .each(wrap);
+
+    // Add bars
+    barEls.append('rect')
+      .attr('class', (d: any) => 'bar ' + this.getBarClass(d.key))
+      .attr('height', this.barHeight)
+      .attr('width', (d: any) => this.scale(d.value))
+      .attr('rx', this.barRadius)
+      .attr('ry', this.barRadius)
+      .attr('transform', `translate(${LEFT_MARGIN}, 0)`)
+      .classed('unclicked', (d: any) => this.getUnClicked(d));
+      // TODO: Implement colors
+      // .style('fill', d => bc.isColoredBarchart ? colorScale(d.key) : '')
+
+    // Add counts
+    barEls.append('text')
+      .text((d: any) => d.value.toLocaleString())
+      .attr('class', 'legend_hist_num')
+      .attr('dy', '0.35em')
       .attr('y', `${this.barHeight / 2}px`)
-      .on('click', this.onClick(this.config.clicked))
-      .on('mouseover', this.onMouseOver)
-      .on('mouseout', this.onMouseOut);
+      .attr('x', (d: any) => this.scale(d.value) + 4)
+      .attr('text-anchor', 'left')
+      .attr('transform', `translate(${LEFT_MARGIN}, 0)`);
+
+    // Add tooltips
+    barEls.append('title')
+      .text((d: any) => this.config.getLabel(d.key));
+
+
   }
 
   private createDataGroups(): any {
@@ -174,5 +180,19 @@ export class BarChartComponent implements OnInit, OnDestroy {
 
   public ngOnDestroy(): void {
     this.destroyed$.next();
+  }
+}
+
+function wrap(_: any): void  {
+  const limit = LEFT_MARGIN - 1;
+  // @ts-ignore
+  const n: any = d3.select(this as any);
+  let text = n.text();
+  let len = n.node().getComputedTextLength();
+
+  while (len > limit && text.length > 1) {
+    text = text.slice(0, text.length - 1);
+    n.text(text + '...');
+    len = n.node().getComputedTextLength();
   }
 }
