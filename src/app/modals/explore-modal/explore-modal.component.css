@@ -6,3 +6,9 @@ input[type="file"] {
     text-align: center;
     padding-bottom: 10px;
 }
+
+.close-button {
+  float: right;
+  top: -60px;
+  right: -16px;
+}

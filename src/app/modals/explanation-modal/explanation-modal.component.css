@@ -4,3 +4,9 @@ p mat-icon {
   padding-left: 2px;
   margin-right: -4px;
 }
+
+.close-button {
+  float: right;
+  top: -60px;
+  right: -16px;
+}
