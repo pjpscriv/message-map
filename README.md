@@ -11,8 +11,8 @@ To run this project locally you need Node.js. This can be downloaded [here](http
 Clone this repo and install required dependencies:
 
 ```
-git clone https://github.com/pjpscriv/ng-fb-message.git
-cd ng-fb-message
+git clone https://github.com/pjpscriv/message-map.git
+cd message-map
 npm install
 ```
 

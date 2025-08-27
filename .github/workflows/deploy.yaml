@@ -16,7 +16,7 @@ jobs:
           # see the Configuration section for how you can create secrets
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
           build_configuration: production
-          base_href: /ng-fb-message/
+          base_href: /message-map/
           deploy_branch: gh-pages
           # The folder where your project is supposed to be after running ng build by the action.
-          angular_dist_build_folder: dist/ngfbmessage
+          angular_dist_build_folder: dist/message-map

@@ -11,7 +11,7 @@
 
 // Generated from https://material.io/design/color/the-color-system.html#tools-for-picking-colors
 // using #0099FF as a starting point
-$ng-fb-message-blue: (
+$message-map-blue: (
   50: #e3f3fe,
   100: #bbdfff,
   200: #8eccff,
@@ -47,7 +47,7 @@ $ng-fb-message-blue: (
 // Generated from https://material.io/design/color/the-color-system.html#tools-for-picking-colors
 // using #0099FF as a starting point
 // Maybe use this in future?: #E4E6EB
-$ng-fb-message-orange: (
+$message-map-orange: (
   50: #fff7e0,
   100: #ffeab1,
   200: #ffdc7e,
@@ -84,43 +84,43 @@ $ng-fb-message-orange: (
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
-$ngfbmessage-primary: mat.define-palette($ng-fb-message-blue);
-$ngfbmessage-accent: mat.define-palette($ng-fb-message-orange);
-$ngfbmessage-warn: mat.define-palette(mat.$red-palette); // The warn palette is optional (defaults to red).
+$message-map-primary: mat.define-palette($message-map-blue);
+$message-map-accent: mat.define-palette($message-map-orange);
+$message-map-warn: mat.define-palette(mat.$red-palette); // The warn palette is optional (defaults to red).
 
 // Create the theme object. A theme consists of configurations for individual
 // theming systems such as "color" or "typography".
-$ngfbmessage-theme: mat.define-light-theme((
+$message-map-theme: mat.define-light-theme((
   color: (
-    primary: $ngfbmessage-primary,
-    accent: $ngfbmessage-accent,
-    warn: $ngfbmessage-warn,
+    primary: $message-map-primary,
+    accent: $message-map-accent,
+    warn: $message-map-warn,
   )
 ));
 
 // Dark Mode
-$ngfbmessage-theme-dark: mat.define-dark-theme((
+$message-map-theme-dark: mat.define-dark-theme((
   color: (
-    primary: $ngfbmessage-primary,
-    accent: $ngfbmessage-accent,
-    warn: $ngfbmessage-warn,
+    primary: $message-map-primary,
+    accent: $message-map-accent,
+    warn: $message-map-warn,
   )
 ));
 
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme
 // mixins for each component that you are using.
-@include mat.all-component-themes($ngfbmessage-theme);
-@include holder-theme($ngfbmessage-theme);
+@include mat.all-component-themes($message-map-theme);
+@include holder-theme($message-map-theme);
 
 .dark-mode {
-  @include mat.all-component-themes($ngfbmessage-theme-dark);
-  @include holder-theme($ngfbmessage-theme-dark);
+  @include mat.all-component-themes($message-map-theme-dark);
+  @include holder-theme($message-map-theme-dark);
 }
 
 :root {
-  --color-primary: #{mat.get-color-from-palette($ngfbmessage-primary)};
-  --color-accent: #{mat.get-color-from-palette($ngfbmessage-accent)};
-  --color-warn: #{mat.get-color-from-palette($ngfbmessage-warn)};
+  --color-primary: #{mat.get-color-from-palette($message-map-primary)};
+  --color-accent: #{mat.get-color-from-palette($message-map-accent)};
+  --color-warn: #{mat.get-color-from-palette($message-map-warn)};
   //--color-success: #{mat-color($app-success)};
 }
