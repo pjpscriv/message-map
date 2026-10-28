@@ -25,8 +25,6 @@ import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
-import { AngularResizeEventModule } from 'angular-resize-event';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BarChartComponent } from './filters/bar-chart/bar-chart.component';
@@ -46,6 +44,7 @@ import {
   threadsReducer
 } from './store/app.reducer';
 import { MatListColorDirective } from './chats/mat-list-color.directive';
+import { ResizedDirective } from './main/main-view/resized.directive';
 import { DownloadModalComponent } from './modals/dowload-modal/download-modal.component';
 import { environment } from '../environments/environment';
 
@@ -62,7 +61,8 @@ import { environment } from '../environments/environment';
     MainViewComponent,
     ThreadListComponent,
     BarChartComponent,
-    MatListColorDirective
+    MatListColorDirective,
+    ResizedDirective
   ],
   imports: [
     BrowserModule,
@@ -87,7 +87,6 @@ import { environment } from '../environments/environment';
     }),
     EffectsModule.forRoot([]),
     StoreDevtoolsModule.instrument({maxAge: 25, logOnly: environment.production}),
-    AngularResizeEventModule,
     MatFormFieldModule,
     MatSelectModule,
     FormsModule,
