@@ -7,7 +7,16 @@
 // Include the common styles for Angular Material. We include this here so that you only
 // have to load a single css file for Angular Material in your app.
 // Be sure that you only ever include this mixin once!
-@include mat.core();
+// TODO(v15): As of v15 mat.legacy-core no longer includes default typography styles.
+//  The following line adds:
+//    1. Default typography styles for all components
+//    2. Styles for typography hierarchy classes (e.g. .mat-headline-1)
+//  If you specify typography styles for the components you use elsewhere, you should delete this line.
+//  If you don't need the default component typographies but still want the hierarchy styles,
+//  you can delete this line and instead use:
+//    `@include mat.legacy-typography-hierarchy(mat.define-legacy-typography-config());`
+@include mat.all-legacy-component-typographies();
+@include mat.legacy-core();
 
 // Generated from https://material.io/design/color/the-color-system.html#tools-for-picking-colors
 // using #0099FF as a starting point
@@ -110,11 +119,11 @@ $message-map-theme-dark: mat.define-dark-theme((
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme
 // mixins for each component that you are using.
-@include mat.all-component-themes($message-map-theme);
+@include mat.all-legacy-component-themes($message-map-theme);
 @include holder-theme($message-map-theme);
 
 .dark-mode {
-  @include mat.all-component-themes($message-map-theme-dark);
+  @include mat.all-legacy-component-colors($message-map-theme-dark);
   @include holder-theme($message-map-theme-dark);
 }
 

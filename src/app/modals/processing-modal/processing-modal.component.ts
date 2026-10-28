@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { select, Store } from '@ngrx/store';
 import { selectLoadProgress } from '../../store/app.selectors';
 import { AppState } from '../../store/app.state';

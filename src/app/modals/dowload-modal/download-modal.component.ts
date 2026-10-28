@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { PreProcessingService } from 'src/app/services/pre-processing.service';
 import { ProcessingModalComponent } from '../processing-modal/processing-modal.component';
 import {Store} from '@ngrx/store';

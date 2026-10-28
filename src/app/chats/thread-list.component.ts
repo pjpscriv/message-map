@@ -6,7 +6,7 @@ import {Thread} from 'src/app/types/thread.interface';
 import {selectThreads} from 'src/app/store/app.selectors';
 import {AppState} from 'src/app/store/app.state';
 import {DatePipe} from '@angular/common';
-import {MatSelectionList, MatSelectionListChange} from '@angular/material/list';
+import {MatLegacySelectionList as MatSelectionList, MatLegacySelectionListChange as MatSelectionListChange} from '@angular/material/legacy-list';
 import {FilterService} from '../services/filter.service';
 import {Crossfilter} from '../types/crossfilter.aliases';
 import {Message} from '../types/message.interface';

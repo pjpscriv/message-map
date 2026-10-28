@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { ExplanationModalComponent } from '../modals/explanation-modal/explanation-modal.component';
 import { ExploreModalComponent } from '../modals/explore-modal/explore-modal.component';
 import { select, Store } from '@ngrx/store';
