@@ -14,7 +14,7 @@ import {filter} from 'rxjs/operators';
 })
 export class FilterService {
 
-  private redraw$ = new Subject();
+  private redraw$ = new Subject<void>();
 
   constructor(private store: Store<AppState>) { }
 

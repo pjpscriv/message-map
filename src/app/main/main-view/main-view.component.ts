@@ -28,7 +28,7 @@ export class MainViewComponent implements AfterViewInit, OnDestroy {
   public canvasWrapperSize$ = new BehaviorSubject<DOMRectReadOnly>(new DOMRectReadOnly());
   private canvas: any;
   private oldCanvasSize: any;
-  private destroyed$ = new Subject();
+  private destroyed$ = new Subject<void>();
 
   // Filters + Data
   private filter = crossfilter([] as Message[]);

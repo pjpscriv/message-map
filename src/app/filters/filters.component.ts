@@ -79,7 +79,7 @@ export class FiltersComponent implements OnDestroy {
   private chartsFilter = crossfilter([] as Message[]);
 
   // Life Cycle
-  private destroyed$ = new Subject();
+  private destroyed$ = new Subject<void>();
 
   // UI Variables
   public messageCount = 0;

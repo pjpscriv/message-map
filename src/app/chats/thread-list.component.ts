@@ -70,7 +70,7 @@ export class ThreadListComponent implements OnDestroy {
   private chartThreadDimension = this.chartFilter.dimension(m => m.thread_id);
 
   private today = new Date();
-  private destroyed$ = new Subject();
+  private destroyed$ = new Subject<void>();
 
   constructor(
     private store: Store<AppState>,

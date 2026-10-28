@@ -25,7 +25,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
   private scale: any;
 
   // Life Cycle
-  private destroyed$ = new Subject();
+  private destroyed$ = new Subject<void>();
 
   // UI Constants
   private barHeight = 20;
