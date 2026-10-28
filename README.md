@@ -41,12 +41,6 @@ Run [Karma](https://karma-runner.github.io) unit tests with:
 ng test
 ```
 
-Run [Protractor](http://www.protractortest.org/) end to end tests with: 
-
-```
-ng e2e
-```
-
 ## Credit
 
 Message Map is a fork of [FBMessage](https://github.com/adurivault/FBMessage) created by [MathReynaud](https://github.com/MathReynaud) & [adurivault](https://github.com/adurivault).

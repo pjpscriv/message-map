@@ -48,3 +48,6 @@ Thumbs.db
 
 # Git version
 */assets/git-version.json
+
+# Angular cache
+/.angular/cache

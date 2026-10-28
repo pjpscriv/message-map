@@ -3,7 +3,7 @@
   <svg class="y-axis" [style.maxWidth]="yAxisWidth+'px'">
     <g class="axis--y"></g>
   </svg>
-  <div class="canvas-wrapper border" (resized)="canvasWrapperSize$.next($event)">
+  <div class="canvas-wrapper border" (appResized)="canvasWrapperSize$.next($event)">
     <canvas #scatterplot class="scatterplot"></canvas>
   </div>
   <svg class="x-axis" [style.height]="xAxisHeight+'px'">
